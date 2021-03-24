@@ -1,0 +1,152 @@
+version: '3'
+
+networks:
+  app-network:
+    ipam:
+      config:
+        - subnet: "${APP_NETWORK_ID}.0/24"
+  elk-network:
+    ipam:
+      config:
+        - subnet: "${ELK_NETWORK_ID}.0/24"
+
+services:
+  php:
+    build:
+      context: ./docker/php
+      args:
+        UID: $UID
+        NGINX_PHP_USER: $NGINX_PHP_USER
+        CLIENT_HOST: "${APP_NETWORK_ID}.1"
+    image: otus-project/php
+    volumes:
+      - ./app:/var/www/html
+      - ./data/sock:/sock
+    networks:
+      app-network:
+        ipv4_address: "${APP_NETWORK_ID}.2"
+
+  composer:
+    build:
+      context: ./docker/composer
+    image: otus-project/composer
+    volumes:
+      - ./app:/var/www/html
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      args:
+        UID: $UID
+        NGINX_PHP_USER: $NGINX_PHP_USER
+    image: otus-project/nginx
+    volumes:
+      - ./app:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/sites-enabled/default
+      - ./data/sock:/sock
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      app-network:
+        ipv4_address: "${APP_NETWORK_ID}.3"
+
+  rabbitmq:
+    image: rabbitmq:3.7.5-management
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      app-network:
+        ipv4_address: "${APP_NETWORK_ID}.4"
+
+  postgres:
+    build:
+      context: ./docker/postgres
+    image: otus-project/postgres
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql
+      - ./logs/postgres:/var/log/postgresql
+    networks:
+      app-network:
+        ipv4_address: "${APP_NETWORK_ID}.5"
+
+  redis:
+    image: redis:6.2-rc2
+    expose:
+      - 6379
+    networks:
+      app-network:
+        ipv4_address: "${APP_NETWORK_ID}.6"
+
+  logstash:
+    build:
+      context: ./docker/logstash
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    volumes:
+      - './docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml'
+      - './docker/logstash/pipeline:/usr/share/logstash/pipeline'
+    ports:
+      - '5001:5001'
+    environment:
+      LS_JAVA_OPTS: '-Xmx1g -Xms1g'
+    networks:
+      app-network:
+        ipv4_address: "${APP_NETWORK_ID}.7"
+      elk-network:
+        ipv4_address: "${ELK_NETWORK_ID}.4"
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+      environment:
+        - discovery.type=single-node
+##        - cluster.name=laradock-cluster
+##        - node.name=laradock-node
+#        - bootstrap.memory_lock=true
+#        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+##        - cluster.initial_master_nodes=laradock-node
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+        nofile:
+          soft: 65536
+          hard: 65536
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      elk-network:
+        ipv4_address: "${ELK_NETWORK_ID}.2"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+#    deploy:
+#      resources:
+#        limits:
+##          cpus: '0.50'
+##          memory: 50M
+#          memory: 4G
+#        reservations:
+##          cpus: '0.25'
+#          memory: 20M
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    networks:
+      elk-network:
+        ipv4_address: "${ELK_NETWORK_ID}.3"
+
+
+
