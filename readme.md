@@ -13,7 +13,6 @@ https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys#locates
 ``` 
 # ssh-keygen -t rsa -f <private-key> -C <user>
 ssh-keygen -t rsa -f ~/.ssh/otus-project-ssh-key -C otus.user
-ssh-keygen -t rsa -f ~/.ssh/good-universal-otus-ssh-key -C viktar_otus
 
 # chmod 400 <private-key>
 chmod 400 ~/.ssh/otus-project-ssh-key
@@ -34,9 +33,10 @@ xclip -sel clip < ~/.ssh/otus-project-ssh-key.pub
 ```
 1. login through ssh
 # ssh -i <private-key> viktar.otus@35.228.202.200
-ssh -i ~/.ssh/good-universal-otus-ssh-key viktar.otus@35.228.202.200
+ssh -i ~/.ssh/otus-project-ssh-key viktar.otus@35.228.202.200
 
 2. 
+sudo su - # если не сделать эту команду, git pull вызывает пока что трабл
 cd /home/viktar_otus/management-helper/
 git pull
 
