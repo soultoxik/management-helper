@@ -1,0 +1,14 @@
+- path: /
+  method: GET
+  resource: IndexController
+  action: index
+
+- path: /test
+  method: GET
+  resource: IndexController
+  action: test
+  pararms:
+    - name: имя
+      required: true
+    - surname: surname
+      required: false
