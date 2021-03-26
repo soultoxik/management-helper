@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 networks:
   app-network:
@@ -36,6 +36,7 @@ services:
         UID: $UID
         NGINX_PHP_USER: $NGINX_PHP_USER
         CLIENT_HOST: $CLIENT_HOST
+        IP: "${NETWORK_ID}.3"
     image: otus-project/nginx
     ports:
       - ${NGINX_80_PORT}:80
