@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 networks:
   app-network:
@@ -17,7 +17,7 @@ services:
     image: otus-project/php
     volumes:
       - ./app:/var/www/html
-      - ./data/sock:/sock
+      - ./docker/sock:/sock
     networks:
       app-network:
         ipv4_address: "${NETWORK_ID}.2"
@@ -35,18 +35,22 @@ services:
       args:
         UID: $UID
         NGINX_PHP_USER: $NGINX_PHP_USER
+        CLIENT_HOST: $CLIENT_HOST
     image: otus-project/nginx
     ports:
       - ${NGINX_80_PORT}:80
       - ${NGINX_443_PORT}:443
     volumes:
       - ./app:/var/www/html
-      - ./docker/nginx/default.conf:/etc/nginx/sites-enabled/default
-      - ./data/sock:/sock
+      - ./docker/sock:/sock
       - ./logs/nginx:/var/log/nginx
     networks:
       app-network:
         ipv4_address: "${NETWORK_ID}.3"
+    depends_on:
+      - php
+    links:
+      - php
 
   rabbitmq:
     image: rabbitmq:3.7.5-management
