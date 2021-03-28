@@ -3,12 +3,62 @@
   resource: IndexController
   action: index
 
-- path: /test
+- path: /api/v1/group
+  method: POST
+  resource: GroupController
+  action: create
+
+- path: /api/v1/group
   method: GET
-  resource: IndexController
-  action: test
-  pararms:
-    - name: имя
-      required: true
-    - surname: surname
-      required: false
+  resource: GroupController
+  action: search
+
+- path: /api/v1/group
+  method: PATCH
+  resource: GroupController
+  action: update
+
+- path: /api/v1/group
+  method: DELETE
+  resource: GroupController
+  action: delete
+
+- path: /api/v1/student
+  method: POST
+  resource: StudentController
+  action: create
+
+- path: /api/v1/student
+  method: GET
+  resource: StudentController
+  action: search
+
+- path: /api/v1/student
+  method: PATCH
+  resource: StudentController
+  action: update
+
+- path: /api/v1/student
+  method: DELETE
+  resource: StudentController
+  action: delete
+
+- path: /api/v1/teacher
+  method: POST
+  resource: TeacherController
+  action: create
+
+- path: /api/v1/teacher
+  method: GET
+  resource: TeacherController
+  action: search
+
+- path: /api/v1/teacher
+  method: PATCH
+  resource: TeacherController
+  action: update
+
+- path: /api/v1/teacher
+  method: DELETE
+  resource: TeacherController
+  action: delete
