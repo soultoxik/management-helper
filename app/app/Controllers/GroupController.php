@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Response\JsonResponse;
 use Laminas\Diactoros\Response;
+use Psr\Http\Message\ServerRequestInterface;
 
 class GroupController
 {
@@ -19,9 +20,9 @@ class GroupController
         return JsonResponse::respond($data);
     }
 
-    public function update()
+    public function update(ServerRequestInterface $request, array $args)
     {
-        $data = ['asd' => 123];
+        $data = ['asd' => 123, 'args' => $args];
         return JsonResponse::respond($data);
     }
 

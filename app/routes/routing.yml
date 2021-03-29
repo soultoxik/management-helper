@@ -13,7 +13,7 @@
   resource: GroupController
   action: search
 
-- path: /api/v1/group
+- path: /api/v1/group/{group_id:number}
   method: PATCH
   resource: GroupController
   action: update
