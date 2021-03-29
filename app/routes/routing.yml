@@ -3,62 +3,62 @@
   resource: IndexController
   action: index
 
-- path: /api/v1/group
+- path: /api/v1/groups
   method: POST
   resource: GroupController
   action: create
 
-- path: /api/v1/group
+- path: /api/v1/groups
   method: GET
   resource: GroupController
   action: search
 
-- path: /api/v1/group/{group_id:number}
+- path: /api/v1/groups/{group_id:number}
   method: PATCH
   resource: GroupController
   action: update
 
-- path: /api/v1/group/{group_id:number}
+- path: /api/v1/groups/{group_id:number}
   method: DELETE
   resource: GroupController
   action: delete
 
-- path: /api/v1/student
+- path: /api/v1/students
   method: POST
   resource: StudentController
   action: create
 
-- path: /api/v1/student
+- path: /api/v1/students
   method: GET
   resource: StudentController
   action: search
 
-- path: /api/v1/student/{student_id:number}
+- path: /api/v1/students/{student_id:number}
   method: PATCH
   resource: StudentController
   action: update
 
-- path: /api/v1/student/{student_id:number}
+- path: /api/v1/students/{student_id:number}
   method: DELETE
   resource: StudentController
   action: delete
 
-- path: /api/v1/teacher
+- path: /api/v1/teachers
   method: POST
   resource: TeacherController
   action: create
 
-- path: /api/v1/teacher
+- path: /api/v1/teachers
   method: GET
   resource: TeacherController
   action: search
 
-- path: /api/v1/teacher/{teacher_id:number}
+- path: /api/v1/teachers/{teacher_id:number}
   method: PATCH
   resource: TeacherController
   action: update
 
-- path: /api/v1/teacher/{teacher_id:number}
+- path: /api/v1/teachers/{teacher_id:number}
   method: DELETE
   resource: TeacherController
   action: delete
