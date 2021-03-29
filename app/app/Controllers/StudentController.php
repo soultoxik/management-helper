@@ -9,8 +9,7 @@ class StudentController
 {
     public function create()
     {
-        $data = ['asd' => 123];
-        return JsonResponse::respond($data,201);
+        return JsonResponse::respond([],201);
     }
 
     public function search()
