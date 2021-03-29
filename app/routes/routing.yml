@@ -62,3 +62,8 @@
   method: DELETE
   resource: TeacherController
   action: delete
+
+- path: /api/v1/requests/{request_id:number}
+  method: GET
+  resource: RequestController
+  action: getStatus
