@@ -49,6 +49,14 @@ class SkillMapper extends Mapper
         return null;
     }
 
+//    public function findIN(array $data): ?SkillCollection
+//    {
+//        $query = 'SELECT id, name FROM skills WHERE id IN (' . implode('?,')')';
+//        $stmt = $this->pdo->prepare(
+//            $query
+//        );
+//    }
+
     public function findByName(string $name): ?Skill
     {
         if ($result = $this->findByOneField($this->selectStmt, $name, false)) {
