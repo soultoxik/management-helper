@@ -78,7 +78,7 @@ class GroupMapper extends Mapper
 
     public function findByActive(bool $active): ?Group
     {
-        if ($result = $this->findByOneField($this->selectActiveStmt, $active, false)) {
+        if ($result = $this->findByOneField($this->selectActiveStmt, $active, true)) {
             return $this->fillGroup($result);
         }
         return null;
