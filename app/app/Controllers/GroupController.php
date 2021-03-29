@@ -20,15 +20,15 @@ class GroupController
         return JsonResponse::respond($data);
     }
 
-    public function update(ServerRequestInterface $request, array $args)
+    public function update(array $args)
     {
         $data = ['asd' => 123, 'args' => $args];
         return JsonResponse::respond($data);
     }
 
-    public function delete()
+    public function delete(array $args)
     {
-        $data = ['asd' => 123];
+        $data = ['asd' => 123, 'args' => $args];
         return JsonResponse::respond($data);
     }
 }

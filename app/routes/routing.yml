@@ -18,7 +18,7 @@
   resource: GroupController
   action: update
 
-- path: /api/v1/group
+- path: /api/v1/group/{group_id:number}
   method: DELETE
   resource: GroupController
   action: delete
@@ -33,12 +33,12 @@
   resource: StudentController
   action: search
 
-- path: /api/v1/student
+- path: /api/v1/student/{student_id:number}
   method: PATCH
   resource: StudentController
   action: update
 
-- path: /api/v1/student
+- path: /api/v1/student/{student_id:number}
   method: DELETE
   resource: StudentController
   action: delete
@@ -53,12 +53,12 @@
   resource: TeacherController
   action: search
 
-- path: /api/v1/teacher
+- path: /api/v1/teacher/{teacher_id:number}
   method: PATCH
   resource: TeacherController
   action: update
 
-- path: /api/v1/teacher
+- path: /api/v1/teacher/{teacher_id:number}
   method: DELETE
   resource: TeacherController
   action: delete
