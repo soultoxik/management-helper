@@ -19,34 +19,34 @@ class GroupMapper extends Mapper
         parent::__construct($pdo);
 
         $this->selectStmt = $pdo->prepare(
-            'SELECT id, name, user_id, min_pupil_num, max_pupil_num, ' .
-            'min_skills_num, max_skills_num, max_useless_skill_pupil, active, created '
+            'SELECT id, name, user_id, min_students_num, max_students_num, ' .
+            'min_skills_num, max_skills_num, max_useless_skill_students, enabled, created '
             . 'FROM groups WHERE id = ?'
         );
 
         $this->selectNameStmt = $pdo->prepare(
-            'SELECT id, name, user_id, min_pupil_num, max_pupil_num, ' .
-            'min_skills_num, max_skills_num, max_useless_skill_pupil, active, created '
+            'SELECT id, name, user_id, min_students_num, max_students_num, ' .
+            'min_skills_num, max_skills_num, max_useless_skill_students, enabled, created '
             . 'FROM groups WHERE name = ?'
         );
 
         $this->selectActiveStmt = $pdo->prepare(
-            'SELECT id, name, user_id, min_pupil_num, max_pupil_num, ' .
-            'min_skills_num, max_skills_num, max_useless_skill_pupil, active, created '
-            . 'FROM groups WHERE active = ?'
+            'SELECT id, name, user_id, min_students_num, max_students_num, ' .
+            'min_skills_num, max_skills_num, max_useless_skill_students, enabled, created '
+            . 'FROM groups WHERE enabled = ?'
         );
 
         $this->insertStmt = $pdo->prepare(
             'INSERT INTO groups ' .
-            '(name, user_id, min_pupil_num, max_pupil_num, min_skills_num, ' .
-            'max_skills_num, max_useless_skill_pupil, active, created) ' .
+            '(name, user_id, min_students_num, max_students_num, min_skills_num, ' .
+            'max_skills_num, max_useless_skill_students, enabled, created) ' .
             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
 
         $this->updateStmt = $pdo->prepare(
-            'UPDATE groups SET name = ?, user_id = ?, min_pupil_num = ?, ' .
-            ' max_pupil_num = ?, min_skills_num = ?, max_skills_num = ?, ' .
-            'max_useless_skill_pupil = ?, active = ?, created = ? WHERE id = ?'
+            'UPDATE groups SET name = ?, user_id = ?, min_students_num = ?, ' .
+            ' max_students_num = ?, min_skills_num = ?, max_skills_num = ?, ' .
+            'max_useless_skill_students = ?, enabled = ?, created = ? WHERE id = ?'
         );
 
         $this->deleteStmt = $pdo->prepare(
@@ -54,9 +54,9 @@ class GroupMapper extends Mapper
         );
 
         $this->batchStmt = $pdo->prepare(
-            'SELECT id, name, user_id, min_pupil_num, max_pupil_num, ' .
-            'min_skills_num, max_skills_num, max_useless_skill_pupil, active, created '
-            . 'FROM groups order by id DESC limit ?  offset ?'
+            'SELECT id, name, user_id, min_students_num, max_students_num, ' .
+            'min_skills_num, max_skills_num, max_useless_skill_students, enabled, created '
+            . 'FROM groups ORDER BY id DESC LIMIT ?  OFFSET ?'
         );
     }
 
@@ -76,9 +76,9 @@ class GroupMapper extends Mapper
         return null;
     }
 
-    public function findByActive(bool $active): ?Group
+    public function findByEnabled(bool $enabled): ?Group
     {
-        if ($result = $this->findByOneField($this->selectActiveStmt, $active, true)) {
+        if ($result = $this->findByOneField($this->selectActiveStmt, $enabled, true)) {
             return $this->fillGroup($result);
         }
         return null;
@@ -90,12 +90,12 @@ class GroupMapper extends Mapper
             $data['id'],
             $data['name'],
             $data['user_id'],
-            $data['min_pupil_num'],
-            $data['max_pupil_num'],
+            $data['min_students_num'],
+            $data['max_students_num'],
             $data['min_skills_num'],
             $data['max_skills_num'],
-            $data['max_useless_kills_pupil'],
-            $data['active'],
+            $data['max_useless_skill_students'],
+            $data['enabled'],
             $data['created'],
         );
     }
@@ -106,12 +106,12 @@ class GroupMapper extends Mapper
             [
                 $groupDTO->name,
                 $groupDTO->userID,
-                $groupDTO->minPupilNum,
-                $groupDTO->maxPupilNum,
+                $groupDTO->minStudentsNum,
+                $groupDTO->maxStudentsNum,
                 $groupDTO->minSkillsNum,
                 $groupDTO->maxSkillsNum,
-                $groupDTO->maxUslessSkillPupil,
-                $groupDTO->status,
+                $groupDTO->maxUselessSkillStudents,
+                $groupDTO->enabled,
                 time()
             ],
             'groups_id_seq'
@@ -120,12 +120,12 @@ class GroupMapper extends Mapper
             $id,
             $groupDTO->name,
             $groupDTO->userID,
-            $groupDTO->minPupilNum,
-            $groupDTO->maxPupilNum,
+            $groupDTO->minStudentsNum,
+            $groupDTO->maxStudentsNum,
             $groupDTO->minSkillsNum,
             $groupDTO->maxSkillsNum,
-            $groupDTO->maxUslessSkillPupil,
-            $groupDTO->status,
+            $groupDTO->maxUselessSkillStudents,
+            $groupDTO->enabled,
             time()
         );
     }
@@ -136,12 +136,12 @@ class GroupMapper extends Mapper
         return $this->baseUpdate([
             $group->getName(),
             $group->getUserID(),
-            $group->getMinPupilNum(),
-            $group->getMaxPupilNum(),
+            $group->getMinStudentsNum(),
+            $group->getMaxStudentsNum(),
             $group->getMinSkillsNum(),
             $group->getMaxSkillsNum(),
-            $group->getMaxUslessSkillPupil(),
-            $group->isStatus(),
+            $group->getMaxUselessSkillStudents(),
+            $group->isEnabled(),
             $group->getCreated(),
             $id
         ]);

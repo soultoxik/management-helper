@@ -14,12 +14,12 @@ class GroupCollection extends Collection
             $raw['id'],
             $raw['name'],
             $raw['user_id'],
-            $raw['min_pupil_num'],
-            $raw['max_pupil_num'],
+            $raw['min_students_num'],
+            $raw['max_students_num'],
             $raw['min_skills_num'],
             $raw['max_skills_num'],
-            $raw['max_useless_kills_pupil'],
-            $raw['active'],
+            $raw['max_useless_skill_students'],
+            $raw['enabled'],
             $raw['created'],
         );
     }

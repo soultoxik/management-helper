@@ -8,46 +8,36 @@ class Group
     private int $id;
     private string $name;
     private int $userID;
-    private int $minPupilNum;
-    private int $maxPupilNum;
+    private int $minStudentsNum;
+    private int $maxStudentsNum;
     private int $minSkillsNum;
     private int $maxSkillsNum;
-    private int $maxUslessSkillPupil;
-    private bool $status;
+    private int $maxUselessSkillStudents;
+    private bool $enabled;
     private int $created;
 
     public function __construct(
         int $id,
         string $name,
         int $userID,
-        int $minPupilNum,
-        int $maxPupilNum,
+        int $minStudentsNum,
+        int $maxStudentsNum,
         int $minSkillsNum,
         int $maxSkillsNum,
-        int $maxUslessSkillPupil,
-        bool $status,
+        int $maxUselessSkillStudents,
+        bool $enabled,
         int $created
     )
     {
         $this->id = $id;
         $this->name = $name;
         $this->userID = $userID;
-        $this->minPupilNum = $minPupilNum;
-        $this->maxPupilNum = $maxPupilNum;
+        $this->minStudentsNum = $minStudentsNum;
+        $this->maxStudentsNum = $maxStudentsNum;
         $this->minSkillsNum = $minSkillsNum;
         $this->maxSkillsNum = $maxSkillsNum;
-        $this->maxUslessSkillPupil = $maxUslessSkillPupil;
-        $this->status = $status;
-        $this->created = $created;
-    }
-
-    public function getCreated(): int
-    {
-        return $this->created;
-    }
-
-    public function setCreated(int $created): void
-    {
+        $this->maxUselessSkillStudents = $maxUselessSkillStudents;
+        $this->enabled = $enabled;
         $this->created = $created;
     }
 
@@ -81,24 +71,24 @@ class Group
         $this->userID = $userID;
     }
 
-    public function getMinPupilNum(): int
+    public function getMinStudentsNum(): int
     {
-        return $this->minPupilNum;
+        return $this->minStudentsNum;
     }
 
-    public function setMinPupilNum(int $minPupilNum): void
+    public function setMinStudentsNum(int $minStudentsNum): void
     {
-        $this->minPupilNum = $minPupilNum;
+        $this->minStudentsNum = $minStudentsNum;
     }
 
-    public function getMaxPupilNum(): int
+    public function getMaxStudentsNum(): int
     {
-        return $this->maxPupilNum;
+        return $this->maxStudentsNum;
     }
 
-    public function setMaxPupilNum(int $maxPupilNum): void
+    public function setMaxStudentsNum(int $maxStudentsNum): void
     {
-        $this->maxPupilNum = $maxPupilNum;
+        $this->maxStudentsNum = $maxStudentsNum;
     }
 
     public function getMinSkillsNum(): int
@@ -121,24 +111,36 @@ class Group
         $this->maxSkillsNum = $maxSkillsNum;
     }
 
-    public function getMaxUslessSkillPupil(): int
+    public function getMaxUselessSkillStudents(): int
     {
-        return $this->maxUslessSkillPupil;
+        return $this->maxUselessSkillStudents;
     }
 
-    public function setMaxUslessSkillPupil(int $maxUslessSkillPupil): void
+    public function setMaxUselessSkillStudents(
+        int $maxUselessSkillStudents
+    ): void
     {
-        $this->maxUslessSkillPupil = $maxUslessSkillPupil;
+        $this->maxUselessSkillStudents = $maxUselessSkillStudents;
     }
 
-    public function isStatus(): bool
+    public function isEnabled(): bool
     {
-        return $this->status;
+        return $this->enabled;
     }
 
-    public function setStatus(bool $status): void
+    public function setEnabled(bool $enabled): void
     {
-        $this->status = $status;
+        $this->enabled = $enabled;
+    }
+
+    public function getCreated(): int
+    {
+        return $this->created;
+    }
+
+    public function setCreated(int $created): void
+    {
+        $this->created = $created;
     }
 
 }
