@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Response\JsonResponse;
+use Psr\Http\Message\ServerRequestInterface;
 
 class StudentController
 {
@@ -18,13 +19,13 @@ class StudentController
         return JsonResponse::respond($data);
     }
 
-    public function update(array $args)
+    public function update(ServerRequestInterface $request, array $args)
     {
         $data = ['asd' => 123, 'args' => $args];
         return JsonResponse::respond($data);
     }
 
-    public function delete(array $args)
+    public function delete(ServerRequestInterface $request, array $args)
     {
         $data = ['asd' => 123, 'args' => $args];
         return JsonResponse::respond($data);
