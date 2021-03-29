@@ -101,8 +101,8 @@ class GroupSkillMapper extends Mapper
         ]);
     }
 
-    public function delete(int $groupSkillID): bool
+    public function delete(int $id): bool
     {
-        return $this->baseDelete([$groupSkillID]);
+        return $this->baseDelete([$id]);
     }
 }
