@@ -18,24 +18,24 @@ class UserMapper extends Mapper
         parent::__construct($pdo);
 
         $this->selectStmt = $pdo->prepare(
-            'SELECT id, email, first_name, last_name, phone, status, ' .
+            'SELECT id, email, first_name, last_name, phone, enabled, ' .
             'teacher, created FROM users WHERE id = ?'
         );
 
         $this->selectEmailStmt = $pdo->prepare(
-            'SELECT id, email, first_name, last_name, phone, status, ' .
+            'SELECT id, email, first_name, last_name, phone, enabled, ' .
             'teacher, created FROM users WHERE email = ?'
         );
 
         $this->insertStmt = $pdo->prepare(
             'INSERT INTO users ' .
-            '(email, first_name, last_name, phone, status, teacher, created) ' .
+            '(email, first_name, last_name, phone, enabled, teacher, created) ' .
             'VALUES (?, ?, ?, ?, ?, ?, ?)'
         );
 
         $this->updateStmt = $pdo->prepare(
             'UPDATE users SET email = ?, first_name = ?, last_name = ?, ' .
-            ' phone = ?, status = ?, teacher = ?, created = ? WHERE id = ?'
+            ' phone = ?, enabled = ?, teacher = ?, created = ? WHERE id = ?'
         );
 
         $this->deleteStmt = $pdo->prepare(
@@ -43,8 +43,8 @@ class UserMapper extends Mapper
         );
 
         $this->batchStmt = $pdo->prepare(
-            'SELECT  id, email, first_name, last_name, phone, status, ' .
-            'teacher, created FROM users order by id DESC limit ?  offset ?'
+            'SELECT  id, email, first_name, last_name, phone, enabled, ' .
+            'teacher, created FROM users ORDER BY id DESC LIMIT ?  OFFSET ?'
         );
     }
 
@@ -72,7 +72,7 @@ class UserMapper extends Mapper
             $data['first_name'],
             $data['last_name'],
             $data['phone'],
-            $data['status'],
+            $data['enabled'],
             $data['teacher'],
             $data['created'],
         );
@@ -86,7 +86,7 @@ class UserMapper extends Mapper
                 $userDTO->firstName,
                 $userDTO->lastName,
                 $userDTO->phone,
-                $userDTO->status,
+                $userDTO->enabled,
                 $userDTO->teacher,
                 time()
             ],
@@ -98,7 +98,7 @@ class UserMapper extends Mapper
             $userDTO->firstName,
             $userDTO->lastName,
             $userDTO->phone,
-            $userDTO->status,
+            $userDTO->enabled,
             $userDTO->teacher,
             time()
         );
@@ -112,7 +112,7 @@ class UserMapper extends Mapper
             $user->getFirstName(),
             $user->getLastName(),
             $user->getPhone(),
-            $user->isStatus(),
+            $user->isEnabled(),
             $user->isTeacher(),
             $user->getCreated(),
             $id
@@ -136,7 +136,7 @@ class UserMapper extends Mapper
     public function findByStatus(bool $status): ?UserCollection
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, email, first_name, last_name, phone, status, ' .
+            'SELECT id, email, first_name, last_name, phone, enabled, ' .
             'teacher, created FROM users WHERE status = ?'
         );
         return new UserCollection(
@@ -147,7 +147,7 @@ class UserMapper extends Mapper
     public function findByTeacher(bool $teacher): ?UserCollection
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, email, first_name, last_name, phone, status, ' .
+            'SELECT id, email, first_name, last_name, phone, enabled, ' .
             'teacher, created FROM users WHERE teacher = ?'
         );
 

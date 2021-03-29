@@ -11,7 +11,7 @@ class User
     private string $firstName;
     private string $lastName;
     private string $phone;
-    private bool $status;
+    private bool $enabled;
     private bool $teacher;
     private int $created;
 
@@ -21,7 +21,7 @@ class User
         string $firstName,
         string $lastName,
         string $phone,
-        bool $status,
+        bool $enabled,
         bool $teacher,
         int $created
     )
@@ -31,7 +31,7 @@ class User
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->phone = $phone;
-        $this->status = $status;
+        $this->enabled = $enabled;
         $this->teacher = $teacher;
         $this->created = $created;
     }
@@ -86,16 +86,6 @@ class User
         $this->phone = $phone;
     }
 
-    public function isStatus(): bool
-    {
-        return $this->status;
-    }
-
-    public function setStatus(bool $status): void
-    {
-        $this->status = $status;
-    }
-
     public function isTeacher(): bool
     {
         return $this->teacher;
@@ -114,6 +104,16 @@ class User
     public function setCreated(int $created): void
     {
         $this->created = $created;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
     }
 
 

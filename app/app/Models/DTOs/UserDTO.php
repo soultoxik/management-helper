@@ -10,7 +10,7 @@ class UserDTO
     public string $firstName;
     public string $lastName;
     public string $phone;
-    public bool $status;
+    public bool $enabled;
     public bool $teacher;
     public int $created;
 
@@ -20,7 +20,7 @@ class UserDTO
         string $firstName,
         string $lastName,
         string $phone,
-        bool $status,
+        bool $enabled,
         bool $teacher,
         int $created
     )
@@ -30,7 +30,7 @@ class UserDTO
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->phone = $phone;
-        $this->status = $status;
+        $this->enabled = $enabled;
         $this->teacher = $teacher;
         $this->created = $created;
     }
