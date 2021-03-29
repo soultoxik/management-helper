@@ -5,7 +5,7 @@ namespace App\Models;
 
 use App\Collections\SkillCollection;
 
-class Pupil
+class Student
 {
     private User $user;
     private SkillCollection $skillCollection;
