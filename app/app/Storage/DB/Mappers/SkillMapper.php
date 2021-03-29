@@ -19,22 +19,22 @@ class SkillMapper extends Mapper
         parent::__construct($pdo);
 
         $this->selectStmt = $pdo->prepare(
-            "SELECT id, name FROM skills WHERE id = ?"
+            'SELECT id, name FROM skills WHERE id = ?'
         );
 
         $this->selectNameStmt = $pdo->prepare(
-            "SELECT id, name FROM skills WHERE name = ?"
+            'SELECT id, name FROM skills WHERE name = ?'
         );
 
         $this->insertStmt = $pdo->prepare(
-            "insert into skills (name) values (?)"
+            'insert into skills (name) values (?)'
         );
 
         $this->updateStmt = $pdo->prepare(
-            "update skills set name = ? WHERE id = ?"
+            'update skills set name = ? WHERE id = ?'
         );
 
-        $this->deleteStmt = $pdo->prepare("delete FROM skills WHERE id = ?");
+        $this->deleteStmt = $pdo->prepare('delete FROM skills WHERE id = ?');
 
         $this->batchStmt = $pdo->prepare(
             'select  id, name FROM skills order by id DESC limit ?  offset ?'
