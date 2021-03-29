@@ -14,6 +14,7 @@ class Group
     private int $maxSkillsNum;
     private int $maxUslessSkillPupil;
     private bool $status;
+    private int $created;
 
     public function __construct(
         int $id,
@@ -24,7 +25,8 @@ class Group
         int $minSkillsNum,
         int $maxSkillsNum,
         int $maxUslessSkillPupil,
-        bool $status
+        bool $status,
+        int $created
     )
     {
         $this->id = $id;
@@ -36,6 +38,17 @@ class Group
         $this->maxSkillsNum = $maxSkillsNum;
         $this->maxUslessSkillPupil = $maxUslessSkillPupil;
         $this->status = $status;
+        $this->created = $created;
+    }
+
+    public function getCreated(): int
+    {
+        return $this->created;
+    }
+
+    public function setCreated(int $created): void
+    {
+        $this->created = $created;
     }
 
     public function getId(): int
