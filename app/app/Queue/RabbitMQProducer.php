@@ -9,6 +9,38 @@ use PhpAmqpLib\Message\AMQPMessage;
 class RabbitMQProducer extends RabbitMQ implements QueueProducerInterface
 {
 
+    /**
+     * {
+     *      "command": "create_group",
+     *      "request_id": 1,
+     *      "data": {
+     *          "group_id": 1
+     *          }
+     * }
+     * {
+     *      "command": "find_teacher",
+     *      "request_id": 1,
+     *      "data": {
+     *          "group_id": 1
+     *          }
+     * }
+     * {
+     *      "command": "find_group_new_user",
+     *      "request_id": 1,
+     *      "data": {
+     *          "student_id": 1
+     *          }
+     * }
+     * {
+     *      "command": "replace_teacher",
+     *      "request_id": 1,
+     *      "data": {
+     *          "group_id": 1
+     *          }
+     * }
+     *
+     */
+
     public function publish(string $data): void
     {
         $this->channel->exchange_declare(
