@@ -150,5 +150,45 @@ services:
       app-network:
         ipv4_address: "${NETWORK_ID}.9"
 
+  php2:
+    build:
+      context: ./docker/php2
+      args:
+        UID: $UID
+        NGINX_PHP_USER: $NGINX_PHP_USER
+        CLIENT_HOST: "${NETWORK_ID}.1"
+    image: otus-project/php2
+    container_name: php2
+    volumes:
+      - ./app:/var/www/html
+#      - ./docker/sock:/sock
+    networks:
+      app-network:
+        ipv4_address: "${NETWORK_ID}.22"
+
+  nginx2:
+    build:
+      context: ./docker/nginx2
+      args:
+        UID: $UID
+        NGINX_PHP_USER: $NGINX_PHP_USER
+        CLIENT_HOST: $CLIENT_HOST
+        IP: "${NETWORK_ID}.32"
+    image: otus-project/nginx2
+    ports:
+      - ${NGINX2_80_PORT}:80
+      - ${NGINX2_443_PORT}:443
+    volumes:
+      - ./app:/var/www/html
+#        - ./docker/sock:/sock
+      - ./logs/nginx2:/var/log/nginx
+    networks:
+      app-network:
+        ipv4_address: "${NETWORK_ID}.32"
+    depends_on:
+      - php2
+    links:
+      - php2
+
 
 
