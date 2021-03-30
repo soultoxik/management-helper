@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Response\JsonResponse;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IndexController
@@ -12,8 +13,9 @@ class IndexController
         return ['message'=>'hello world','queryParams' => $test];
     }
 
-    public function test(): array
+    public function test()
     {
-        return ['test' => 'test'];
+        $data = ['asd' => 123];
+        return JsonResponse::respond($data,201);
     }
 }
