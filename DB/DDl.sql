@@ -24,8 +24,8 @@ CREATE TABLE public."groups"
     max_skills_num             int2         NOT NULL,
     max_useless_skill_students float4       NULL,
     enabled                    bool         NOT NULL,
-    created_at                 date         NOT NULL,
-    updated_at                 date         NOT NULL,
+    created_at                 timestamp    NOT NULL,
+    updated_at                 timestamp    NOT NULL,
     CONSTRAINT groups_pk PRIMARY KEY (id),
     CONSTRAINT groups_fk FOREIGN KEY (user_id) REFERENCES users (id)
 );
