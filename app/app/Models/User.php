@@ -9,7 +9,6 @@ class User extends Model
 {
     protected $table = 'users';
     protected $fillable = [
-        'id',
         'email',
         'first_name',
         'last_name',
