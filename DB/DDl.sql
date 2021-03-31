@@ -35,8 +35,8 @@ CREATE TABLE public.skills
 (
     id         bigserial   NOT NULL,
     "name"     varchar(50) NOT NULL,
-    updated_at date        NOT NULL,
-    created_at date        NOT NULL,
+    updated_at timestamp        NOT NULL,
+    created_at timestamp        NOT NULL,
     CONSTRAINT skills_pk PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX skills_name_idx ON public.skills USING btree (name);
@@ -45,8 +45,8 @@ CREATE TABLE public.requests
 (
     id         bigserial   NOT NULL,
     status     varchar(20) NOT NULL,
-    created_at date        NOT NULL,
-    updated_at date        NOT NULL,
+    created_at timestamp        NOT NULL,
+    updated_at timestamp        NOT NULL,
     CONSTRAINT requests_pk PRIMARY KEY (id)
 );
 
@@ -79,8 +79,8 @@ CREATE TABLE public.teachers_conditions
     max_groups_num int2      NOT NULL,
     min_group_size int2      NOT NULL,
     max_group_size int2      NOT NULL,
-    updated_at     date      NOT NULL,
-    created_at     date      NOT NULL,
+    updated_at     timestamp      NOT NULL,
+    created_at     timestamp      NOT NULL,
     CONSTRAINT teachers_conditions_pk PRIMARY KEY (id),
     CONSTRAINT teachers_conditions_fk FOREIGN KEY (user_id) REFERENCES users (id)
 );
