@@ -29,6 +29,16 @@ class Student extends Model
         return new Student($user, $skills);
     }
 
+    public static function findByEmail(string $email): ?Student
+    {
+        $user = User::where('email', $email)->where('teacher', false)->first();
+        if (empty($user)) {
+            return null;
+        }
+        $skills = $user->skills;
+        return new Student($user, $skills);
+    }
+
     /**
      * @param User  $user
      * @param array[skill_id] $skills
