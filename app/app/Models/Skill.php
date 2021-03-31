@@ -10,7 +10,6 @@ class Skill extends Model
 
     protected $table = 'skills';
     protected $fillable = [
-        'id',
         'name',
     ];
 
@@ -22,15 +21,6 @@ class Skill extends Model
     public function groups()
     {
         return $this->belongsToMany('App\Models\Group', 'groups_skills');
-    }
-
-    public static function getSkillID(array $skillsCollection)
-    {
-        $ids = [];
-        foreach ($skillsCollection as $skill) {
-            $ids[] = $skill->id;
-        }
-        return $ids;
     }
 
 }

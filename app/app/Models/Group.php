@@ -9,7 +9,6 @@ class Group extends Model
 {
     protected $table = 'groups';
     protected $fillable = [
-        'id',
         'name',
         'user_id',
         'min_students_num',

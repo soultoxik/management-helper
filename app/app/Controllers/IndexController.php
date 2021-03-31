@@ -67,6 +67,8 @@ class IndexController
 
 //            Teacher::remove(220);
 
+            Skill::create(['name' => 'wordpress3']);
+
             return JsonResponse::respond('ok', 201);
         } catch (\Exception $exception) {
             return JsonResponse::respond(['message' => $exception->getMessage()], 422);
