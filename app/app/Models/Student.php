@@ -105,12 +105,7 @@ class Student extends Model
             if (empty($student)) {
                 return false;
             }
-            $skillIDs = Skill::getSkillID($student->skills);
             self::beginTransaction();
-            if (!empty($skillIDs)) {
-                $student->user->skills()->detach();
-                $student->user->groups()->detach();
-            }
             $student->user->delete();
             self::commit();
             return true;
