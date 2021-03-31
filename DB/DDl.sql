@@ -1,3 +1,18 @@
+CREATE TABLE public.users
+(
+    id         bigserial   NOT NULL,
+    email      varchar(80) NOT NULL,
+    first_name varchar     NOT NULL,
+    last_name  varchar     NULL,
+    phone      varchar     NULL,
+    enabled    bool        NOT NULL,
+    teacher    bool        NOT NULL,
+    updated_at date        NOT NULL,
+    created_at date        NOT NULL,
+    CONSTRAINT users_pk PRIMARY KEY (id)
+);
+CREATE UNIQUE INDEX users_email_idx ON public.users USING btree (email);
+
 CREATE TABLE public."groups"
 (
     id                         bigserial    NOT NULL,
@@ -34,21 +49,6 @@ CREATE TABLE public.requests
     updated_at date        NOT NULL,
     CONSTRAINT requests_pk PRIMARY KEY (id)
 );
-
-CREATE TABLE public.users
-(
-    id         bigserial   NOT NULL,
-    email      varchar(80) NOT NULL,
-    first_name varchar     NOT NULL,
-    last_name  varchar     NULL,
-    phone      varchar     NULL,
-    enabled    bool        NOT NULL,
-    teacher    bool        NOT NULL,
-    updated_at date        NOT NULL,
-    created_at date        NOT NULL,
-    CONSTRAINT users_pk PRIMARY KEY (id)
-);
-CREATE UNIQUE INDEX users_email_idx ON public.users USING btree (email);
 
 CREATE TABLE public.groups_skills
 (
