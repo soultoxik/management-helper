@@ -67,3 +67,8 @@
   method: GET
   resource: RequestController
   action: getStatus
+
+- path: /api/v1/student/{user_id:number}/find-group
+  method: POST
+  resource: StudentController
+  action: findGroup
