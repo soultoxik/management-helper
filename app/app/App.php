@@ -65,17 +65,22 @@ class App
 //        var_dump($result);
 
 //        $user = new User;
-//        $user->email = 'newemail@example.com';
+//        $user->email = 'newem' . rand(2, 15) . ' ail@example.com';
 //        $user->first_name = 'first name_' . time();
 //        $user->last_name = 'last_name name_' . time();
 //        $user->phone = '8904' . rand(2222222,9999999);
 //
 //        $skills = [
-//            new Skill(['name' => 'PHP']),
-//            new Skill(['name' => 'laravel']),
-//            new Skill(['name' => 'symphony']),
+//            1,2
 //        ];
-//        $reseul = Student::create($user, $skills);
+//        $reseul = Student::insert($user, $skills);
+
+//        $student = Student::findByID(194);
+//        $student->user->first_name = 'qqqqqqqqq';
+//        var_dump($student);
+//        Student::change($student->user, [7, 5]);
+
+//        Student::remove(196);
 
     }
 }
