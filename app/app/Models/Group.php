@@ -73,13 +73,12 @@ class Group extends Model
      *
      * @return bool
      */
-    public static function change(GroupDTO $group, array $skills): bool
+    public static function change(Group $group, array $skills): bool
     {
         try {
             self::beginTransaction();
             $changedGroup = Group::where('id', $group->id)->first();
             $changedGroup->name = $group->name;
-            $changedGroup->user_id = $group->user_id;
             $changedGroup->min_students_num = $group->min_students_num;
             $changedGroup->max_students_num = $group->max_students_num;
             $changedGroup->min_skills_num = $group->min_skills_num;
