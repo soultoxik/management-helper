@@ -3,42 +3,122 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected User $user;
-    protected ?Collection $skill;
+    use Transaction;
 
-    public function __construct(User $user, Collection $skill)
+    public User $user;
+
+    /**
+     *  var array Skill
+    */
+    public ?array $skills;
+
+    public function __construct(User $user, ?array $skills)
     {
         $this->user = $user;
-        $this->skill = $skill;
+        $this->skills = $skills;
     }
 
-    public static function findByID(int $id)
+    public static function findByID(int $id): ?Student
     {
         $user = User::where('id', $id)->where('teacher', false)->first();
-        $skill = $user->skills;
-        if (empty($skill)) {
+        if (empty($user)) {
+            return null;
+        }
+        $data = $user->skills;
+        if (empty($data)) {
             return new Student($user, null);
         }
-        return new Student($user, $skill);
+        $skills = [];
+        foreach ($data as $item) {
+            $skills[] = $item;
+        }
+        if (empty($skills)) {
+            $skills = null;
+        }
+        return new Student($user, $skills);
     }
 
-    public static function create(User $user, array $skills)
+    public static function insert(User $user, array $skills): ?Student
     {
-        $user = User::create([
-            'email' => $user->email,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'phone' =>  $user->phone,
-            'enabled' => true,
-            'teacher' => false
-        ]);
-        // не работает
-        $user->skills()->sync($skills);
+        try {
+            self::beginTransaction();
+
+            $user = User::create([
+                'email' => $user->email,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'phone' =>  $user->phone,
+                'enabled' => true,
+                'teacher' => false
+            ]);
+            $user->skills()->sync($skills);
+            self::commit();
+            $data = [];
+            foreach ($skills as $skillID) {
+                $skill = Skill::where('id', $skillID)->first();
+                if ($skill) {
+                    $data[] = $skill;
+                }
+            }
+
+            return new Student($user, $data);
+
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            self::rollBack();
+            return null;
+        }
     }
+
+    public static function change(User $user, array $skills): bool
+    {
+        try {
+            self::beginTransaction();
+            $user->update([
+                'email' => $user->email,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'phone' =>  $user->phone,
+                'enabled' => $user->enabled,
+                'teacher' => $user->teacher
+            ]);
+            // @TODO изменения скиллов может привести к исключению студента из группы.
+            $user->skills()->sync($skills);
+            self::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            self::rollBack();
+            return false;
+        }
+    }
+
+    public static function remove(int $userID): bool
+    {
+        try {
+            $student = self::findByID($userID);
+            if (empty($student)) {
+                return false;
+            }
+            $skillIDs = Skill::getSkillID($student->skills);
+            self::beginTransaction();
+            if (!empty($skillIDs)) {
+                $student->user->skills()->detach();
+                $student->user->groups()->detach();
+            }
+            $student->user->delete();
+            self::commit();
+            return true;
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            self::rollBack();
+        }
+    }
+
+
 }

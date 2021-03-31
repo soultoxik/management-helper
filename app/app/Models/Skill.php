@@ -23,4 +23,14 @@ class Skill extends Model
     {
         return $this->belongsToMany('App\Models\Group', 'groups_skills');
     }
+
+    public static function getSkillID(array $skillsCollection)
+    {
+        $ids = [];
+        foreach ($skillsCollection as $skill) {
+            $ids[] = $skill->id;
+        }
+        return $ids;
+    }
+
 }
