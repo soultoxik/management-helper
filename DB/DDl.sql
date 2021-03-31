@@ -70,17 +70,16 @@ CREATE TABLE public.groups_users (
 );
 CREATE INDEX groups_users_group_id_idx ON public.groups_users USING btree (group_id, user_id);
 
-CREATE TABLE public.teachers_conditions
-(
-    id             bigserial NOT NULL,
-    user_id        int4      NOT NULL,
-    max_groups_num int2      NOT NULL,
-    min_group_size int2      NOT NULL,
-    max_group_size int2      NOT NULL,
-    updated_at     timestamp      NOT NULL,
-    created_at     timestamp      NOT NULL,
-    CONSTRAINT teachers_conditions_pk PRIMARY KEY (id),
-    CONSTRAINT teachers_conditions_fk FOREIGN KEY (user_id) REFERENCES users (id)
+CREATE TABLE public.teachers_conditions (
+	id bigserial NOT NULL,
+	user_id int4 NOT NULL,
+	max_groups_num int2 NOT NULL,
+	min_group_size int2 NOT NULL,
+	max_group_size int2 NOT NULL,
+	updated_at date NOT NULL,
+	created_at date NOT NULL,
+	CONSTRAINT teachers_conditions_pk PRIMARY KEY (id),
+	CONSTRAINT users_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX teachers_conditions_user_id_idx ON public.teachers_conditions USING btree (user_id);
 
