@@ -7,3 +7,5 @@ logs/
 .env
 
 vendor/
+
+docker-compose.override.yml
