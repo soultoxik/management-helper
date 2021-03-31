@@ -27,4 +27,9 @@ class User extends Model
         return $this->belongsToMany('App\Models\Group', 'groups_users');
     }
 
+    public function teacherConditions()
+    {
+        return $this->hasOne('App\Models\TeacherCondition', 'user_id');
+    }
+
 }

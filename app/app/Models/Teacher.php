@@ -5,37 +5,49 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use App\Models\DTOs\TeacherConditionDTO;
 
-class Student extends Model
+class Teacher extends Model
 {
     use Transaction;
 
     public User $user;
     public ?Collection $skills;
+    public ?TeacherCondition $teacherCondition;
 
-    public function __construct(User $user, ?Collection $skills)
-    {
+    public function __construct(
+        User $user,
+        ?Collection $skills,
+        ?TeacherCondition $teacherCondition
+    ) {
         $this->user = $user;
         $this->skills = $skills;
+        $this->teacherCondition = $teacherCondition;
     }
 
-    public static function findByID(int $id): ?Student
+    public static function findByID(int $id): ?Teacher
     {
-        $user = User::where('id', $id)->where('teacher', false)->first();
+        $user = User::where('id', $id)->where('teacher', true)->first();
         if (empty($user)) {
             return null;
         }
         $skills = $user->skills;
-        return new Student($user, $skills);
+        $condition = $user->teacherConditions->first();
+        return new Teacher($user, $skills, $condition);
     }
 
     /**
      * @param User  $user
      * @param array[skill_id] $skills
+     * @param TeacherConditionDTO $condition
      *
-     * @return Student|null
+     * @return Teacher|null
      */
-    public static function insert(User $user, array $skills): ?Student
+    public static function insert(
+        User $user,
+        array $skills,
+        TeacherConditionDTO $condition
+    ): ?Teacher
     {
         try {
             self::beginTransaction();
@@ -46,14 +58,18 @@ class Student extends Model
                 'last_name' => $user->last_name,
                 'phone' =>  $user->phone,
                 'enabled' => true,
-                'teacher' => false
+                'teacher' => true
             ]);
             $user->skills()->sync($skills);
             $skills = $user->skills()->get();
+            $condition = TeacherCondition::create([
+                'user_id' => $user->id,
+                'max_groups_num' => $condition->maxGroupsNum,
+                'min_group_size' => $condition->minGroupSize,
+                'max_group_size' => $condition->maxGroupSize,
+            ]);
             self::commit();
-
-            return new Student($user, $skills);
-
+            return new Teacher($user, $skills, $condition);
         } catch (\Exception $e) {
             var_dump($e->getMessage());
             self::rollBack();
@@ -64,10 +80,15 @@ class Student extends Model
     /**
      * @param User  $user
      * @param array[skill_id] $skills
+     * @param TeacherCondition $condition
      *
      * @return bool
      */
-    public static function change(User $user, array $skills): bool
+    public static function change(
+        User $user,
+        array $skills,
+        TeacherCondition $condition
+    ): bool
     {
         try {
             self::beginTransaction();
@@ -80,7 +101,12 @@ class Student extends Model
             $newUser->teacher = $user->teacher;
             $newUser->save();
             $newUser->skills()->sync($skills);
-            // @TODO изменения скиллов может привести к исключению студента из группы.
+            $newTeacherCondition = TeacherCondition::where('user_id', $user->id)->first();
+            $newTeacherCondition->max_groups_num = $condition->max_groups_num;
+            $newTeacherCondition->min_group_size = $condition->min_group_size;
+            $newTeacherCondition->max_group_size = $condition->max_group_size;
+            $newTeacherCondition->save();
+            // @TODO изменения условий студента приводит к изменению группы.
             self::commit();
 
             return true;
@@ -94,12 +120,12 @@ class Student extends Model
     public static function remove(int $userID): bool
     {
         try {
-            $student = self::findByID($userID);
-            if (empty($student)) {
+            $teacher = self::findByID($userID);
+            if (empty($teacher)) {
                 return false;
             }
             self::beginTransaction();
-            $student->user->delete();
+            $teacher->user->delete();
             self::commit();
             return true;
         } catch (\Exception $e) {
@@ -107,6 +133,4 @@ class Student extends Model
             self::rollBack();
         }
     }
-
-
 }
