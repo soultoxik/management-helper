@@ -36,6 +36,7 @@ class StudentController
     /**
      * @param ServerRequestInterface $request
      * @param array $args
+     * @return \Laminas\Diactoros\Response|\Psr\Http\Message\ResponseInterface
      * @throws \League\Route\Http\Exception\BadRequestException
      * @throws \League\Route\Http\Exception\NotFoundException
      */
@@ -44,8 +45,8 @@ class StudentController
         (new RequestValidator($args))->validate(['user_id' => 'required|numeric']);
 
         $user = (new UserRepository())->findById($args['user_id']);
-        $group = new StudentRepository($user);
+        $student = new StudentRepository($user);
 
-        return JsonResponse::respond($group->findSuitableGroup());
+        return JsonResponse::respond($student->findSuitableGroup());
     }
 }
