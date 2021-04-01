@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ use League\Route\Http\Exception\NotFoundException;
 class StudentRepository
 {
     private User $user;
+    private Group $group;
 
     public function __construct(User $user)
     {
@@ -19,7 +21,7 @@ class StudentRepository
     }
 
     /**
-     * @return Model|Builder|object|null
+     * @return Group
      * @throws BadRequestException
      * @throws NotFoundException
      */
@@ -37,6 +39,28 @@ class StudentRepository
             throw new BadRequestException('cannot get skill ids');
         }
 
+        $this->group = $this->findGroup($skillIds);
+
+        return $this->group;
+    }
+
+    public function addToGroup()
+    {
+        $this->user->groups()->sync([$this->group->id]);
+    }
+
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param array $skillIds
+     * @return Group
+     * @throws NotFoundException
+     */
+    private function findGroup(array $skillIds)
+    {
         $counter = DB::table('groups')
             ->select('groups.id', DB::raw('count(groups.id) as counter'))
             ->join('groups_skills', 'groups.id', '=', 'groups_skills.group_id')
@@ -46,9 +70,16 @@ class StudentRepository
             ->orderBy('counter', 'desc')
             ->limit(1);
 
-        return DB::table('groups')
+        /** @var Group $group */
+        $group = Group::query()
             ->joinSub($counter,'counter', function ($join) {
                 $join->on('groups.id', '=', 'counter.id');
             })->first();
+
+        if (empty($group)) {
+            throw new NotFoundException('group not found for this user');
+        }
+
+        return $group;
     }
 }

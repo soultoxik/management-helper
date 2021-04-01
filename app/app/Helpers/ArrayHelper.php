@@ -10,4 +10,9 @@ class ArrayHelper
     {
         return array_column($array, $column);
     }
+
+    public static function toArray($data)
+    {
+        return json_decode(json_encode($data),true);
+    }
 }
