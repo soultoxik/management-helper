@@ -7,8 +7,8 @@ CREATE TABLE public.users
     phone      varchar     NULL,
     enabled    bool        NOT NULL,
     teacher    bool        NOT NULL,
-    updated_at date        NOT NULL,
-    created_at date        NOT NULL,
+    updated_at timestamp   NOT NULL,
+    created_at timestamp   NOT NULL,
     CONSTRAINT users_pk PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX users_email_idx ON public.users USING btree (email);
@@ -50,50 +50,46 @@ CREATE TABLE public.requests
     CONSTRAINT requests_pk PRIMARY KEY (id)
 );
 
-CREATE TABLE public.groups_skills
-(
-    id       bigserial NOT NULL,
-    group_id int4      NOT NULL,
-    skill_id int4      NOT NULL,
-    CONSTRAINT groups_skills_pk PRIMARY KEY (id),
-    CONSTRAINT groups_skills_fk FOREIGN KEY (group_id) REFERENCES groups (id),
-    CONSTRAINT skills_fk FOREIGN KEY (skill_id) REFERENCES skills (id)
+CREATE TABLE public.groups_skills (
+	id bigserial NOT NULL,
+	group_id int4 NOT NULL,
+	skill_id int4 NOT NULL,
+	CONSTRAINT groups_skills_pk PRIMARY KEY (id),
+	CONSTRAINT groups_fk FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+	CONSTRAINT skills_fk FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
 );
-CREATE INDEX groups_skills_group_id_idx ON public.groups_skills USING btree (group_id, skill_id);
+CREATE INDEX groups_skills_group_id_idx ON public.groups_skills USING btree (group_id, skill_id);;
 
-CREATE TABLE public.groups_users
-(
-    id       bigserial NOT NULL,
-    group_id int4      NOT NULL,
-    user_id  int4      NOT NULL,
-    CONSTRAINT groups_users_pk PRIMARY KEY (id),
-    CONSTRAINT groups_users_fk FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT users_fk FOREIGN KEY (group_id) REFERENCES groups (id)
+CREATE TABLE public.groups_users (
+	id bigserial NOT NULL,
+	group_id int4 NOT NULL,
+	user_id int4 NOT NULL,
+	CONSTRAINT groups_users_pk PRIMARY KEY (id),
+	CONSTRAINT groups_fk FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+	CONSTRAINT users_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE INDEX groups_users_group_id_idx ON public.groups_users USING btree (group_id, user_id);
 
-CREATE TABLE public.teachers_conditions
-(
-    id             bigserial NOT NULL,
-    user_id        int4      NOT NULL,
-    max_groups_num int2      NOT NULL,
-    min_group_size int2      NOT NULL,
-    max_group_size int2      NOT NULL,
-    updated_at     timestamp      NOT NULL,
-    created_at     timestamp      NOT NULL,
-    CONSTRAINT teachers_conditions_pk PRIMARY KEY (id),
-    CONSTRAINT teachers_conditions_fk FOREIGN KEY (user_id) REFERENCES users (id)
+CREATE TABLE public.teachers_conditions (
+	id bigserial NOT NULL,
+	user_id int4 NOT NULL,
+	max_groups_num int2 NOT NULL,
+	min_group_size int2 NOT NULL,
+	max_group_size int2 NOT NULL,
+	updated_at date NOT NULL,
+	created_at date NOT NULL,
+	CONSTRAINT teachers_conditions_pk PRIMARY KEY (id),
+	CONSTRAINT users_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX teachers_conditions_user_id_idx ON public.teachers_conditions USING btree (user_id);
 
-CREATE TABLE public.users_skills
-(
-    id       bigserial NOT NULL,
-    user_id  int4      NOT NULL,
-    skill_id int4      NOT NULL,
-    CONSTRAINT users_skills_pk PRIMARY KEY (id),
-    CONSTRAINT users_skills_fk FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT users_skills_fk1 FOREIGN KEY (skill_id) REFERENCES skills (id)
+CREATE TABLE public.users_skills (
+	id bigserial NOT NULL,
+	user_id int4 NOT NULL,
+	skill_id int4 NOT NULL,
+	CONSTRAINT users_skills_pk PRIMARY KEY (id),
+	CONSTRAINT skill_fk FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX users_skills_user_id_idx ON public.users_skills USING btree (user_id, skill_id);
 

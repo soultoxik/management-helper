@@ -19,7 +19,11 @@
         "laminas/laminas-httphandlerrunner": "^1.3",
         "symfony/yaml": "^5.2",
         "illuminate/database": "^8.34.0",
-        "ext-pdo": "*"
+        "php-amqplib/php-amqplib": ">=2.9.0",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-bcmath": "*",
+        "ext-sockets": "*"
     },
     "autoload": {
         "psr-4": {

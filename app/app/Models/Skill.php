@@ -10,7 +10,6 @@ class Skill extends Model
 
     protected $table = 'skills';
     protected $fillable = [
-        'id',
         'name',
     ];
 
@@ -23,4 +22,5 @@ class Skill extends Model
     {
         return $this->belongsToMany('App\Models\Group', 'groups_skills');
     }
+
 }

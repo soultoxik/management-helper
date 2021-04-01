@@ -15,8 +15,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
       curl \
       wget \
       grep \
+      zip \
+      unzip \
       libmemcached-dev \
       zlib1g-dev \
+      libzip-dev \
       libcurl4-openssl-dev \
       libbrotli-dev \
       libevent-dev \
@@ -25,12 +28,15 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
       libidn2-0-dev \
       libssl-dev \
       libpq-dev \
+      libonig-dev \
+      librabbitmq-dev \
   && pecl install redis memcached raphf propro \
   && docker-php-ext-enable redis memcached raphf propro \
   && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-  && docker-php-ext-install pdo pdo_pgsql \
+  && docker-php-ext-install pdo pdo_pgsql pgsql \
   && pecl install xdebug-2.9.8 && docker-php-ext-enable xdebug \
-  && docker-php-ext-install sockets bcmath \
+  && docker-php-ext-install zip sockets bcmath mbstring \
+  && pecl install amqp && docker-php-ext-enable amqp \
   && addgroup --gid $UID --system $NGINX_PHP_USER \
   && adduser --uid $UID --system --disabled-login --disabled-password --gid $UID $NGINX_PHP_USER \
   && sed -i -r "s/%REPLACE_USERNAME%/$NGINX_PHP_USER/g" $DOCKER_PATH \

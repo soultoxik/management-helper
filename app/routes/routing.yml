@@ -8,7 +8,7 @@
   resource: GroupController
   action: create
 
-- path: /api/v1/groups
+- path: /api/v1/groups/{group_id:number}
   method: GET
   resource: GroupController
   action: search
