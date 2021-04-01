@@ -20,6 +20,7 @@ class Database
             'prefix' => '',
         ]);
         // Setup the Eloquent ORM…
+        $capsule->setAsGlobal();
         $capsule->bootEloquent();
     }
 }

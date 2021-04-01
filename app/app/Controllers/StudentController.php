@@ -47,6 +47,6 @@ class StudentController
         $user = (new UserRepository())->findById($args['user_id']);
         $student = new StudentRepository($user);
 
-        return JsonResponse::respond($student->findSuitableGroup());
+        return JsonResponse::respond(['result' => $student->findSuitableGroup()]);
     }
 }

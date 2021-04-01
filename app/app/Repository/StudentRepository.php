@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
-use App\Models\Group;
 use App\Models\User;
+use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
+use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 
 class StudentRepository
@@ -15,6 +18,11 @@ class StudentRepository
         $this->user = $user;
     }
 
+    /**
+     * @return Model|Builder|object|null
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
     public function findSuitableGroup()
     {
         $skills = $this->user->skills()->get();
@@ -23,23 +31,24 @@ class StudentRepository
             throw new NotFoundException('skills not found');
         }
 
-        //получаю только id skill-ов
         $skillIds = $skills->pluck('id')->toArray();
 
-        $sql = 'select * from groups where id = (
-                select id
-                from (
-                         select groups.id, count(groups.id) as counter
-                         from groups
-                                  inner join groups_skills gs on groups.id = gs.group_id
-                                  left join skills s on gs.skill_id = s.id
-                         where skill_id in (1,3,5)
-                         group by groups.id
-                         order by counter desc
-                     ) counter
-                limit 1);';
-//        $groups = Group::where([''])
+        if (empty($skillIds)) {
+            throw new BadRequestException('cannot get skill ids');
+        }
 
-        return ['group'];
+        $counter = DB::table('groups')
+            ->select('groups.id', DB::raw('count(groups.id) as counter'))
+            ->join('groups_skills', 'groups.id', '=', 'groups_skills.group_id')
+            ->leftJoin('skills', 'groups_skills.skill_id', '=', 'skills.id')
+            ->whereIn('skill_id', $skillIds)
+            ->groupBy('groups.id')
+            ->orderBy('counter', 'desc')
+            ->limit(1);
+
+        return DB::table('groups')
+            ->joinSub($counter,'counter', function ($join) {
+                $join->on('groups.id', '=', 'counter.id');
+            })->first();
     }
 }
