@@ -5,5 +5,5 @@ namespace App\Queue;
 
 interface QueueConsumerInterface
 {
-    public function consume(): void;
+    public function consume(string $command): void;
 }
