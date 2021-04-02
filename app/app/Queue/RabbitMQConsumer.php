@@ -8,13 +8,38 @@ use App\Queue\Jobs\Worker;
 class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
 {
 
-    public function consume(): void
+    protected const ALLOWED_COMMANDS = [
+        'create_group',
+        'find_teacher',
+        'find_group_new_user',
+        'replace_teacher'
+    ];
+
+    public function consume(string $command): void
     {
 //        AppLogger::addInfo('RabbitMQ:Consumer was ran');
 
+        $this->validate($command);
+
+        $queueName = $this->generateQueueName($command);
+
+        $this->channel->queue_declare(
+            $queueName,
+            false,
+            true,
+            false,
+            false
+        );
+
+        $this->channel->queue_bind(
+            $queueName,
+            self::EXCHANGE,
+            $command
+        );
+
         $this->channel->basic_qos(null, 1, null);
         $this->channel->basic_consume(
-            self::QUEUE_NAME,
+            $queueName,
             '',
             false,
             false,
@@ -31,13 +56,25 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
     public function processMessage($msg): void
     {
 //        AppLogger::addInfo('RabbitMQ:Consumer received message', [$msg->body]);
-        $worker = new Worker($msg->body);
-        $job = $worker->create();
+
+        $worker = new Worker($msg->body, $msg->getRoutingKey());
+        $job = $worker->createJob();
         $job->do();
         if ($job->isCompleted()) {
             $worker->finish();
-            $this->channel->basic_ack($msg->delivery_info['delivery_tag']);
+            $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
         }
     }
 
+    private function validate(string $routingKey)
+    {
+        if (!in_array($routingKey, self::ALLOWED_COMMANDS)) {
+            // Exception:: 'Такая команда не поддеживается'
+        }
+    }
+
+    private function generateQueueName(string $command): string
+    {
+        return self::NAME . $command;
+    }
 }

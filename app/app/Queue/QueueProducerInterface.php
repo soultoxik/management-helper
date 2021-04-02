@@ -5,5 +5,5 @@ namespace App\Queue;
 
 interface QueueProducerInterface
 {
-    public function publish(string $data): void;
+    public function publish(string $command, array $data): void;
 }
