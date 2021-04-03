@@ -20,7 +20,7 @@ use \Redis;
  */
 
 
-class RedisDAO
+class RedisDAO implements Cache
 {
 
     private Redis $redis;
