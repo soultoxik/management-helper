@@ -5,12 +5,12 @@ namespace App\Queue;
 
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exchange\AMQPExchangeType;
 
 class RabbitMQ
 {
-    const EXCHANGE = 'custom_exchange';
-    const QUEUE_NAME = 'custom_queue_name';
-    const ROUTING_KEY = 'custom_routing_key';
+    protected const NAME = 'school.manager.';
+    protected const EXCHANGE = self::NAME . 'exchange';
 
     protected AMQPStreamConnection $connection;
     protected AMQPChannel $channel;
@@ -18,7 +18,18 @@ class RabbitMQ
     public function __construct()
     {
         $this->setChannelConnection();
-        $this->queueDeclare();
+        $this->exchangeDeclare();
+    }
+
+    private function exchangeDeclare(): void
+    {
+        $this->channel->exchange_declare(
+            self::EXCHANGE,
+            AMQPExchangeType::DIRECT,
+            false,
+            true,
+            false
+        );
     }
 
     public function __destruct()
@@ -37,22 +48,9 @@ class RabbitMQ
         $this->channel = $this->connection->channel();
     }
 
-    private function queueDeclare(): void
-    {
-        $this->channel->queue_declare(
-            self::QUEUE_NAME,
-            false,
-            true,
-            false,
-            false
-        );
-    }
-
     private function closeChannelConnection(): void
     {
         $this->channel->close();
         $this->connection->close();
     }
-
-
 }
