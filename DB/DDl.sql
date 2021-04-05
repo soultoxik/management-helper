@@ -93,3 +93,6 @@ CREATE TABLE public.users_skills (
 );
 CREATE UNIQUE INDEX users_skills_user_id_idx ON public.users_skills USING btree (user_id, skill_id);
 
+ALTER TABLE public.teachers_conditions ADD CONSTRAINT teachers_conditions_check CHECK ((min_group_size <= max_group_size));
+ALTER TABLE public."groups" ADD CONSTRAINT groups_skills_check CHECK ((min_skills_num <= max_skills_num));
+ALTER TABLE public."groups" ADD CONSTRAINT groups_students_check CHECK ((min_students_num <= max_students_num));
