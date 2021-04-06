@@ -37,7 +37,7 @@ class Teacher extends Model
             return null;
         }
         $skills = $user->skills;
-        $condition = $user->teacherConditions->first();
+        $condition = $user->teacherConditions;
         return new Teacher($user, $skills, $condition);
     }
 
@@ -148,6 +148,7 @@ class Teacher extends Model
             }
             self::beginTransaction();
             $teacher->user->delete();
+            $teacher->teacherCondition->delete();
             self::commit();
             return true;
         } catch (Exception $e) {
