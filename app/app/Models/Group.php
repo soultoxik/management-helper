@@ -3,12 +3,16 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Transaction;
+use App\Storage\RedisDAO;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DTOs\GroupDTO;
 
 class Group extends Model
 {
     use Transaction;
+    use PivotEventTrait;
 
     protected $table = 'groups';
     protected $fillable = [
@@ -89,7 +93,6 @@ class Group extends Model
             $changedGroup->skills()->sync($skills);
             // @TODO изменения группы приводит к возможному изменению студентов.
             self::commit();
-
             return true;
         } catch (\Exception $e) {
             var_dump($e->getMessage());
@@ -101,7 +104,7 @@ class Group extends Model
     public static function remove(int $groupID): bool
     {
         try {
-            $group = Group::find($groupID);
+            $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
                 return false;
             }
@@ -114,4 +117,109 @@ class Group extends Model
             self::rollBack();
         }
     }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        $redis = new RedisDAO();
+        static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) use ($redis) {
+            if ($relationName == 'skills') {
+                foreach ($pivotIds as $skillID) {
+                    $redis->addSkillToGroup($model->id, $skillID);
+                }
+            }
+            if ($relationName == 'students') {
+                foreach ($pivotIds as $skillID) {
+                    $redis->addUserToGroup($model->id, $skillID);
+                }
+            }
+        });
+        static::pivotDetached(function ($model, $relationName, $pivotIds) use ($redis) {
+            if ($relationName == 'skills') {
+                foreach ($pivotIds as $skillID) {
+                    $redis->delSkillFromGroup($model->id, $skillID);
+                }
+            }
+            if ($relationName == 'students') {
+                foreach ($pivotIds as $skillID) {
+                    $redis->delUserFromGroup($model->id, $skillID);
+                }
+            }
+        });
+
+        static::deleted(function ($model) use ($redis) {
+            $redis->delGroup($model->id);
+        });
+    }
+
+
+//    public static function boot()
+//    {
+//        parent::boot();
+//        $redis = new RedisDAO();
+////        static::creating(function($item) {
+////            var_dump('creating');
+////        });
+////        static::created(function ($item) {
+////            $redis = new RedisDAO();
+////            $redis->setGroup($item);
+////        });
+////        static::updating(function($item) {
+////            var_dump('updating');
+////        });
+////        static::updated(function ($item) use ($redis) {
+////            var_dump('updated');
+////            $redis->setGroup($item);
+////        });
+////        static::saving(function($item) {
+////            var_dump('saving');
+////        });
+//        static::saved(function ($item) use ($redis) {
+//            var_dump('Group saved');
+////            $redis->setGroup($item);
+//        });
+////        static::updated(function ($item) use ($redis) {
+////            $redis->setGroup($item);
+////        });
+////        static::inserted(function ($model, $group, $skills) use ($redis) {
+////            $redis->setGroup($group);
+////            $redis->setGroupSkills($group->id, $skills);
+////        });
+////        static::changed(function ($model, $group, $skills) use ($redis) {
+////            $redis->setGroup($group);
+////            $redis->setGroupSkills($group->id, $skills);
+////        });
+////        static::removed(function ($model, $group) use ($redis) {
+////            $redis->delGroup($group->id);
+////            $redis->delGroupSkills($group->id);
+////        });
+//    }
+
+//    public function fireModelEvent($event, $halt = true, ?Group $group = null, array $skills = null)
+//    {
+//        if (!isset(static::$dispatcher)) {
+//            return true;
+//        }
+//
+//        // First, we will get the proper method to call on the event dispatcher, and then we
+//        // will attempt to fire a custom, object based event for the given event. If that
+//        // returns a result we can return that result, or we'll call the string events.
+//        $method = $halt ? 'until' : 'dispatch';
+//
+//        $result = $this->filterModelEventResults(
+//            $this->fireCustomModelEvent($event, $method)
+//        );
+//
+//        if (false === $result) {
+//            return false;
+//        }
+//
+//        $payload = [$this, $group, $skills];
+//
+//        return !empty($result) ? $result : static::$dispatcher->{$method}(
+//            "eloquent.{$event}: ".static::class, $payload
+//        );
+//    }
 }
+
