@@ -3,18 +3,23 @@
 
 namespace App\Models;
 
+use App\Storage\RedisDAO;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use App\Models\Traits\Transaction;
 
 class Student extends Model
 {
     use Transaction;
+    use PivotEventTrait;
 
     public User $user;
     public ?Collection $skills;
 
     public function __construct(User $user, ?Collection $skills)
     {
+        parent::__construct();
         $this->user = $user;
         $this->skills = $skills;
     }
@@ -77,7 +82,7 @@ class Student extends Model
      *
      * @return bool
      */
-    public static function change(User $user, array $skills): bool
+    public static function change(User $user, ?array $skills): bool
     {
         try {
             self::beginTransaction();
@@ -89,7 +94,9 @@ class Student extends Model
             $newUser->enabled = $user->enabled;
             $newUser->teacher = $user->teacher;
             $newUser->save();
-            $newUser->skills()->sync($skills);
+            if (!empty($skills)) {
+                $newUser->skills()->sync($skills);
+            }
             // @TODO изменения скиллов может привести к исключению студента из группы.
             self::commit();
 
@@ -117,6 +124,4 @@ class Student extends Model
             self::rollBack();
         }
     }
-
-
 }
