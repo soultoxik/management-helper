@@ -3,12 +3,62 @@
 
 namespace App\Repository;
 
+use App\Models\DTOs\GroupDTO;
 use App\Models\Group;
 use App\Repository\Traits\CacheTrait;
 
 class GroupRepository
 {
     use CacheTrait;
+
+    public function getGroup(int $groupID): ?Group
+    {
+        $group = $this->cache->getGroup($groupID);
+        if (!empty($group)) {
+            $group->id = $groupID;
+            return $group;
+        }
+        $group = Group::where('id', $groupID)->first();
+        if (empty($group)) {
+            return null;
+        }
+        $this->cache->setGroup($group);
+        return $group;
+    }
+
+    public function getGroupFull(int $groupID): ?Group
+    {
+        $group = $this->getGroup($groupID);
+        if (empty($groupID)) {
+            return null;
+        }
+        $group->setStudents($group->students()->get());
+        $group->setSkills($group->skills()->get());
+        return $group;
+    }
+
+    public function create(GroupDTO $groupDTO): ?Group
+    {
+        $group = Group::insert($groupDTO);
+        if (!empty($group)) {
+            $this->cache->setGroup($group);
+        }
+        return $group;
+    }
+
+    public function update(Group $newGroup): bool
+    {
+        $result = Group::change($newGroup);
+        if ($result) {
+            $this->cache->setGroup($newGroup);
+        }
+        return $result;
+    }
+
+    public function delete(int $groupID): bool
+    {
+        return Group::remove($groupID);
+    }
 
     public function getSkillIDsByGroupID(int $groupID): ?array
     {
@@ -59,32 +109,6 @@ class GroupRepository
             return null;
         }
         return $group->user_id;
-    }
-
-    public function getGroup(int $groupID): ?Group
-    {
-        $group = $this->cache->getGroup($groupID);
-        if (!empty($group)) {
-            $group->id = $groupID;
-            return $group;
-        }
-        $group = Group::where('id', $groupID)->first();
-        if (empty($group)) {
-            return null;
-        }
-        $this->cache->setGroup($group);
-        return $group;
-    }
-
-    public function getGroupFull(int $groupID): ?Group
-    {
-        $group = $this->getGroup($groupID);
-        if (empty($groupID)) {
-            return null;
-        }
-        $group->setStudents($group->students()->get());
-        $group->setSkills($group->skills()->get());
-        return $group;
     }
 
     public function setSkillsByGroupID(int $groupID, array $skillIDs): bool
