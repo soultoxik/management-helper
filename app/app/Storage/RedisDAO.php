@@ -241,10 +241,41 @@ class RedisDAO implements Cache
         return in_array(0, $result);
     }
 
-    public function getUserSkills(int $userID): array
+    public function getUserSkills(int $userID): ?array
     {
         $key = $this->generateUserSkills($userID);
         return $this->getSet($key);
+    }
+
+    public function addSkillToUser(int $userID, int $skillID): bool
+    {
+        $key = $this->generateUserSkills($userID);
+        $existSkillIDs = $this->getUserSkills($userID);
+        if (empty($existSkillIDs)) {
+            return $this->redis->sAdd($key, $skillID);
+        }
+
+        foreach ($existSkillIDs as $item) {
+            if ($item == $skillID) {
+                return true;
+            }
+        }
+        return $this->redis->sAdd($key, $skillID);
+    }
+
+    public function delSkillFromUser(int $userID, int $skillID): bool
+    {
+        $key = $this->generateUserSkills($userID);
+        $existSkillIDs = $this->getUserSkills($userID);
+        if (empty($existSkillIDs)) {
+            return true;
+        }
+
+        foreach ($existSkillIDs as $item) {
+            if ($item == $skillID) {
+                return $this->redis->sRem($key, $skillID);
+            }
+        }
     }
 
     public function delUserSkills(int $userID): bool
