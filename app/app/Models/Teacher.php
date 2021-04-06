@@ -3,9 +3,12 @@
 
 namespace App\Models;
 
+use App\Exceptions\TeacherException;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\DTOs\TeacherConditionDTO;
+use App\Models\Traits\Transaction;
 
 class Teacher extends Model
 {
@@ -20,6 +23,8 @@ class Teacher extends Model
         ?Collection $skills,
         ?TeacherCondition $teacherCondition
     ) {
+        parent::__construct();
+
         $this->user = $user;
         $this->skills = $skills;
         $this->teacherCondition = $teacherCondition;
@@ -48,11 +53,12 @@ class Teacher extends Model
     }
 
     /**
-     * @param User  $user
+     * @param User            $user
      * @param array[skill_id] $skills
      * @param TeacherConditionDTO $condition
      *
      * @return Teacher|null
+     * @throws TeacherException
      */
     public static function insert(
         User $user,
@@ -81,19 +87,19 @@ class Teacher extends Model
             ]);
             self::commit();
             return new Teacher($user, $skills, $condition);
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
-            return null;
+            throw new TeacherException($e->getMessage(), $e->getCode());
         }
     }
 
     /**
-     * @param User  $user
+     * @param User             $user
      * @param array[skill_id] $skills
      * @param TeacherCondition $condition
      *
      * @return bool
+     * @throws TeacherException
      */
     public static function change(
         User $user,
@@ -121,13 +127,18 @@ class Teacher extends Model
             self::commit();
 
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
-            return false;
+            throw new TeacherException($e->getMessage(), $e->getCode());
         }
     }
 
+    /**
+     * @param int $userID
+     *
+     * @return bool
+     * @throws TeacherException
+     */
     public static function remove(int $userID): bool
     {
         try {
@@ -139,9 +150,9 @@ class Teacher extends Model
             $teacher->user->delete();
             self::commit();
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
+            throw new TeacherException($e->getMessage(), $e->getCode());
         }
     }
 }
