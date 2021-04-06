@@ -3,7 +3,8 @@
 
 namespace App\Models;
 
-use App\Storage\RedisDAO;
+use App\Exceptions\StudentException;
+use Exception;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
@@ -45,10 +46,11 @@ class Student extends Model
     }
 
     /**
-     * @param User  $user
+     * @param User $user
      * @param array[skill_id] $skills
      *
      * @return Student|null
+     * @throws StudentException
      */
     public static function insert(User $user, array $skills): ?Student
     {
@@ -69,18 +71,18 @@ class Student extends Model
 
             return new Student($user, $skills);
 
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
-            return null;
+            throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
 
     /**
-     * @param User  $user
+     * @param User $user
      * @param array[skill_id] $skills
      *
      * @return bool
+     * @throws StudentException
      */
     public static function change(User $user, ?array $skills): bool
     {
@@ -101,13 +103,18 @@ class Student extends Model
             self::commit();
 
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
-            return false;
+            throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
 
+    /**
+     * @param int $userID
+     *
+     * @return bool
+     * @throws StudentException
+     */
     public static function remove(int $userID): bool
     {
         try {
@@ -119,9 +126,9 @@ class Student extends Model
             $student->user->delete();
             self::commit();
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
+            throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
 }
