@@ -66,8 +66,6 @@ class TeacherRepository
             ->leftJoin('skills', 'groups_skills.skill_id', '=', 'skills.id')
             ->whereIn('skill_id', $skillIds)
             ->groupBy('groups.id')
-            ->orderBy('counter', 'desc')
-            ->orderBy('id')
             ->limit(100);
 
         /** @var Group $group */
@@ -92,7 +90,10 @@ class TeacherRepository
             }, '<', $conditions['max_groups_num']);
         }
 
-        $group = $group->first();
+        $group = $group
+            ->orderBy('counter', 'desc')
+            ->orderBy('groups.id')
+            ->first();
 
         if (empty($group)) {
             throw new NotFoundException('group not found for this user');

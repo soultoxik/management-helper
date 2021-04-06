@@ -69,7 +69,6 @@ class StudentRepository
             ->leftJoin('skills', 'groups_skills.skill_id', '=', 'skills.id')
             ->whereIn('skill_id', $skillIds)
             ->groupBy('groups.id')
-            ->orderBy('counter', 'desc')
             ->limit(100);
 
         /** @var Group $group */
@@ -81,7 +80,8 @@ class StudentRepository
                     ->from('groups_users')
                     ->join('users', 'users.id', '=', 'groups_users.user_id')
                     ->where('teacher', );
-            })->first();
+            })->orderBy('counter', 'desc')
+            ->first();
 
         if (empty($group)) {
             throw new NotFoundException('group not found for this user');
