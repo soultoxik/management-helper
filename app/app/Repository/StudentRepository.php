@@ -56,6 +56,31 @@ class StudentRepository
             })->first();
     }
 
+    public function getStudentByID(int $studentID): ?Student
+    {
+        return Student::findByID($studentID);
+    }
+
+    public function getStudentByEmail(string $email): ?Student
+    {
+        return Student::findByEmail($email);
+    }
+
+    public function create(User $user, array $skills): ?Student
+    {
+        return Student::insert($user, $skills);
+    }
+
+    public function update(User $user, ?array $skills): bool
+    {
+        return Student::change($user, $skills);
+    }
+
+    public function delete(int $userID): bool
+    {
+        return Student::remove($userID);
+    }
+
     public function getSkillIDsByStudentID(int $studentID): ?array
     {
         $skillIDs = $this->cache->getUserSkills($studentID);
@@ -91,16 +116,6 @@ class StudentRepository
             return null;
         }
         return $groupsIDs;
-    }
-
-    public function getStudentByID(int $studentID): ?Student
-    {
-        return Student::findByID($studentID);
-    }
-
-    public function getStudentByEmail(string $email): ?Student
-    {
-        return Student::findByEmail($email);
     }
 
     public function setSkills(int $userID, array $skillIDs): bool
