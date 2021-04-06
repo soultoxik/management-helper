@@ -47,6 +47,12 @@ class RedisDAO implements Cache
         return $this->setHash($key, $group);
     }
 
+    public function delGroup(int $groupID): bool
+    {
+        $key = $this->generateKeyGroup($groupID);
+        return $this->redis->del($key);
+    }
+
     private function generateKeyGroup(int $id): string
     {
         return 'groups:' . $id;
@@ -68,6 +74,12 @@ class RedisDAO implements Cache
         return $this->getSet($key);
     }
 
+    public function delGroupSkills(int $groupID): bool
+    {
+        $key = $this->generateKeyGroupSkills($groupID);
+        return $this->redis->del($key);
+    }
+
     private function generateKeyGroupSkills(int $groupID): string
     {
         return 'group:skills:' . $groupID;
@@ -87,6 +99,12 @@ class RedisDAO implements Cache
     {
         $key = $this->generateKeyGroupUsers($groupID);
         return $this->getSet($key);
+    }
+
+    public function delGroupUsers(int $groupID): bool
+    {
+        $key = $this->generateKeyGroupUsers($groupID);
+        return $this->redis->del($key);
     }
 
     private function generateKeyGroupUsers(int $groupID): string
@@ -130,6 +148,19 @@ class RedisDAO implements Cache
         return new TeacherCondition($result);
     }
 
+    public function delTeacherConditionByID(int $id): bool
+    {
+        $result = $this->getTeacherConditionByID($id);
+        $key = $this->generateTeacherCondition($id);
+        $deleted = $this->redis->del($key);
+        $deletedHelper = true;
+        if (!empty($result->user_id) && $deleted) {
+            $key = $this->generateTeacherCondition('user_id:' . $result->user_id);
+            $deletedHelper = $this->redis->del($key);
+        }
+        return $deleted && $deletedHelper;
+    }
+
     private function generateTeacherCondition(string $id): string
     {
         return 'teacher:condition:' . $id;
@@ -149,6 +180,12 @@ class RedisDAO implements Cache
     {
         $key = $this->generateUserSkills($userID);
         return $this->getSet($key);
+    }
+
+    public function delUserSkills(int $userID): bool
+    {
+        $key = $this->generateUserSkills($userID);
+        return $this->redis->del($key);
     }
 
     private function generateUserSkills(string $id): string
