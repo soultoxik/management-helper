@@ -32,4 +32,9 @@ class User extends Model
         return $this->hasOne('App\Models\TeacherCondition', 'user_id');
     }
 
+    public function teacherGroups()
+    {
+        return $this->hasMany('App\Models\Group');
+    }
+
 }

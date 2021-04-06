@@ -2,7 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Repository\TeacherRepository;
+use App\Repository\UserRepository;
 use App\Response\JsonResponse;
+use App\Validators\RequestValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
 class TeacherController
@@ -28,5 +31,24 @@ class TeacherController
     {
         $data = ['asd' => 123, 'args' => $args];
         return JsonResponse::respond($data);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param array $args
+     * @return \Laminas\Diactoros\Response|\Psr\Http\Message\ResponseInterface
+     * @throws \League\Route\Http\Exception\BadRequestException
+     * @throws \League\Route\Http\Exception\NotFoundException
+     */
+    public function findGroup(ServerRequestInterface $request, array $args)
+    {
+        (new RequestValidator($args))->validate(['user_id' => 'required|numeric']);
+
+        $user = (new UserRepository())->findById($args['user_id']);
+        $student = new TeacherRepository($user);
+        $student->findSuitableGroup();
+        $student->addToGroup();
+
+        return JsonResponse::respond(['result' => $student->getGroup()]);
     }
 }

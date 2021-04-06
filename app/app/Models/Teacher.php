@@ -20,6 +20,7 @@ class Teacher extends Model
         ?Collection $skills,
         ?TeacherCondition $teacherCondition
     ) {
+        parent::__construct();
         $this->user = $user;
         $this->skills = $skills;
         $this->teacherCondition = $teacherCondition;
