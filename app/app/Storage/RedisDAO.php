@@ -50,7 +50,10 @@ class RedisDAO implements Cache
     public function delGroup(int $groupID): bool
     {
         $key = $this->generateKeyGroup($groupID);
-        return $this->redis->del($key);
+        if ($this->redis->del($key)) {
+            $this->delGroupSkills($groupID);
+            $this->delGroupUsers($groupID);
+        }
     }
 
     private function generateKeyGroup(int $id): string
@@ -66,6 +69,37 @@ class RedisDAO implements Cache
             return false;
         }
         return in_array(0, $result);
+    }
+
+    public function addSkillToGroup(int $groupID, int $skillID): bool
+    {
+        $existSkillIDs = $this->getGroupSkills($groupID);
+        $key = $this->generateKeyGroupSkills($groupID);
+        if (empty($existSkillIDs)) {
+            return $this->redis->sAdd($key, $skillID);
+        }
+
+        foreach ($existSkillIDs as $item) {
+            if ($item == $skillID) {
+                return true;
+            }
+        }
+        return $this->redis->sAdd($key, $skillID);
+    }
+
+    public function delSkillFromGroup(int $groupID, int $skillID): bool
+    {
+        $existSkillIDs = $this->getGroupSkills($groupID);
+        $key = $this->generateKeyGroupSkills($groupID);
+        if (empty($existSkillIDs)) {
+            return true;
+        }
+
+        foreach ($existSkillIDs as $item) {
+            if ($item == $skillID) {
+                return $this->redis->sRem($key, $skillID);
+            }
+        }
     }
 
     public function getGroupSkills(int $groupID): ?array
@@ -99,6 +133,37 @@ class RedisDAO implements Cache
     {
         $key = $this->generateKeyGroupUsers($groupID);
         return $this->getSet($key);
+    }
+
+    public function addUserToGroup(int $groupID, int $userID): bool
+    {
+        $key = $this->generateKeyGroupUsers($groupID);
+        $existUserIDs = $this->getGroupUsers($groupID);
+        if (empty($existUserIDs)) {
+            return $this->redis->sAdd($key, $userID);
+        }
+
+        foreach ($existUserIDs as $item) {
+            if ($item == $userID) {
+                return true;
+            }
+        }
+        return $this->redis->sAdd($key, $userID);
+    }
+
+    public function delUserFromGroup(int $groupID, int $skillID): bool
+    {
+        $existUserIDs = $this->getGroupUsers($groupID);
+        $key = $this->generateKeyGroupUsers($groupID);
+        if (empty($existUserIDs)) {
+            return true;
+        }
+
+        foreach ($existUserIDs as $item) {
+            if ($item == $skillID) {
+                return $this->redis->sRem($key, $skillID);
+            }
+        }
     }
 
     public function delGroupUsers(int $groupID): bool
@@ -226,6 +291,4 @@ class RedisDAO implements Cache
             var_dump($e);
         }
     }
-
-
 }
