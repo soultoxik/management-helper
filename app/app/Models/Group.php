@@ -3,12 +3,14 @@
 
 namespace App\Models;
 
+use App\Exceptions\GroupException;
 use App\Models\Traits\Transaction;
 use App\Storage\RedisDAO;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DTOs\GroupDTO;
 use Illuminate\Support\Collection;
+use Exception;
 
 class Group extends Model
 {
@@ -45,10 +47,11 @@ class Group extends Model
     }
 
     /**
-     * @param GroupDTO  $group
+     * @param GroupDTO $group
      * @param array[skill_id] $skills
      *
      * @return Group|null
+     * @throws GroupException
      */
     public static function insert(GroupDTO $groupDTO): ?Group
     {
@@ -64,17 +67,17 @@ class Group extends Model
                 'enabled' => $groupDTO->enabled
             ]);
             return $group;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            return null;
+        } catch (Exception $e) {
+            throw new GroupException($e->getMessage(), $e->getCode());
         }
     }
 
     /**
-     * @param Group  $group
+     * @param Group $group
      * @param array[skill_id] $skills
      *
      * @return bool
+     * @throws GroupException
      */
     public static function change(Group $group): bool
     {
@@ -90,12 +93,17 @@ class Group extends Model
             $changedGroup->save();
             // @TODO изменения группы приводит к возможному изменению студентов.
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            return false;
+        } catch (Exception $e) {
+            throw new GroupException($e->getMessage(), $e->getCode());
         }
     }
 
+    /**
+     * @param int int
+     *
+     * @return bool
+     * @throws GroupException
+     */
     public static function remove(int $groupID): bool
     {
         try {
@@ -105,8 +113,8 @@ class Group extends Model
             }
             $group->delete();
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
+            throw new GroupException($e->getMessage(), $e->getCode());
         }
     }
 
