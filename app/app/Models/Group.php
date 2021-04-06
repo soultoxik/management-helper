@@ -8,6 +8,7 @@ use App\Storage\RedisDAO;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DTOs\GroupDTO;
+use Illuminate\Support\Collection;
 
 class Group extends Model
 {
@@ -25,6 +26,8 @@ class Group extends Model
         'max_useless_skill_students',
         'enabled'
     ];
+    private ?Collection $skills;
+    private ?Collection $students;
 
     public function teacher()
     {
@@ -47,10 +50,9 @@ class Group extends Model
      *
      * @return Group|null
      */
-    public static function insert(GroupDTO $groupDTO, array $skills): ?Group
+    public static function insert(GroupDTO $groupDTO): ?Group
     {
         try {
-            self::beginTransaction();
             $group = Group::create([
                 'name' => $groupDTO->name,
                 'user_id' => null,
@@ -61,12 +63,9 @@ class Group extends Model
                 'max_useless_skill_students' => $groupDTO->maxUselessSkillStudents,
                 'enabled' => $groupDTO->enabled
             ]);
-            $group->skills()->sync($skills);
-            self::commit();
             return $group;
         } catch (\Exception $e) {
             var_dump($e->getMessage());
-            self::rollBack();
             return null;
         }
     }
@@ -77,10 +76,9 @@ class Group extends Model
      *
      * @return bool
      */
-    public static function change(Group $group, array $skills): bool
+    public static function change(Group $group): bool
     {
         try {
-            self::beginTransaction();
             $changedGroup = Group::where('id', $group->id)->first();
             $changedGroup->name = $group->name;
             $changedGroup->min_students_num = $group->min_students_num;
@@ -90,13 +88,10 @@ class Group extends Model
             $changedGroup->max_useless_skill_students = $group->max_useless_skill_students;
             $changedGroup->enabled = $group->enabled;
             $changedGroup->save();
-            $changedGroup->skills()->sync($skills);
             // @TODO изменения группы приводит к возможному изменению студентов.
-            self::commit();
             return true;
         } catch (\Exception $e) {
             var_dump($e->getMessage());
-            self::rollBack();
             return false;
         }
     }
@@ -108,13 +103,10 @@ class Group extends Model
             if (empty($group)) {
                 return false;
             }
-            self::beginTransaction();
             $group->delete();
-            self::commit();
             return true;
         } catch (\Exception $e) {
             var_dump($e->getMessage());
-            self::rollBack();
         }
     }
 
@@ -151,6 +143,26 @@ class Group extends Model
         static::deleted(function ($model) use ($redis) {
             $redis->delGroup($model->id);
         });
+    }
+
+    public function getSkills(): ?Collection
+    {
+        return $this->skills;
+    }
+
+    public function setSkills(?Collection $skills): void
+    {
+        $this->skills = $skills;
+    }
+
+    public function getStudents(): ?Collection
+    {
+        return $this->students;
+    }
+
+    public function setStudents(?Collection $students): void
+    {
+        $this->students = $students;
     }
 
 
@@ -221,5 +233,6 @@ class Group extends Model
 //            "eloquent.{$event}: ".static::class, $payload
 //        );
 //    }
+
 }
 
