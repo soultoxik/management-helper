@@ -123,7 +123,7 @@ class Student extends Model
         try {
             $student = self::findByID($userID);
             if (empty($student)) {
-                return false;
+                throw new StudentException('User does not exist.');
             }
             self::beginTransaction();
             $student->user->delete();
