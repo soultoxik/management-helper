@@ -67,3 +67,8 @@
   method: GET
   resource: RequestController
   action: getStatus
+
+- path: /api/v1/documentation/generate
+  method: GET
+  resource: DocumentationController
+  action: generateDocumentation

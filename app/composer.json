@@ -23,7 +23,8 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-bcmath": "*",
-        "ext-sockets": "*"
+        "ext-sockets": "*",
+        "zircote/swagger-php": "^3.1"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,359 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/groups": {
+      "post": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "name, min_students_num"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "Group name.",
+                    "type": "string",
+                    "example": "ggggroup 65"
+                  },
+                  "min_students_num": {
+                    "description": "min_students_num.",
+                    "type": "integer",
+                    "example": "3"
+                  },
+                  "max_students_num": {
+                    "description": "max_students_num.",
+                    "type": "integer",
+                    "example": "20"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/groups/{id}": {
+      "get": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::search",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The group identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The group identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The group identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "name, min_students_num"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "Group name.",
+                    "type": "string",
+                    "example": "ggggroup 65"
+                  },
+                  "min_students_num": {
+                    "description": "min_students_num.",
+                    "type": "integer",
+                    "example": "3"
+                  },
+                  "max_students_num": {
+                    "description": "max_students_num.",
+                    "type": "integer",
+                    "example": "20"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students": {
+      "post": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "Group name.",
+                    "type": "string",
+                    "example": "Bob"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{id}": {
+      "get": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::search",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The student identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The student identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The student identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "student name.",
+                    "type": "string",
+                    "example": "Nicolas"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

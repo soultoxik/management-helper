@@ -10,6 +10,43 @@ use App\Models\Group;
 
 class GroupController
 {
+    /**
+     * @OA\Post (
+     *     path="/api/v1/groups",
+     *     tags={"Group API"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     description="Group name.",
+     *                     property="name",
+     *                     type="string",
+     *                     example="ggggroup 65"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="min_students_num.",
+     *                     property="min_students_num",
+     *                     type="integer",
+     *                     example="3"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="max_students_num.",
+     *                     property="max_students_num",
+     *                     type="integer",
+     *                     example="20"
+     *                 ),
+     *                 required={"name, min_students_num"}
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
+     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     * )
+     */
     public function create(ServerRequestInterface $request, array $args)
     {
         $data = $request->getBody()->getContents();
@@ -39,6 +76,17 @@ class GroupController
         return JsonResponse::respond($data,201);
     }
 
+    /**
+    * @OA\Get(
+    *     path="/api/v1/groups/{id}",
+    *     tags={"Group API"},
+    *
+    *     @OA\Parameter(name="id", in="path", description="The group identifier.", example=1, required=true),
+    *
+    *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
+    *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+    * )
+    */
     public function search(ServerRequestInterface $request, array $args)
     {
         // нужна валидация
@@ -53,6 +101,45 @@ class GroupController
         return JsonResponse::respond($data);
     }
 
+    /**
+     * @OA\Patch  (
+     *     path="/api/v1/groups/{id}",
+     *     tags={"Group API"},
+     *
+     *     @OA\Parameter(name="id", in="path", description="The group identifier.", example=1, required=true),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     description="Group name.",
+     *                     property="name",
+     *                     type="string",
+     *                     example="ggggroup 65"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="min_students_num.",
+     *                     property="min_students_num",
+     *                     type="integer",
+     *                     example="3"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="max_students_num.",
+     *                     property="max_students_num",
+     *                     type="integer",
+     *                     example="20"
+     *                 ),
+     *                 required={"name, min_students_num"}
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
+     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     * )
+     */
     public function update(ServerRequestInterface $request, array $args)
     {
         $data = $request->getBody()->getContents();
@@ -77,6 +164,17 @@ class GroupController
         return JsonResponse::respond($data);
     }
 
+    /**
+     * @OA\Delete (
+     *     path="/api/v1/groups/{id}",
+     *     tags={"Group API"},
+     *
+     *     @OA\Parameter(name="id", in="path", description="The group identifier.", example=1, required=true),
+     *
+     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
+     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     * )
+     */
     public function delete(ServerRequestInterface $request, array $args)
     {
         // нужна валидация
