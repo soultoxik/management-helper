@@ -20,10 +20,13 @@
         "symfony/yaml": "^5.2",
         "illuminate/database": "^8.34.0",
         "php-amqplib/php-amqplib": ">=2.9.0",
+        "illuminate/events": "^8.34.0",
+        "fico7489/laravel-pivot": "3.0.7",
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-bcmath": "*",
-        "ext-sockets": "*"
+        "ext-sockets": "*",
+        "ext-redis": "*"
     },
     "autoload": {
         "psr-4": {

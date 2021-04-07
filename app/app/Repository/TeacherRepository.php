@@ -3,15 +3,20 @@
 
 namespace App\Repository;
 
-
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
+use App\Models\DTOs\TeacherConditionDTO;
+use App\Models\Teacher;
+use App\Models\TeacherCondition;
+use App\Repository\Traits\CacheTrait;
 
 class TeacherRepository
 {
+    use CacheTrait;
+
     private User $user;
     private Group $group;
 
@@ -24,6 +29,39 @@ class TeacherRepository
         }
 
         $this->user = $user;
+    }
+
+    public function getTeacherByID(int $teacherID): ?Teacher
+    {
+        return Teacher::findByID($teacherID);
+    }
+
+    public function getTeacherByEmail(string $email): ?Teacher
+    {
+        return Teacher::findByEmail($email);
+    }
+
+    public function create(
+        User $user,
+        array $skills,
+        TeacherConditionDTO $conditionDTO
+    ): ?Teacher
+    {
+        return Teacher::insert($user, $skills, $conditionDTO);
+    }
+
+    public function update(
+        User $user,
+        array $skills,
+        TeacherCondition $condition
+    ): bool
+    {
+        return Teacher::change($user, $skills, $condition);
+    }
+
+    public function delete(int $userID): bool
+    {
+        return Teacher::remove($userID);
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Storage;
 
+use Illuminate\Events\Dispatcher;
+use Illuminate\Container\Container;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Database
@@ -19,6 +21,7 @@ class Database
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
         ]);
+        $capsule->setEventDispatcher(new Dispatcher(new Container()));
         // Setup the Eloquent ORM…
         $capsule->setAsGlobal();
         $capsule->bootEloquent();

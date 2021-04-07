@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37b5789eed4b7e75f0d06f0c2a6410f2",
+    "content-hash": "6a0ffce0a349a15e9809be43d6e7c81d",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -102,6 +102,60 @@
             "time": "2020-05-29T15:13:26+00:00"
         },
         {
+            "name": "fico7489/laravel-pivot",
+            "version": "3.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fico7489/laravel-pivot.git",
+                "reference": "97fbc8c7c65b652f21b0ff78a430712f3f14a515"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fico7489/laravel-pivot/zipball/97fbc8c7c65b652f21b0ff78a430712f3f14a515",
+                "reference": "97fbc8c7c65b652f21b0ff78a430712f3f14a515",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^5.5|^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "*",
+                "orchestra/testbench": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fico7489\\Laravel\\Pivot\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Filip Horvat",
+                    "email": "filip.horvat@am2studio.hr",
+                    "homepage": "http://am2studio.hr",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This package introduces new eloquent events for sync(), attach(), detach() or updateExistingPivot() methods on BelongsToMany relation.",
+            "homepage": "https://github.com/fico7489/laravel-pivot",
+            "keywords": [
+                "eloquent events",
+                "eloquent extra events",
+                "laravel BelongsToMany events",
+                "laravel pivot events",
+                "laravel sync events"
+            ],
+            "support": {
+                "issues": "https://github.com/fico7489/laravel-pivot/issues",
+                "source": "https://github.com/fico7489/laravel-pivot"
+            },
+            "time": "2020-10-05T06:12:29+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.0.1",
             "source": {
@@ -166,6 +220,59 @@
                 }
             ],
             "time": "2020-04-13T13:17:36+00:00"
+        },
+        {
+            "name": "illuminate/bus",
+            "version": "v8.35.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/bus.git",
+                "reference": "18b3d810cfe52a4fa040994e68da4f356a498e8a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/bus/zipball/18b3d810cfe52a4fa040994e68da4f356a498e8a",
+                "reference": "18b3d810cfe52a4fa040994e68da4f356a498e8a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/collections": "^8.0",
+                "illuminate/contracts": "^8.0",
+                "illuminate/pipeline": "^8.0",
+                "illuminate/support": "^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "suggest": {
+                "illuminate/queue": "Required to use closures when chaining jobs (^7.0)."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Bus\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Bus package.",
+            "homepage": "https://laravel.com",
+            "support": {
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+            },
+            "time": "2021-01-30T19:50:02+00:00"
         },
         {
             "name": "illuminate/collections",
@@ -389,6 +496,61 @@
             "time": "2021-03-30T13:58:56+00:00"
         },
         {
+            "name": "illuminate/events",
+            "version": "v8.35.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/events.git",
+                "reference": "0160e896c1909fa961a245d0628685321a4d58f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/events/zipball/0160e896c1909fa961a245d0628685321a4d58f5",
+                "reference": "0160e896c1909fa961a245d0628685321a4d58f5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/bus": "^8.0",
+                "illuminate/collections": "^8.0",
+                "illuminate/container": "^8.0",
+                "illuminate/contracts": "^8.0",
+                "illuminate/macroable": "^8.0",
+                "illuminate/support": "^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Events\\": ""
+                },
+                "files": [
+                    "functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Events package.",
+            "homepage": "https://laravel.com",
+            "support": {
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+            },
+            "time": "2021-03-11T13:55:37+00:00"
+        },
+        {
             "name": "illuminate/macroable",
             "version": "v8.35.1",
             "source": {
@@ -433,6 +595,54 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2020-10-27T15:20:30+00:00"
+        },
+        {
+            "name": "illuminate/pipeline",
+            "version": "v8.35.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/pipeline.git",
+                "reference": "23aeff5b26ae4aee3f370835c76bd0f4e93f71d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/pipeline/zipball/23aeff5b26ae4aee3f370835c76bd0f4e93f71d2",
+                "reference": "23aeff5b26ae4aee3f370835c76bd0f4e93f71d2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^8.0",
+                "illuminate/support": "^8.0",
+                "php": "^7.3|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Pipeline\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Pipeline package.",
+            "homepage": "https://laravel.com",
+            "support": {
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+            },
+            "time": "2021-03-26T18:39:16+00:00"
         },
         {
             "name": "illuminate/support",
@@ -3145,7 +3355,8 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-bcmath": "*",
-        "ext-sockets": "*"
+        "ext-sockets": "*",
+        "ext-redis": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
