@@ -84,6 +84,9 @@ class Group extends Model
     {
         try {
             $changedGroup = Group::where('id', $group->id)->first();
+            if (empty($changedGroup)) {
+                throw new GroupException('Can not update the Group. Group does not exist');
+            }
             $changedGroup->name = $group->name;
             $changedGroup->min_students_num = $group->min_students_num;
             $changedGroup->max_students_num = $group->max_students_num;
@@ -110,7 +113,7 @@ class Group extends Model
         try {
             $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
-                return false;
+                throw new GroupException('Can not remove the Group. Group does not exist.');
             }
             $group->delete();
             return true;
