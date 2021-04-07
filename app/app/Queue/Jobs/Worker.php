@@ -4,6 +4,8 @@
 namespace App\Queue\Jobs;
 
 use App\Helper;
+use App\Models\Group;
+use App\Models\Student;
 
 class Worker
 {
@@ -27,24 +29,32 @@ class Worker
     {
         switch ($this->command) {
             case 'create_group':
+                $group = Group::where('id', $this->id)->first();
+                // Но надо будет пользоваться GroupRepository
                 // $groupID = $this->id;
                 // $group = загрузка Group из БД
-                // $job = new JobCreateGroup($group);
+                 $job = new JobCreateGroup($group);
                 break;
             case 'find_teacher':
+                $group = Group::where('id', $this->id)->first();
+                // Но надо будет пользоваться GroupRepository
                 // $groupID = $this->id;
                 // $group = загрузка Group из БД
-                // $job = new JobFindTeacher($group);
+                 $job = new JobFindTeacher($group);
                 break;
             case 'find_group_new_user':
+                $student = Student::where('id', $this->id)->first();
+                // Но надо будет пользоваться StudentRepository
                 // $studentID = $this->id;;
                 // $student = загрузка Student из БД
-                // $job = new JobFindGroupNewUser($student);
+                 $job = new JobFindGroupNewUser($student);
                 break;
             case 'replace_teacher':
+                $group = Group::where('id', $this->id)->first();
+                // Но надо будет пользоваться GroupRepository
                 // $groupID = $this->id;
                 // $group = загрузка Group из БД
-                // $job = new JobReplaceTeacher($group);
+                 $job = new JobReplaceTeacher($group);
                 break;
             default:
                 // Exception:: 'работа не объявлена'

@@ -3,6 +3,8 @@
 
 namespace App\Queue\Jobs;
 
+use App\Models\Group;
+
 class JobCreateGroup extends Job
 {
     private Group $group;
