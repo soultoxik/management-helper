@@ -205,9 +205,7 @@ class GroupRepository
             throw new BadRequestException('cannot get skill ids');
         }
 
-        $this->user = $this->findTeacher($skillIds);
-
-        return $this->user;
+        return $this->findTeacher($skillIds);
     }
 
     private function findTeacher(array $skillIds)
@@ -233,6 +231,12 @@ class GroupRepository
         }
 
         return $user;
+    }
+
+    public function setTeacherID(Group $group, int $userID): bool
+    {
+        $group->user_id = $userID;
+        return $this->update($group);
     }
 
 //    public function changeTo(int $teacherId)
