@@ -50,10 +50,18 @@ class RedisDAO implements Cache
     public function delGroup(int $groupID): bool
     {
         $key = $this->generateKeyGroup($groupID);
-        if ($this->redis->del($key)) {
-            $this->delGroupSkills($groupID);
-            $this->delGroupUsers($groupID);
+        if (!$this->redis->del($key)) {
+            return false;
         }
+        $result = $this->delGroupSkills($groupID);
+        if (!$result) {
+            return false;
+        }
+        $result = $this->delGroupUsers($groupID);
+        if (!$result) {
+            return false;
+        }
+        return true;
     }
 
     private function generateKeyGroup(int $id): string
