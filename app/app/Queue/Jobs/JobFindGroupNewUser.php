@@ -3,6 +3,7 @@
 
 namespace App\Queue\Jobs;
 
+use App\Logger\AppLogger;
 use App\Repository\GroupRepository;
 use App\Repository\StudentRepository;
 use App\Models\Student;
@@ -19,18 +20,23 @@ class JobFindGroupNewUser extends Job
 
     public function work(): bool
     {
-        $repo = new StudentRepository();
-        $repo->setRedis(new RedisDAO());
+        $repo = new StudentRepository(new RedisDAO());
         $group = $repo->findSuitableGroup($this->student->user);
-
-        $groupRepo = new GroupRepository();
-        $groupRepo->setRedis(new RedisDAO());
-        $groupRepo->setStudentsByGroupID($group->id, [$this->student->user->id]);
-
-        if ($repo->getGroup()) {
-            return true;
+        if (empty($group)) {
+            AppLogger::addInfo(
+                'RabbitMQ:Consumer - Could not find groups for student: ' . $this->student->user->id
+            );
+            return false;
         }
-
-        return false;
+        // находит и если еще раз отправляю тоже самое. то опять находит туже группу
+        // но запись не добавляется в бд( я так понимаю не проходит запись на уровне команды sync)
+        // потому что исключения не выпадают
+        $result = $repo->addGroup($this->student->user->id, $group->id);
+        $status = $result ? ' was ': ' was not ';
+        AppLogger::addInfo(
+            'RabbitMQ:Consumer - For student: ' . $this->student->user->id
+            . $status . 'found groupID:' . $group->id
+        );
+        return $result;
     }
 }

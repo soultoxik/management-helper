@@ -3,8 +3,8 @@
 
 namespace App\Queue\Jobs;
 
-use App\Helper;
-use App\Repository\UserRepository;
+use App\Logger\AppLogger;
+use App\Repository\RequestRepository;
 use App\Exceptions\WorkerException;
 use App\Helpers\JSONHelper;
 use App\Models\Group;
@@ -14,7 +14,7 @@ use App\Storage\RedisDAO;
 
 class Worker
 {
-    protected const REQUIRED_PARAM = ['request_id', 'data'];
+    protected const REQUIRED_PARAM = ['request_id', 'id'];
 
     public const COMMAND_CREATE_GROUP = 'create_group';
     public const COMMAND_FIND_TEACHER = 'find_teacher';
@@ -53,10 +53,9 @@ class Worker
                 $job = new JobFindTeacher($group);
                 break;
             case 'find_group_new_user':
-                $repo = new StudentRepository(null);
-                $repo->setRedis($redis);
+                $repo = new StudentRepository(new RedisDAO());
                 $student = $repo->getStudentByID($this->id);
-                if (empty($group)) {
+                if (empty($student)) {
                     throw new WorkerException(
                         $msgPrefix . ' Can not load student: ' . $this->id
                     );
@@ -70,7 +69,7 @@ class Worker
             default:
                 throw new WorkerException('This command is not available.');
         }
-//        AppLogger::addInfo('RabbitMQ:Consumer create job - ' . $this->command);
+        AppLogger::addInfo('RabbitMQ:Consumer create job - ' . $this->command);
         return $job;
     }
 
@@ -84,8 +83,7 @@ class Worker
      */
     private function prepareJobGroup(int $groupID, RedisDAO $redis, string $msg): Group
     {
-        $repo = new GroupRepository();
-        $repo->setRedis($redis);
+        $repo = new GroupRepository(new RedisDAO());
         $group = $repo->getGroup($this->id);
         if (empty($group)) {
             throw new WorkerException(
@@ -97,7 +95,7 @@ class Worker
 
     public function finish()
     {
-//        Request::update(['id' => $this->requestID, 'status' => 'Done']);
+        RequestRepository::closeRequest($this->requestID);
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\DTOs\GroupDTO;
 use App\Models\Group;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Storage\Cache;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
@@ -16,10 +17,17 @@ use Exception;
 
 class GroupRepository
 {
-    use CacheTrait;
+//    use CacheTrait;
+//
+//    private Group $group;
+//    private User $user;
 
-    private Group $group;
-    private User $user;
+    private Cache $cache;
+
+    public function __construct(Cache $redisDAO)
+    {
+        $this->cache = $redisDAO;
+    }
 
     public function findById(int $id)
     {
@@ -29,9 +37,7 @@ class GroupRepository
             throw new NotFoundException('user not found');
         }
 
-        $this->group = $group;
-
-        return $this->group;
+        return $group;
     }
 
     public function getGroup(int $groupID): ?Group
@@ -185,9 +191,9 @@ class GroupRepository
         return true;
     }
 
-    public function findSuitableTeacher()
+    public function findSuitableTeacher(Group $group)
     {
-        $skills = $this->group->skills()->get();
+        $skills = $group->skills()->get();
 
         if (empty($skills)) {
             throw new NotFoundException('skills not found');
@@ -229,27 +235,27 @@ class GroupRepository
         return $user;
     }
 
-    public function changeTo(int $teacherId)
-    {
-        $user = (new UserRepository())->findById($teacherId);
-        if (!$user->teacher) {
-            throw new BadRequestException('user is not a teacher');
-        }
-
-        $this->group->user_id = $user->id;
-        $this->group->save();
-
-        return $this->group;
-    }
-
-    public function addToGroup()
-    {
-        $this->group->user_id = $this->user->id;
-        $this->group->save();
-    }
-
-    public function getTeacher()
-    {
-        return $this->user;
-    }
+//    public function changeTo(int $teacherId)
+//    {
+//        $user = (new UserRepository())->findById($teacherId);
+//        if (!$user->teacher) {
+//            throw new BadRequestException('user is not a teacher');
+//        }
+//
+//        $this->group->user_id = $user->id;
+//        $this->group->save();
+//
+//        return $this->group;
+//    }
+//
+//    public function addToGroup()
+//    {
+//        $this->group->user_id = $this->user->id;
+//        $this->group->save();
+//    }
+//
+//    public function getTeacher()
+//    {
+//        return $this->user;
+//    }
 }

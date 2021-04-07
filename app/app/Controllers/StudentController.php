@@ -49,7 +49,6 @@ class StudentController
 
             $data = ['student_id' => $student->user->id];
             $status = 201;
-
         } catch (\Exception $e) {
             $data = ['message' => $e->getMessage()];
             $status = 422;
