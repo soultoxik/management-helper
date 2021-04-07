@@ -6,24 +6,23 @@ use App\Models\Group;
 use App\Models\Student;
 use App\Models\User;
 use App\Repository\Traits\CacheTrait;
+use App\Storage\Cache;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 
 class StudentRepository
 {
-    use CacheTrait;
+//    use CacheTrait;
 
-    private ?User $user;
-    private Group $group;
+//    private ?User $user;
+//    private Group $group;
+//
+    private Cache $cache;
 
-    public function __construct(?User $user)
+    public function __construct(Cache $redisDAO)
     {
-        if ($user->teacher) {
-            throw new BadRequestException('the user is not a student');
-        }
-
-        $this->user = $user;
+        $this->cache = $redisDAO;
     }
 
     /**
@@ -45,20 +44,20 @@ class StudentRepository
             throw new BadRequestException('cannot get skill ids');
         }
 
-        $this->group = $this->findGroup($skillIds);
+        return $this->findGroup($skillIds);
 
-        return $this->group;
+//        return $this->group;
     }
 
-    public function addToGroup()
-    {
-        $this->user->groups()->sync([$this->group->id]);
-    }
+//    public function addToGroup()
+//    {
+//        $this->user->groups()->sync([$this->group->id]);
+//    }
 
-    public function getGroup()
-    {
-        return $this->group;
-    }
+//    public function getGroup()
+//    {
+//        return $this->group;
+//    }
 
     /**
      * @param array $skillIds
@@ -104,14 +103,14 @@ class StudentRepository
         return Student::findByEmail($email);
     }
 
-    public function create(User $user, array $skills): ?Student
+    public function create(User $user, array $skillIDs): ?Student
     {
-        return Student::insert($user, $skills);
+        return Student::insert($user, $skillIDs);
     }
 
-    public function update(User $user, ?array $skills): bool
+    public function update(User $user, ?array $skillIDs): bool
     {
-        return Student::change($user, $skills);
+        return Student::change($user, $skillIDs);
     }
 
     public function delete(int $userID): bool
@@ -175,5 +174,31 @@ class StudentRepository
         }
 
         return Student::change($user, null);
+    }
+
+    public function addGroup(int $userID, int $groupID): bool
+    {
+        $user = User::where('id', $userID)->first();
+        if (empty($user)) {
+            return false;
+        }
+        $result = $user->groups()->sync($groupID);
+        if (empty($result)) {
+            return false;
+        }
+        return true;
+    }
+
+    public function delGroup(int $userID, int $groupID): bool
+    {
+        $user = User::where('id', $userID)->first();
+        if (empty($user)) {
+            return false;
+        }
+        $result = $user->groups()->toggle($groupID);
+        if (empty($result)) {
+            return false;
+        }
+        return true;
     }
 }
