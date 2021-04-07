@@ -3,7 +3,7 @@
 
 namespace App\Queue\Jobs;
 
-use App\Helper;
+use App\Helpers\JSONHelper;
 
 class Worker
 {
@@ -61,7 +61,7 @@ class Worker
 
     private function validate(string $message)
     {
-        if (!Helper::isJSON($message)) {
+        if (!JSONHelper::isJSON($message)) {
             // Exception:: 'получен не JSON'
         }
         $data = json_decode($message, true);
