@@ -3,6 +3,7 @@
 
 namespace App\Storage;
 
+use App\Exceptions\RedisDAOException;
 use App\Models\Group;
 use App\Models\TeacherCondition;
 use Illuminate\Database\Eloquent\Model;
@@ -327,7 +328,7 @@ class RedisDAO implements Cache
         try {
             return $this->redis->hMSet($key, $model);
         } catch (\Exception $e) {
-            var_dump($e);
+            throw new RedisDAOException($e->getMessage(), $e->getCode());
         }
     }
 }
