@@ -5,7 +5,7 @@ namespace App\Exceptions;
 
 use League\Route\Http\Exception;
 
-class GroupException extends AppException
+class TeacherConditionException extends AppException
 {
     public function __construct(string $message = '', int $code = 0, ?Exception $previous = null)
     {
