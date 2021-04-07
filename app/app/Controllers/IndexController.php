@@ -11,6 +11,7 @@ use App\Models\Teacher;
 use App\Models\TeacherCondition;
 use App\Models\User;
 use App\Repository\GroupRepository;
+use App\Repository\SkillRepository;
 use App\Repository\TeacherConditionRepository;
 use App\Response\JsonResponse;
 use App\Storage\RedisDAO;
@@ -86,13 +87,17 @@ class IndexController
 //            $result = $repo->delete($teacherCondition->id);
 //            var_dump($result);
 
-            $repo = new GroupRepository();
-            $repo->setRedis(new RedisDAO());
-            $group = $repo->getGroup(97);
-            $result = $repo->setSkillsByGroupID($group->id, [2,4]);
-            var_dump($result);
-            $result = $repo->setStudentsByGroupID($group->id, []);
-            var_dump($result);
+//            $repo = new GroupRepository();
+//            $repo->setRedis(new RedisDAO());
+//            $group = $repo->getGroup(97);
+//            $result = $repo->setSkillsByGroupID($group->id, [2,4]);
+//            var_dump($result);
+//            $result = $repo->setStudentsByGroupID($group->id, []);
+//            var_dump($result);
+
+            $repo = new SkillRepository();
+            $r = $repo->getGroupIDsBySkillID(1);
+            var_dump($r);
             return JsonResponse::respond('ok', 201);
         } catch (\Exception $exception) {
             return JsonResponse::respond(['message' => $exception->getMessage()], 422);
