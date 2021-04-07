@@ -3,25 +3,31 @@
 
 namespace App\Queue\Jobs;
 
-use App\Models\User;
+use App\Repository\GroupRepository;
 use App\Repository\StudentRepository;
+use App\Models\Student;
+use App\Storage\RedisDAO;
 
 class JobFindGroupNewUser extends Job
 {
-    private User $student;
+    private Student $student;
 
-    public function __construct(User $student)
+    public function __construct(Student $student)
     {
         $this->student = $student;
     }
 
     public function work(): bool
     {
-        $student = new StudentRepository($this->student);
-        $student->findSuitableGroup();
-        $student->addToGroup();
+        $repo = new StudentRepository();
+        $repo->setRedis(new RedisDAO());
+        $group = $repo->findSuitableGroup($this->student->user);
 
-        if ($student->getGroup()) {
+        $groupRepo = new GroupRepository();
+        $groupRepo->setRedis(new RedisDAO());
+        $groupRepo->setStudentsByGroupID($group->id, [$this->student->user->id]);
+
+        if ($repo->getGroup()) {
             return true;
         }
 

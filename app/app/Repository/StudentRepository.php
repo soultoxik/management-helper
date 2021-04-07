@@ -14,10 +14,10 @@ class StudentRepository
 {
     use CacheTrait;
 
-    private User $user;
+    private ?User $user;
     private Group $group;
 
-    public function __construct(User $user)
+    public function __construct(?User $user)
     {
         if ($user->teacher) {
             throw new BadRequestException('the user is not a student');
@@ -31,9 +31,9 @@ class StudentRepository
      * @throws BadRequestException
      * @throws NotFoundException
      */
-    public function findSuitableGroup()
+    public function findSuitableGroup(User $user)
     {
-        $skills = $this->user->skills()->get();
+        $skills = $user->skills()->get();
 
         if (empty($skills)) {
             throw new NotFoundException('skills not found');

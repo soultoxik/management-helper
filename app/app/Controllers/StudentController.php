@@ -4,10 +4,12 @@ namespace App\Controllers;
 
 use App\Queue\Jobs\Worker;
 use App\Queue\RabbitMQProducer;
+use App\Repository\GroupRepository;
 use App\Repository\RequestRepository;
 use App\Repository\StudentRepository;
 use App\Repository\UserRepository;
 use App\Response\JsonResponse;
+use App\Storage\RedisDAO;
 use App\Validators\RequestValidator;
 use League\Route\Http\Exception\BadRequestException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,17 +50,21 @@ class StudentController
     {
         (new RequestValidator($args))->validate(['user_id' => 'required|numeric']);
 
-        $user = (new UserRepository())->findById($args['user_id']);
 
-        if ($user->isTeacher()) {
-            throw new BadRequestException('user is a student');
-        }
-
+//        $student = new StudentRepository($this->student);
+//        $student->findSuitableGroup();
+//        $student->addToGroup();
+//        $user = (new UserRepository())->findById($args['user_id']);
+//
+//        if ($user->isTeacher()) {
+//            throw new BadRequestException('user is a student');
+//        }
+//
         $queueRequest = RequestRepository::createRequest();
 
         $data = [
             'request_id' => $queueRequest->id,
-            'id' => $user->id
+            'data' => ['id' => $args['user_id']]
         ];
 
         $producer = new RabbitMQProducer();
