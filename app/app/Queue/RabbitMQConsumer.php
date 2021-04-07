@@ -65,7 +65,8 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
                 $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
             }
         } catch (\Exception $e) {
-//            $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag'], false, true);
+//        AppLogger::addInfo('RabbitMQ:Consumer ' . $e->getMessage);
+            $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
         }
     }
 
