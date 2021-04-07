@@ -49,3 +49,15 @@ psql -h 35.228.74.42 -p 5432 -U postgres -d otusdb
 ### postgres (docker-compose service), password - docker
 psql -h 192.168.15.5 -p 5432 -U docker -d docker
 ```
+
+```
+examples:
+- generate documentation
+http://localhost:2280/api/v1/documentation/generate
+* после как сгенерится json => вставить в app/public/swagger.json
+
+
+- get doccumentation
+http://localhost:2280/swagger/index.html
+
+```
