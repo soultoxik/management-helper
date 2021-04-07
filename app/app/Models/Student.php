@@ -89,6 +89,9 @@ class Student extends Model
         try {
             self::beginTransaction();
             $newUser = User::where('id', $user->id)->first();
+            if (empty($newUser)) {
+                throw new StudentException('User does not exist.');
+            }
             $newUser->email = $user->email;
             $newUser->first_name = $user->first_name;
             $newUser->last_name = $user->last_name;
