@@ -27,6 +27,6 @@ interface Cache
     public function getTeacherConditionByID(int $id): ?TeacherCondition;
     public function getTeacherConditionByUserID(int $userID): ?TeacherCondition;
     public function setUserSkills(int $userID, array $skillIDs): bool;
-    public function getUserSkills(int $userID): array;
+    public function getUserSkills(int $userID): ?array;
     public function delUserSkills(int $userID): bool;
 }
