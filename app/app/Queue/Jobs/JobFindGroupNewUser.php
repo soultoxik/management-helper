@@ -3,18 +3,28 @@
 
 namespace App\Queue\Jobs;
 
+use App\Models\User;
+use App\Repository\StudentRepository;
+
 class JobFindGroupNewUser extends Job
 {
-    private Student $student;
+    private User $student;
 
-    public function __construct(Student $student)
+    public function __construct(User $student)
     {
         $this->student = $student;
     }
 
     public function work(): bool
     {
-        // тут писать подбор группы для студента по его критериям
-        // результат. добавление записи в таблицу groups_users
+        $student = new StudentRepository($this->student);
+        $student->findSuitableGroup();
+        $student->addToGroup();
+
+        if ($student->getGroup()) {
+            return true;
+        }
+
+        return false;
     }
 }

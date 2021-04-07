@@ -4,10 +4,16 @@
 namespace App\Queue\Jobs;
 
 use App\Helper;
+use App\Repository\UserRepository;
 
 class Worker
 {
     protected const REQUIRED_PARAM = ['request_id', 'data'];
+
+    const COMMAND_CREATE_GROUP = 'create_group';
+    const COMMAND_FIND_TEACHER = 'find_teacher';
+    const COMMAND_FIND_GROUP_NEW_USER = 'find_group_new_user';
+    const COMMAND_REPLACE_TEACHER = 'replace_teacher';
 
     protected int $requestID;
     protected string $command;
@@ -26,22 +32,21 @@ class Worker
     public function createJob(): Job
     {
         switch ($this->command) {
-            case 'create_group':
+            case self::COMMAND_CREATE_GROUP:
                 // $groupID = $this->id;
                 // $group = загрузка Group из БД
                 // $job = new JobCreateGroup($group);
                 break;
-            case 'find_teacher':
+            case self::COMMAND_FIND_TEACHER:
                 // $groupID = $this->id;
                 // $group = загрузка Group из БД
                 // $job = new JobFindTeacher($group);
                 break;
-            case 'find_group_new_user':
-                // $studentID = $this->id;;
-                // $student = загрузка Student из БД
-                // $job = new JobFindGroupNewUser($student);
+            case self::COMMAND_FIND_GROUP_NEW_USER:
+                 $student = (new UserRepository())->findById($this->id);
+                 $job = new JobFindGroupNewUser($student);
                 break;
-            case 'replace_teacher':
+            case self::COMMAND_REPLACE_TEACHER:
                 // $groupID = $this->id;
                 // $group = загрузка Group из БД
                 // $job = new JobReplaceTeacher($group);

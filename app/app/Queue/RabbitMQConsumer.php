@@ -9,10 +9,10 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
 {
 
     protected const ALLOWED_COMMANDS = [
-        'create_group',
-        'find_teacher',
-        'find_group_new_user',
-        'replace_teacher'
+        Worker::COMMAND_CREATE_GROUP,
+        Worker::COMMAND_FIND_TEACHER,
+        Worker::COMMAND_FIND_GROUP_NEW_USER,
+        Worker::COMMAND_REPLACE_TEACHER
     ];
 
     public function consume(string $command): void

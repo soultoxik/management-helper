@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Models\DTOs\GroupDTO;
 use App\Models\Request;
+use App\Repository\GroupRepository;
 use App\Response\JsonResponse;
+use App\Validators\RequestValidator;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Models\Group;
 
@@ -86,5 +88,27 @@ class GroupController
         $data = ['deleted' => $result, 'request_id' => $req->id];
         // @TODO нужна ли тут очередь?
         return JsonResponse::respond($data);
+    }
+
+    public function findTeacher(ServerRequestInterface $request, array $args)
+    {
+        (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
+
+        $group = new GroupRepository();
+        $group->findById($args['group_id']);
+        $group->findSuitableTeacher();
+        $group->addToGroup();
+        return JsonResponse::respond(['result' => $group->getTeacher()]);
+    }
+
+    public function changeTeacher(ServerRequestInterface $request, array $args)
+    {
+        $data = json_decode($request->getBody()->getContents(), true);
+        (new RequestValidator($data))->validate(['teacher_id' => 'required|numeric']);
+
+        $group = new GroupRepository();
+        $group->findById($args['group_id']);
+        $group->changeTo($data['teacher_id']);
+        return JsonResponse::respond(['result' => $data]);
     }
 }

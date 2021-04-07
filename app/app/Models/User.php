@@ -37,4 +37,13 @@ class User extends Model
         return $this->hasMany('App\Models\Group');
     }
 
+    public function isStudent()
+    {
+        return !$this->teacher;
+    }
+
+    public function isTeacher()
+    {
+        return $this->teacher;
+    }
 }

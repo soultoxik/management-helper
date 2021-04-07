@@ -1,7 +1,7 @@
 - path: /
   method: GET
   resource: IndexController
-  action: index
+  action: test
 
 - path: /api/v1/groups
   method: POST
@@ -77,3 +77,13 @@
   method: POST
   resource: TeacherController
   action: findGroup
+
+- path: /api/v1/group/{group_id:number}/find-teacher
+  method: POST
+  resource: GroupController
+  action: findTeacher
+
+- path: /api/v1/group/{group_id:number}/change-teacher
+  method:  PATCH
+  resource: GroupController
+  action: changeTeacher

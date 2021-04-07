@@ -15,10 +15,12 @@ class TeacherRepository
     private User $user;
     private Group $group;
 
-    public function __construct(User $user)
+    public function __construct(int $userId)
     {
-        if (!$user->teacher) {
-            throw new BadRequestException('the user is not a teacher');
+        $user = User::find($userId);
+
+        if (empty($user)) {
+            throw new NotFoundException('user not found');
         }
 
         $this->user = $user;
@@ -61,7 +63,7 @@ class TeacherRepository
         }
 
         $counter = DB::table('groups')
-            ->select('groups.id', DB::raw('count(groups.id) as counter'))
+                ->select('groups.id', DB::raw('count(groups.id) as counter'))
             ->join('groups_skills', 'groups.id', '=', 'groups_skills.group_id')
             ->leftJoin('skills', 'groups_skills.skill_id', '=', 'skills.id')
             ->whereIn('skill_id', $skillIds)

@@ -9,6 +9,9 @@ use App\Models\DTOs\TeacherConditionDTO;
 
 class Teacher extends Model
 {
+    const IS_A_TEACHER = true;
+    const IS_NOT_A_TEACHER = false;
+
     use Transaction;
 
     public User $user;
