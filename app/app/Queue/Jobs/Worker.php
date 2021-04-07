@@ -3,6 +3,7 @@
 
 namespace App\Queue\Jobs;
 
+use App\Exceptions\WorkerException;
 use App\Helpers\JSONHelper;
 use App\Models\Group;
 use App\Models\Student;
@@ -57,7 +58,7 @@ class Worker
                  $job = new JobReplaceTeacher($group);
                 break;
             default:
-                // Exception:: 'работа не объявлена'
+                throw new WorkerException('This command is not available.');
                 break;
         }
 //        AppLogger::addInfo('RabbitMQ:Consumer create job - ' . $this->command);
@@ -69,15 +70,20 @@ class Worker
 //        Request::update(['id' => $this->requestID, 'status' => 'Done']);
     }
 
-    private function validate(string $message)
+    /**
+     * @param string $message
+     *
+     * @throws WorkerException
+     */
+    private function validate(string $message): void
     {
         if (!JSONHelper::isJSON($message)) {
-            // Exception:: 'получен не JSON'
+            throw new WorkerException('String is not format-JSON.');
         }
         $data = json_decode($message, true);
         foreach (self::REQUIRED_PARAM as $item) {
             if (empty($data[$item])) {
-                // Exception:: 'Обязательных параметров нету в сообщении'
+                throw new WorkerException('There is no required parameter: ' . $item . '.');
             }
         }
     }
