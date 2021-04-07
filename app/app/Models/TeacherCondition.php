@@ -3,6 +3,7 @@
 
 namespace App\Models;
 
+use App\Actions\ActionsTeacherCondition;
 use App\Exceptions\TeacherConditionException;
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Storage\RedisDAO;
@@ -86,13 +87,12 @@ class TeacherCondition extends Model
     public static function boot()
     {
         parent::boot();
-        $redis = new RedisDAO();
-        // переделать через Repository
-        static::deleted(function ($model) use ($redis) {
-            $redis->delTeacherConditionByID($model->id);
+        $action = new ActionsTeacherCondition();
+        static::deleted(function ($model) use ($action) {
+            $action->delete($model);
         });
-        static::saved(function ($model) use ($redis) {
-            $redis->setTeacherCondition($model);
+        static::saved(function ($model) use ($action) {
+            $action->save($model);
         });
     }
 }
