@@ -3,6 +3,8 @@
 
 namespace App\Queue;
 
+use App\Exceptions\RabbitMQConsumerException;
+use App\Logger\AppLogger;
 use App\Queue\Jobs\Worker;
 
 class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
@@ -17,7 +19,7 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
 
     public function consume(string $command): void
     {
-//        AppLogger::addInfo('RabbitMQ:Consumer was ran');
+        AppLogger::addInfo('RabbitMQ:Consumer was ran, command:' . $command);
 
         $this->validate($command);
 
@@ -55,7 +57,7 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
 
     public function processMessage($msg): void
     {
-//        AppLogger::addInfo('RabbitMQ:Consumer received message', [$msg->body]);
+        AppLogger::addInfo('RabbitMQ:Consumer received message', [$msg->body]);
         try {
             $worker = new Worker($msg->body, $msg->getRoutingKey());
             $job = $worker->createJob();
@@ -63,17 +65,25 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
             if ($job->isCompleted()) {
                 $worker->finish();
                 $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+            } else {
+                // если работа не выполнена, но структура сообщения валидное, значит обратно в очередь
+                $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag'], false, true);
             }
         } catch (\Exception $e) {
-//        AppLogger::addInfo('RabbitMQ:Consumer ' . $e->getMessage);
+            AppLogger::addInfo('RabbitMQ:Consumer ' . $e->getMessage());
             $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
         }
     }
 
+    /**
+     * @param string $routingKey
+     *
+     * @throws RabbitMQConsumerException
+     */
     private function validate(string $routingKey)
     {
         if (!in_array($routingKey, self::ALLOWED_COMMANDS)) {
-            // Exception:: 'Такая команда не поддеживается'
+            throw new RabbitMQConsumerException('Command: ' . $routingKey . ' not supported');
         }
     }
 
