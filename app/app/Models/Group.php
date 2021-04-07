@@ -125,7 +125,6 @@ class Group extends Model
 
         $actions = new ActionsGroup();
         static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) use ($actions) {
-            var_dump('pivotAttached');
             if ($relationName == 'skills') {
                 $actions->addSkills($model->id, $pivotIds);
             }
@@ -134,7 +133,6 @@ class Group extends Model
             }
         });
         static::pivotDetached(function ($model, $relationName, $pivotIds) use ($actions) {
-            var_dump('pivotDetached');
             if ($relationName == 'skills') {
                 $actions->delSkills($model->id, $pivotIds);
             }
@@ -143,7 +141,6 @@ class Group extends Model
             }
         });
         static::deleted(function ($model) use ($actions) {
-            var_dump('deleted');
             $actions->delGroup($model->id);
         });
     }

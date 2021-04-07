@@ -2,14 +2,19 @@
 
 namespace App\Controllers;
 
+use App\Exceptions\AppException;
+use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\Group;
 use App\Models\Skill;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\TeacherCondition;
-use App\Models\TeacherConditionDTO;
 use App\Models\User;
+use App\Repository\GroupRepository;
+use App\Repository\TeacherConditionRepository;
 use App\Response\JsonResponse;
+use App\Storage\RedisDAO;
+use League\Route\Http\Exception;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IndexController
@@ -62,13 +67,32 @@ class IndexController
 //            $condition->max_group_size = 20000;
 //
 //            $reseul = Teacher::change($user, $skills, $condition);
-
 //            Teacher::findByID(220);
-
 //            Teacher::remove(220);
+//            Skill::create(['name' => 'wordpress3']);
+//            $teacherCondition = $repo->create(new TeacherConditionDTO(
+//                50,
+//                2,
+//                1,
+//                2
+//            ));
+//            $teacherCondition = $repo->getTeacherConditionByID(64);
+//            $teacherCondition->id = 64;
+//            $teacherCondition->max_groups_num = 20;
+//            $teacherCondition->min_group_size = 5;
+//            $teacherCondition->max_group_size = 20;
+//            $result = $repo->update($teacherCondition);
+//            var_dump($result);
+//            $result = $repo->delete($teacherCondition->id);
+//            var_dump($result);
 
-            Skill::create(['name' => 'wordpress3']);
-
+            $repo = new GroupRepository();
+            $repo->setRedis(new RedisDAO());
+            $group = $repo->getGroup(97);
+            $result = $repo->setSkillsByGroupID($group->id, [2,4]);
+            var_dump($result);
+            $result = $repo->setStudentsByGroupID($group->id, []);
+            var_dump($result);
             return JsonResponse::respond('ok', 201);
         } catch (\Exception $exception) {
             return JsonResponse::respond(['message' => $exception->getMessage()], 422);
