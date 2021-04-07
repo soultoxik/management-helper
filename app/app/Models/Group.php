@@ -3,6 +3,7 @@
 
 namespace App\Models;
 
+use App\Actions\ActionsGroup;
 use App\Exceptions\GroupException;
 use App\Models\Traits\Transaction;
 use App\Storage\RedisDAO;
@@ -122,34 +123,25 @@ class Group extends Model
     {
         parent::boot();
 
-        $redis = new RedisDAO();
-        static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) use ($redis) {
+        $actions = new ActionsGroup();
+        static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) use ($actions) {
             if ($relationName == 'skills') {
-                foreach ($pivotIds as $skillID) {
-                    $redis->addSkillToGroup($model->id, $skillID);
-                }
+                $actions->addSkills($model->id, $pivotIds);
             }
             if ($relationName == 'students') {
-                foreach ($pivotIds as $skillID) {
-                    $redis->addUserToGroup($model->id, $skillID);
-                }
+                $actions->addStudents($model->id, $pivotIds);
             }
         });
-        static::pivotDetached(function ($model, $relationName, $pivotIds) use ($redis) {
+        static::pivotDetached(function ($model, $relationName, $pivotIds) use ($actions) {
             if ($relationName == 'skills') {
-                foreach ($pivotIds as $skillID) {
-                    $redis->delSkillFromGroup($model->id, $skillID);
-                }
+                $actions->delSkills($model->id, $pivotIds);
             }
             if ($relationName == 'students') {
-                foreach ($pivotIds as $skillID) {
-                    $redis->delUserFromGroup($model->id, $skillID);
-                }
+                $actions->delStudents($model->id, $pivotIds);
             }
         });
-
-        static::deleted(function ($model) use ($redis) {
-            $redis->delGroup($model->id);
+        static::deleted(function ($model) use ($actions) {
+            $actions->delGroup($model->id);
         });
     }
 

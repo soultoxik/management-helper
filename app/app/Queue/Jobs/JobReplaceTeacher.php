@@ -4,6 +4,8 @@
 namespace App\Queue\Jobs;
 
 
+use App\Models\Group;
+
 class JobReplaceTeacher extends Job
 {
     private Group $group;

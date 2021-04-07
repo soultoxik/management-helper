@@ -3,7 +3,7 @@
 
 namespace App\Models;
 
-use \Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
 {
@@ -15,7 +15,7 @@ class Skill extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\Models\Skill', 'users_skills');
+        return $this->belongsToMany('App\Models\User', 'users_skills');
     }
 
     public function groups()

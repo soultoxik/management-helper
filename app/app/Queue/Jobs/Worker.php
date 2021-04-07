@@ -5,6 +5,12 @@ namespace App\Queue\Jobs;
 
 use App\Helper;
 use App\Repository\UserRepository;
+use App\Exceptions\WorkerException;
+use App\Helpers\JSONHelper;
+use App\Models\Group;
+use App\Repository\GroupRepository;
+use App\Repository\StudentRepository;
+use App\Storage\RedisDAO;
 
 class Worker
 {
@@ -29,34 +35,64 @@ class Worker
         $this->id = $data['id'];
     }
 
+    /**
+     * @return Job
+     * @throws WorkerException
+     */
     public function createJob(): Job
     {
+        $redis = new RedisDAO();
+        $msgPrefix = 'Command (' . $this->command . ') can not do.';
         switch ($this->command) {
-            case self::COMMAND_CREATE_GROUP:
-                // $groupID = $this->id;
-                // $group = загрузка Group из БД
-                // $job = new JobCreateGroup($group);
+            case 'create_group':
+                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+                $job = new JobCreateGroup($group);
                 break;
-            case self::COMMAND_FIND_TEACHER:
-                // $groupID = $this->id;
-                // $group = загрузка Group из БД
-                // $job = new JobFindTeacher($group);
+            case 'find_teacher':
+                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+                $job = new JobFindTeacher($group);
                 break;
-            case self::COMMAND_FIND_GROUP_NEW_USER:
-                 $student = (new UserRepository())->findById($this->id);
-                 $job = new JobFindGroupNewUser($student);
+            case 'find_group_new_user':
+                $repo = new StudentRepository(null);
+                $repo->setRedis($redis);
+                $student = $repo->getStudentByID($this->id);
+                if (empty($group)) {
+                    throw new WorkerException(
+                        $msgPrefix . ' Can not load student: ' . $this->id
+                    );
+                }
+                $job = new JobFindGroupNewUser($student);
                 break;
-            case self::COMMAND_REPLACE_TEACHER:
-                // $groupID = $this->id;
-                // $group = загрузка Group из БД
-                // $job = new JobReplaceTeacher($group);
+            case 'replace_teacher':
+                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+                $job = new JobReplaceTeacher($group);
                 break;
             default:
-                // Exception:: 'работа не объявлена'
-                break;
+                throw new WorkerException('This command is not available.');
         }
 //        AppLogger::addInfo('RabbitMQ:Consumer create job - ' . $this->command);
         return $job;
+    }
+
+    /**
+     * @param int      $groupID
+     * @param RedisDAO $redis
+     * @param string   $msg
+     *
+     * @return Group
+     * @throws WorkerException
+     */
+    private function prepareJobGroup(int $groupID, RedisDAO $redis, string $msg): Group
+    {
+        $repo = new GroupRepository();
+        $repo->setRedis($redis);
+        $group = $repo->getGroup($this->id);
+        if (empty($group)) {
+            throw new WorkerException(
+                $msg . ' Can not load group: ' . $this->id
+            );
+        }
+        return $group;
     }
 
     public function finish()
@@ -64,15 +100,20 @@ class Worker
 //        Request::update(['id' => $this->requestID, 'status' => 'Done']);
     }
 
-    private function validate(string $message)
+    /**
+     * @param string $message
+     *
+     * @throws WorkerException
+     */
+    private function validate(string $message): void
     {
-        if (!Helper::isJSON($message)) {
-            // Exception:: 'получен не JSON'
+        if (!JSONHelper::isJSON($message)) {
+            throw new WorkerException('String is not format-JSON.');
         }
         $data = json_decode($message, true);
         foreach (self::REQUIRED_PARAM as $item) {
             if (empty($data[$item])) {
-                // Exception:: 'Обязательных параметров нету в сообщении'
+                throw new WorkerException('There is no required parameter: ' . $item . '.');
             }
         }
     }

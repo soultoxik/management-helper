@@ -3,14 +3,16 @@
 
 namespace App\Repository;
 
+use App\Exceptions\GroupRepositoryException;
+use App\Models\DTOs\GroupDTO;
 use App\Models\Group;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
-use App\Models\DTOs\GroupDTO;
 use App\Repository\Traits\CacheTrait;
+use Exception;
 
 class GroupRepository
 {
@@ -132,14 +134,25 @@ class GroupRepository
         return $group->user_id;
     }
 
+    /**
+     * @param int   $groupID
+     * @param array $skillIDs
+     *
+     * @return bool
+     * @throws GroupRepositoryException
+     */
     public function setSkillsByGroupID(int $groupID, array $skillIDs): bool
     {
-        $group = Group::where('id', $groupID)->first();
-        if (empty($group)) {
-            return false;
-        }
+        try {
+            $group = Group::where('id', $groupID)->first();
+            if (empty($group)) {
+                return false;
+            }
 
-        $result = $group->skills()->sync($skillIDs);
+            $result = $group->skills()->sync($skillIDs);
+        } catch (Exception $e) {
+            throw new GroupRepositoryException($e->getMessage(), $e->getCode());
+        }
         if (empty($result)) {
             return false;
         }
@@ -147,14 +160,25 @@ class GroupRepository
         return true;
     }
 
+    /**
+     * @param int   $groupID
+     * @param array $studentIDs
+     *
+     * @return bool
+     * @throws GroupRepositoryException
+     */
     public function setStudentsByGroupID(int $groupID, array $studentIDs): bool
     {
-        $group = Group::where('id', $groupID)->first();
-        if (empty($group)) {
-            return false;
+        try {
+            $group = Group::where('id', $groupID)->first();
+            if (empty($group)) {
+                return false;
+            }
+            $result = $group->students()->sync($studentIDs);
+        } catch (Exception $e) {
+            throw new GroupRepositoryException($e->getMessage(), $e->getCode());
         }
 
-        $result = $group->students()->sync($studentIDs);
         if (empty($result)) {
             return false;
         }
