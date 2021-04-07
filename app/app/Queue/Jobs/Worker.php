@@ -16,10 +16,10 @@ class Worker
 {
     protected const REQUIRED_PARAM = ['request_id', 'data'];
 
-    const COMMAND_CREATE_GROUP = 'create_group';
-    const COMMAND_FIND_TEACHER = 'find_teacher';
-    const COMMAND_FIND_GROUP_NEW_USER = 'find_group_new_user';
-    const COMMAND_REPLACE_TEACHER = 'replace_teacher';
+    public const COMMAND_CREATE_GROUP = 'create_group';
+    public const COMMAND_FIND_TEACHER = 'find_teacher';
+    public const COMMAND_FIND_GROUP_NEW_USER = 'find_group_new_user';
+    public const COMMAND_REPLACE_TEACHER = 'replace_teacher';
 
     protected int $requestID;
     protected string $command;
