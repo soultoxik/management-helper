@@ -88,12 +88,13 @@ class Group extends Model
                 throw new GroupException('Can not update the Group. Group does not exist');
             }
             $changedGroup->name = $group->name;
+            $changedGroup->user_id = $group->user_id;
             $changedGroup->min_students_num = $group->min_students_num;
             $changedGroup->max_students_num = $group->max_students_num;
             $changedGroup->min_skills_num = $group->min_skills_num;
             $changedGroup->max_skills_num = $group->max_skills_num;
             $changedGroup->max_useless_skill_students = $group->max_useless_skill_students;
-            $changedGroup->enabled = $group->enabled;
+            $changedGroup->enabled = (bool) $group->enabled;
             $changedGroup->save();
             // @TODO изменения группы приводит к возможному изменению студентов.
             return true;
