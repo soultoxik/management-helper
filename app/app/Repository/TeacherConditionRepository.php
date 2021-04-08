@@ -5,11 +5,17 @@ namespace App\Repository;
 
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\TeacherCondition;
-use App\Repository\Traits\CacheTrait;
+use App\Storage\Cache;
+use League\Route\Http\Exception\NotFoundException;
 
 class TeacherConditionRepository
 {
-    use CacheTrait;
+    private Cache $cache;
+
+    public function __construct(Cache $redisDAO)
+    {
+        $this->cache = $redisDAO;
+    }
 
     public function getTeacherConditionByID(int $id): ?TeacherCondition
     {
@@ -19,7 +25,7 @@ class TeacherConditionRepository
         }
         $teacherCondition = TeacherCondition::where('id', $id)->first();
         if (empty($teacherCondition)) {
-            return null;
+            throw new NotFoundException('TeacherCondition (' . $id . ') not found');
         }
         $this->cache->setTeacherCondition($teacherCondition);
         return $teacherCondition;
@@ -33,7 +39,7 @@ class TeacherConditionRepository
         }
         $teacherCondition = TeacherCondition::where('user_id', $userID)->first();
         if (empty($teacherCondition)) {
-            return null;
+            throw new NotFoundException('TeacherCondition not found, by userID:' . $userID);
         }
         $this->cache->setTeacherCondition($teacherCondition);
         return $teacherCondition;
