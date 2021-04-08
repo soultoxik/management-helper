@@ -1,3 +1,12 @@
+DROP TABLE IF EXISTS groups_skills;
+DROP TABLE IF EXISTS groups_users;
+DROP TABLE IF EXISTS groups;
+DROP TABLE IF EXISTS requests;
+DROP TABLE IF EXISTS users_skills;
+DROP TABLE IF EXISTS teachers_conditions;
+DROP TABLE IF EXISTS skills;
+DROP TABLE IF EXISTS users;
+
 --
 -- PostgreSQL database dump
 --
