@@ -3,13 +3,13 @@
 
 namespace App\Queue\Jobs;
 
-
 use App\Logger\AppLogger;
 
 abstract class Job
 {
-    protected bool $completed = false;
+    const SUCCESS = 'completed';
 
+    protected bool $completed = false;
 
     public function do()
     {
@@ -29,5 +29,11 @@ abstract class Job
         return $this->completed;
     }
 
+    public function getStatusSuccess(): string
+    {
+        return self::SUCCESS;
+    }
+
     abstract protected function work(): bool;
+    abstract public function getStatusFail(): string;
 }

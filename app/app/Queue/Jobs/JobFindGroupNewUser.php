@@ -11,6 +11,8 @@ use App\Storage\RedisDAO;
 
 class JobFindGroupNewUser extends Job
 {
+    const FAIL = 'not_found_group_for_user';
+
     private Student $student;
 
     public function __construct(Student $student)
@@ -18,7 +20,7 @@ class JobFindGroupNewUser extends Job
         $this->student = $student;
     }
 
-    public function work(): bool
+    protected function work(): bool
     {
         $repo = new StudentRepository(new RedisDAO());
         $group = $repo->findSuitableGroup($this->student->user);
@@ -38,5 +40,10 @@ class JobFindGroupNewUser extends Job
             . $status . 'found groupID:' . $group->id
         );
         return $result;
+    }
+
+    public function getStatusFail(): string
+    {
+        return self::FAIL;
     }
 }

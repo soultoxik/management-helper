@@ -63,10 +63,10 @@ class Worker
                 }
                 $job = new JobFindGroupNewUser($student);
                 break;
-//            case 'change_teacher':
-//                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
-//                $job = new JobChangeTeacher($group);
-//                break;
+            case 'change_teacher':
+                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+                $job = new JobChangeTeacher($group);
+                break;
             default:
                 throw new WorkerException('This command is not available.');
         }
@@ -94,11 +94,6 @@ class Worker
         return $group;
     }
 
-    public function finish()
-    {
-        RequestRepository::closeRequest($this->requestID);
-    }
-
     /**
      * @param string $message
      *
@@ -115,5 +110,15 @@ class Worker
                 throw new WorkerException('There is no required parameter: ' . $item . '.');
             }
         }
+    }
+
+    public function completed(Job $job): void
+    {
+        RequestRepository::setStatus($this->requestID, $job->getStatusSuccess());
+    }
+
+    public function fail(Job $job): void
+    {
+        RequestRepository::setStatus($this->requestID, $job->getStatusFail());
     }
 }

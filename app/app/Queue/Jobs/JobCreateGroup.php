@@ -10,6 +10,8 @@ use App\Storage\RedisDAO;
 
 class JobCreateGroup extends Job
 {
+    const FAIL = 'not_created_group';
+
     private Group $group;
 
     public function __construct(Group $group)
@@ -17,7 +19,7 @@ class JobCreateGroup extends Job
         $this->group = $group;
     }
 
-    public function work(): bool
+    protected function work(): bool
     {
         $repo = new GroupRepository(new RedisDAO());
         $result = $repo->formGroup($this->group);
@@ -34,5 +36,8 @@ class JobCreateGroup extends Job
         return $repo->setStudentsByGroupID($this->group->id, $studentIDs);
     }
 
-
+    public function getStatusFail(): string
+    {
+        return self::FAIL;
+    }
 }

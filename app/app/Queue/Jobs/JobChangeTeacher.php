@@ -10,6 +10,8 @@ use App\Storage\RedisDAO;
 
 class JobChangeTeacher extends Job
 {
+    const FAIL = 'not_changed_teacher';
+
     private Group $group;
 
     public function __construct(Group $group)
@@ -17,11 +19,8 @@ class JobChangeTeacher extends Job
         $this->group = $group;
     }
 
-    public function work(): bool
+    protected function work(): bool
     {
-        // тут писать замену препода из числа свободных
-        // результат. новое значение поле user_id в таблице groups
-
         $repo = new GroupRepository(new RedisDAO());
         $user = $repo->findSuitableTeacher($this->group);
         if (empty($user)) {
@@ -37,5 +36,10 @@ class JobChangeTeacher extends Job
             . $status . 'changed Teacher:' . $user->id
         );
         return $result;
+    }
+
+    public function getStatusFail(): string
+    {
+        return self::FAIL;
     }
 }

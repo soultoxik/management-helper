@@ -11,6 +11,8 @@ use App\Storage\RedisDAO;
 
 class JobFindTeacher extends Job
 {
+    const FAIL = 'not_found_teacher';
+
     private Group $group;
 
     public function __construct(Group $group)
@@ -18,7 +20,7 @@ class JobFindTeacher extends Job
         $this->group = $group;
     }
 
-    public function work(): bool
+    protected function work(): bool
     {
         $repo = new GroupRepository(new RedisDAO());
         $user = $repo->findSuitableTeacher($this->group);
@@ -35,5 +37,10 @@ class JobFindTeacher extends Job
             . $status . 'found Teacher:' . $user->id
         );
         return $result;
+    }
+
+    public function getStatusFail(): string
+    {
+        return self::FAIL;
     }
 }
