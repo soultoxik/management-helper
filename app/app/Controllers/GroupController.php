@@ -7,7 +7,6 @@ use App\Queue\Jobs\Worker;
 use App\Queue\RabbitMQProducer;
 use App\Repository\GroupRepository;
 use App\Repository\RequestRepository;
-use App\Repository\TeacherRepository;
 use App\Response\JsonResponse;
 use App\Storage\RedisDAO;
 use App\Validators\RequestValidator;
@@ -62,15 +61,14 @@ class GroupController
 
     public function search(ServerRequestInterface $request, array $args)
     {
-        // нужна валидация
-        $groupID = $args['group_id'];
-        $group = Group::find($groupID);
-        $skills = $group->skills()->get();
-        $data['skills'] = [];
-        foreach ($skills as $item) {
-            $data['skills'][] = $item->id;
-        }
-        $data['group'] = $group->toArray();
+        (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
+        $repo = new GroupRepository(new RedisDAO());
+        $group = $repo->getGroupFull($args['group_id']);
+        $data = [
+            'group' => $group->toArray(),
+            'skills' => $group->getSkills()->pluck('id')->toArray(),
+            'students' => $group->getStudents()->pluck('id')->toArray(),
+        ];
         return JsonResponse::respond($data);
     }
 
