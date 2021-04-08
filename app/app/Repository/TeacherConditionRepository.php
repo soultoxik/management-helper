@@ -5,7 +5,6 @@ namespace App\Repository;
 
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\TeacherCondition;
-use App\Storage\Cache;
 use League\Route\Http\Exception\NotFoundException;
 
 class TeacherConditionRepository extends Repository
