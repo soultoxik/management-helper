@@ -2,45 +2,39 @@
 
 namespace App\Controllers;
 
-use App\Logger\AppLogger;
+use App\Helpers\JSONHelper;
 use App\Models\User;
 use App\Queue\Jobs\Worker;
 use App\Queue\RabbitMQProducer;
-use App\Repository\GroupRepository;
 use App\Repository\RequestRepository;
 use App\Repository\StudentRepository;
-use App\Repository\UserRepository;
 use App\Response\JsonResponse;
 use App\Storage\RedisDAO;
 use App\Validators\RequestValidator;
-use League\Route\Http\Exception\BadRequestException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class StudentController
 {
+
+    const RULES_VALIDATE = [
+        'email' => 'required|email',
+        'first_name' => 'required',
+        'last_name' => 'required',
+        'phone' => 'required',
+        'enabled' => 'required|boolean',
+        'skills' => 'required|array',
+    ];
+
     public function create(ServerRequestInterface $request, array $args)
     {
         try {
-            $data = $request->getBody()->getContents();
-            $data = json_decode($data, true);
-            if (empty($data)) {
-                throw new \Exception('JSON is wrong');
-            }
-//            // нужна валидация
-//            if (empty(validate)) {
-//                throw new \Exception('Параметры ошибочны');
-//            }
+            $body = $request->getBody()->getContents();
+            $this->validateCreate($body);
 
-            $skills = $data['skills'];
-            $data['enabled'] = false;
-            unset($data['skills']);
-            $user = new User;
-            $user->email = $data['email'];
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
-            $user->phone = $data['phone'];
-            $user->enabled = $data['enabled'];
-            $user->teacher = false;
+            $body = json_decode($body, true);
+            $user = $this->prepareCreateUser($body);
+
+            $skills = $body['skills'];
             $repo = new StudentRepository(new RedisDAO());
             $student = $repo->create($user, $skills);
             if (empty($student)) {
@@ -56,32 +50,32 @@ class StudentController
         return JsonResponse::respond($data, $status);
     }
 
-    public function search()
+    public function search(ServerRequestInterface $request, array $args)
     {
-        $data = ['asd' => 123];
+        $this->validateArgument($args);
+
+        $repo = new StudentRepository(new RedisDAO());
+        $student = $repo->getStudentByID($args['student_id']);
+        $user = $student->user->toArray();
+        unset($user['skills']);
+        $data = [
+            'user' => $user,
+            'skills' => $student->skills->pluck('id')->toArray(),
+        ];
         return JsonResponse::respond($data);
     }
 
     public function update(ServerRequestInterface $request, array $args)
     {
         try {
-            $data = $request->getBody()->getContents();
-            $data = json_decode($data, true);
-            if (empty($data)) {
-                throw new \Exception('JSON is wrong');
-            }
+            $body = $request->getBody()->getContents();
+            $this->validateUpdate($body, $args);
 
-            $skills = $data['skills'];
-            $data['enabled'] = false;
-            unset($data['skills']);
-            $user = new User;
-            $user->id = $args['student_id'];
-            $user->email = $data['email'];
-            $user->first_name = $data['first_name'];
-            $user->last_name = $data['last_name'];
-            $user->phone = $data['phone'];
-            $user->enabled = $data['enabled'];
-            $user->teacher = false;
+            $body = json_decode($body, true);
+            $user = $this->prepareUpdateUser($args['student_id'], $body);
+
+            $skills = $body['skills'];
+
             $repo = new StudentRepository(new RedisDAO());
             $result = $repo->update($user, $skills);
             $status = 201;
@@ -102,6 +96,7 @@ class StudentController
     public function delete(ServerRequestInterface $request, array $args)
     {
         try {
+            $this->validateArgument($args);
             $repo = new StudentRepository(new RedisDAO());
             $result = $repo->delete($args['student_id']);
             $data = ['deleted' => $result];
@@ -148,5 +143,65 @@ class StudentController
         $producer->publish(Worker::COMMAND_FIND_GROUP_NEW_USER, $data);
 
         return JsonResponse::respond(['id' => $queueRequest->id]);
+    }
+
+    private function validateCreate(string $body): void
+    {
+        $rules = self::RULES_VALIDATE;
+        unset($rules['enabled']);
+        $this->validateBody($body, $rules);
+    }
+
+    private function validateUpdate(string $body, array $args): void
+    {
+        $this->validateArgument($args);
+        $this->validateBody($body, self::RULES_VALIDATE);
+    }
+
+    private function validateArgument(array $args)
+    {
+        $validator = new RequestValidator($args);
+        $validator->validate(['student_id' => 'required|numeric']);
+    }
+
+    private function validateBody(string $body, array $rules)
+    {
+        if (!JSONHelper::isJSON($body)) {
+            throw new \Exception('Received string is not in JSON-format.');
+        }
+        $data = json_decode($body, true);
+        $validator = new RequestValidator($data);
+        $validator->validate($rules);
+    }
+
+    private function prepareCreateUser(array $body): User
+    {
+        $user = $this->prepareUser($body);
+        $user->enabled = true;
+        $user->teacher = false;
+        return $user;
+    }
+
+    private function prepareUpdateUser(int $studentID, array $body): User
+    {
+        $user = $this->prepareUser($body);
+        $user->id = $studentID;
+        $user->teacher = false;
+        return $user;
+    }
+
+    private function prepareUser(array $body): User
+    {
+        $properties = array_keys(self::RULES_VALIDATE);
+
+        $user = new User;
+        foreach ($properties as $item) {
+            if ($item == 'skills') {
+                continue;
+            }
+            $user->{$item} = $body[$item];
+        }
+
+        return $user;
     }
 }

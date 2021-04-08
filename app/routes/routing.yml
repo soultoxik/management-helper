@@ -28,7 +28,7 @@
   resource: StudentController
   action: create
 
-- path: /api/v1/students
+- path: /api/v1/students/{student_id:number}
   method: GET
   resource: StudentController
   action: search
