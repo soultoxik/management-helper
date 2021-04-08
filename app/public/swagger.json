@@ -145,7 +145,7 @@
         }
       }
     },
-    "/api/v1/groups/{id}/find-teacher": {
+    "/api/v1/group/{id}/find-teacher": {
       "post": {
         "tags": [
           "Group API"
@@ -203,7 +203,7 @@
         }
       }
     },
-    "/api/v1/groups/{id}/change-teacher": {
+    "/api/v1/group/{id}/change-teacher": {
       "patch": {
         "tags": [
           "Group API"
@@ -261,7 +261,7 @@
         }
       }
     },
-    "/api/v1/groups/{id}/form-group": {
+    "/api/v1/group/{id}/form-group": {
       "post": {
         "tags": [
           "Group API"
@@ -437,7 +437,7 @@
         }
       }
     },
-    "/api/v1/students/{id}/find-group": {
+    "/api/v1/student/{id}/find-group": {
       "post": {
         "tags": [
           "Student API"
@@ -609,7 +609,7 @@
         }
       }
     },
-    "/api/v1/teachers/{id}/find-group": {
+    "/api/v1/teacher/{id}/find-group": {
       "post": {
         "tags": [
           "Teacher API"

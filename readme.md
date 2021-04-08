@@ -45,6 +45,8 @@ git pull
 psql -h 35.228.74.42 -p 5432 -U otus -d otusdb
 psql -h 35.228.74.42 -p 5432 -U postgres -d otusdb
 
+restore from backup: psql -h 35.228.74.42 -p 5432 -U otus -d otusdb  < DB/backup.sql
+
 *
 ### postgres (docker-compose service), password - docker
 psql -h 192.168.15.5 -p 5432 -U docker -d docker
@@ -63,12 +65,4 @@ http://localhost:2280/swagger/index.html
 docker-compose exec php bash
 composer install
 
-```
-
-- postgres
-```
-docker-compose exec postgres bash
-su postgres
-
-restore from backup: psql -h 192.168.15.5 -p 5432 -U docker -d docker  < DB/temp/backup.sql
 ```

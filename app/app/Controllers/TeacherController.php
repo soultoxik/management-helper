@@ -192,7 +192,7 @@ class TeacherController
 
     /**
      * @OA\Post (
-     *     path="/api/v1/teachers/{id}/find-group",
+     *     path="/api/v1/teacher/{id}/find-group",
      *     tags={"Teacher API"},
      *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\Response(response="201", description="OK"),

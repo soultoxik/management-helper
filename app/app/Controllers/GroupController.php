@@ -186,7 +186,7 @@ class GroupController
 
     /**
      * @OA\Post (
-     *     path="/api/v1/groups/{id}/find-teacher",
+     *     path="/api/v1/group/{id}/find-teacher",
      *     tags={"Group API"},
      *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\RequestBody(
@@ -227,7 +227,7 @@ class GroupController
 
     /**
      * @OA\Patch (
-     *     path="/api/v1/groups/{id}/change-teacher",
+     *     path="/api/v1/group/{id}/change-teacher",
      *     tags={"Group API"},
      *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\RequestBody(
@@ -267,7 +267,7 @@ class GroupController
 
     /**
      * @OA\Post (
-     *     path="/api/v1/groups/{id}/form-group",
+     *     path="/api/v1/group/{id}/form-group",
      *     tags={"Group API"},
      *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\Response(response="201", description="OK"),

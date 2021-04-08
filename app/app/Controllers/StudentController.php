@@ -172,7 +172,7 @@ class StudentController
 
     /**
      * @OA\Post (
-     *     path="/api/v1/students/{id}/find-group",
+     *     path="/api/v1/student/{id}/find-group",
      *     tags={"Student API"},
      *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\Response(response="201", description="OK"),
