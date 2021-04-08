@@ -29,4 +29,6 @@ interface Cache
     public function setUserSkills(int $userID, array $skillIDs): bool;
     public function getUserSkills(int $userID): ?array;
     public function delUserSkills(int $userID): bool;
+    public function addSkillToUser(int $userID, int $skillID): bool;
+    public function delSkillFromUser(int $userID, int $skillID): bool;
 }
