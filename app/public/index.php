@@ -8,6 +8,5 @@ try {
     $app = new App();
     $app->run();
 }catch (\Exception $e) {
-    //TODO::логировать
-    echo $e->getMessage();
+    \App\Logger\AppLogger::addEmergency($e->getMessage());
 }
