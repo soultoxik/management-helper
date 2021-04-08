@@ -159,20 +159,16 @@ class GroupController
     {
         (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
 
-        $repo = new GroupRepository(new RedisDAO());
-        $group = $repo->getGroup($args['group_id']);
-        $result = $repo->formGroup($group);
-//        $queueRequest = RequestRepository::createRequest();
-//
-//        $data = [
-//            'request_id' => $queueRequest->id,
-//            'id' => $args['group_id']
-//        ];
-//
-//        $producer = new RabbitMQProducer();
-//        $producer->publish(/*formGroup*/ $data);
-//
-        return JsonResponse::respond(['result' => $result]);
+        $queueRequest = RequestRepository::createRequest();
+
+        $data = [
+            'request_id' => $queueRequest->id,
+            'id' => $args['group_id']
+        ];
+
+        $producer = new RabbitMQProducer();
+        $producer->publish(Worker::COMMAND_CREATE_GROUP, $data);
+        return JsonResponse::respond(['result' => $data]);
     }
 
     private function validateCreate(string $body): void
