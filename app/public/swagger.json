@@ -13,7 +13,7 @@
             "application/json": {
               "schema": {
                 "required": [
-                  "name, min_students_num"
+                  "name, min_students_num, max_students_num"
                 ],
                 "properties": {
                   "name": {
@@ -30,6 +30,26 @@
                     "description": "max_students_num.",
                     "type": "integer",
                     "example": "20"
+                  },
+                  "min_skills_num": {
+                    "description": "min_skills_num.",
+                    "type": "integer",
+                    "example": "5"
+                  },
+                  "max_skills_num": {
+                    "description": "max_skills_num.",
+                    "type": "integer",
+                    "example": "6"
+                  },
+                  "max_useless_skill_students": {
+                    "description": "max_useless_skill_students.",
+                    "type": "integer",
+                    "example": "1"
+                  },
+                  "skills": {
+                    "description": "Array of IDs of skills.",
+                    "type": "array",
+                    "example": "[1, 2]"
                   }
                 },
                 "type": "object"
@@ -144,7 +164,7 @@
             "application/json": {
               "schema": {
                 "required": [
-                  "name, min_students_num"
+                  "name, min_students_num, max_students_num"
                 ],
                 "properties": {
                   "name": {
@@ -161,6 +181,31 @@
                     "description": "max_students_num.",
                     "type": "integer",
                     "example": "20"
+                  },
+                  "min_skills_num": {
+                    "description": "min_skills_num.",
+                    "type": "integer",
+                    "example": "5"
+                  },
+                  "max_skills_num": {
+                    "description": "max_skills_num.",
+                    "type": "integer",
+                    "example": "6"
+                  },
+                  "max_useless_skill_students": {
+                    "description": "max_useless_skill_students.",
+                    "type": "integer",
+                    "example": "1"
+                  },
+                  "enabled": {
+                    "description": "enabled.",
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "skills": {
+                    "description": "Array of IDs of skills.",
+                    "type": "array",
+                    "example": "[1, 2, 3]"
                   }
                 },
                 "type": "object"

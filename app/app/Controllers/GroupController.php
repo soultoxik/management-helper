@@ -38,7 +38,31 @@ class GroupController
      *                     type="integer",
      *                     example="20"
      *                 ),
-     *                 required={"name, min_students_num"}
+     *                 @OA\Property(
+     *                     description="min_skills_num.",
+     *                     property="min_skills_num",
+     *                     type="integer",
+     *                     example="5"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="max_skills_num.",
+     *                     property="max_skills_num",
+     *                     type="integer",
+     *                     example="6"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="max_useless_skill_students.",
+     *                     property="max_useless_skill_students",
+     *                     type="integer",
+     *                     example="1"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="Array of IDs of skills.",
+     *                     property="skills",
+     *                      type="array",
+     *                     example="[1, 2]"
+     *                 ),
+     *                 required={"name, min_students_num, max_students_num"}
      *             )
      *         )
      *     ),
@@ -131,7 +155,37 @@ class GroupController
      *                     type="integer",
      *                     example="20"
      *                 ),
-     *                 required={"name, min_students_num"}
+     *                 @OA\Property(
+     *                     description="min_skills_num.",
+     *                     property="min_skills_num",
+     *                     type="integer",
+     *                     example="5"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="max_skills_num.",
+     *                     property="max_skills_num",
+     *                     type="integer",
+     *                     example="6"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="max_useless_skill_students.",
+     *                     property="max_useless_skill_students",
+     *                     type="integer",
+     *                     example="1"
+     *                 ),
+     *                 @OA\Property(
+     *                     description="enabled.",
+     *                     property="enabled",
+     *                     type="boolean",
+     *                     example=false
+     *                 ),
+     *                 @OA\Property(
+     *                     description="Array of IDs of skills.",
+     *                     property="skills",
+     *                      type="array",
+     *                     example="[1, 2, 3]"
+     *                 ),
+     *                 required={"name, min_students_num, max_students_num"}
      *             )
      *         )
      *     ),

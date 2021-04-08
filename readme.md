@@ -60,4 +60,15 @@ http://localhost:2280/api/v1/documentation/generate
 - get doccumentation
 http://localhost:2280/swagger/index.html
 
+docker-compose exec php bash
+composer install
+
+```
+
+- postgres
+```
+docker-compose exec postgres bash
+su postgres
+
+restore from backup: psql -h 192.168.15.5 -p 5432 -U docker -d docker  < DB/temp/backup.sql
 ```
