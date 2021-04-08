@@ -12,32 +12,15 @@ use App\Storage\Cache;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
-use App\Repository\Traits\CacheTrait;
 use Exception;
 
 class GroupRepository
 {
-//    use CacheTrait;
-//
-//    private Group $group;
-//    private User $user;
-
     private Cache $cache;
 
     public function __construct(Cache $redisDAO)
     {
         $this->cache = $redisDAO;
-    }
-
-    public function findById(int $id)
-    {
-        $group = Group::find($id);
-
-        if (empty($group)) {
-            throw new NotFoundException('user not found');
-        }
-
-        return $group;
     }
 
     public function getGroup(int $groupID): ?Group
@@ -49,7 +32,7 @@ class GroupRepository
         }
         $group = Group::where('id', $groupID)->first();
         if (empty($group)) {
-            return null;
+            throw new NotFoundException('Group (' . $groupID . ') not found');
         }
         $this->cache->setGroup($group);
         return $group;
@@ -59,7 +42,7 @@ class GroupRepository
     {
         $group = $this->getGroup($groupID);
         if (empty($groupID)) {
-            return null;
+            throw new NotFoundException('Group (' . $groupID . ') not found');
         }
         $group->setStudents($group->students()->get());
         $group->setSkills($group->skills()->get());
@@ -135,7 +118,7 @@ class GroupRepository
         }
         $group = Group::where('id', $groupID)->first();
         if (empty($group)) {
-            return null;
+            throw new NotFoundException('Group (' . $groupID . ') not found');
         }
         return $group->user_id;
     }
@@ -152,7 +135,7 @@ class GroupRepository
         try {
             $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
-                return false;
+                throw new NotFoundException('Group (' . $groupID . ') not found');
             }
 
             $result = $group->skills()->sync($skillIDs);
@@ -178,7 +161,7 @@ class GroupRepository
         try {
             $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
-                return false;
+                throw new NotFoundException('Group (' . $groupID . ') not found');
             }
             $result = $group->students()->sync($studentIDs);
         } catch (Exception $e) {
@@ -191,7 +174,7 @@ class GroupRepository
         return true;
     }
 
-    public function findSuitableTeacher(Group $group)
+    public function findSuitableTeacher(Group $group): User
     {
         $skills = $group->skills()->get();
 
@@ -208,7 +191,7 @@ class GroupRepository
         return $this->findTeacher($skillIds);
     }
 
-    private function findTeacher(array $skillIds)
+    private function findTeacher(array $skillIds): User
     {
         $counter = DB::table('users')
             ->select('users.id', DB::raw('count(users.id) as counter'))
