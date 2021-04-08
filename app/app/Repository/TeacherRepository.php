@@ -13,17 +13,10 @@ use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\Teacher;
 use App\Models\TeacherCondition;
 
-class TeacherRepository
+class TeacherRepository extends Repository
 {
     private User $user;
     private Group $group;
-
-    private Cache $cache;
-
-    public function __construct(Cache $redisDAO)
-    {
-        $this->cache = $redisDAO;
-    }
 
     public function getTeacherByID(int $teacherID): ?Teacher
     {
@@ -134,13 +127,13 @@ class TeacherRepository
         return $group;
     }
 
-    public function addToGroup()
+    public function addToGroup(): void
     {
         $this->group->user_id = $this->user->id;
         $this->group->save();
     }
 
-    public function getGroup()
+    public function getGroup(): Group
     {
         return $this->group;
     }

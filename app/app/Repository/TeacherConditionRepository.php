@@ -8,14 +8,8 @@ use App\Models\TeacherCondition;
 use App\Storage\Cache;
 use League\Route\Http\Exception\NotFoundException;
 
-class TeacherConditionRepository
+class TeacherConditionRepository extends Repository
 {
-    private Cache $cache;
-
-    public function __construct(Cache $redisDAO)
-    {
-        $this->cache = $redisDAO;
-    }
 
     public function getTeacherConditionByID(int $id): ?TeacherCondition
     {

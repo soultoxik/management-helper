@@ -9,7 +9,7 @@ use App\Models\Skill;
 use Illuminate\Support\Collection;
 use League\Route\Http\Exception\NotFoundException;
 
-class SkillRepository
+class SkillRepository extends Repository
 {
     public function getSkillByID(int $id): ?Skill
     {

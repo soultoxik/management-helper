@@ -10,14 +10,8 @@ use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 
-class StudentRepository
+class StudentRepository extends Repository
 {
-    private Cache $cache;
-
-    public function __construct(Cache $redisDAO)
-    {
-        $this->cache = $redisDAO;
-    }
 
     /**
      * @return Group

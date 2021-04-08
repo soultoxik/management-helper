@@ -6,7 +6,7 @@ namespace App\Repository;
 use App\Models\Request;
 use League\Route\Http\Exception\NotFoundException;
 
-class RequestRepository
+class RequestRepository extends Repository
 {
     public static function createRequest(): Request
     {

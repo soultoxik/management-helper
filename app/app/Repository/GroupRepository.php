@@ -8,20 +8,13 @@ use App\Models\DTOs\GroupDTO;
 use App\Models\Group;
 use App\Models\Teacher;
 use App\Models\User;
-use App\Storage\Cache;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 use Exception;
 
-class GroupRepository
+class GroupRepository extends Repository
 {
-    private Cache $cache;
-
-    public function __construct(Cache $redisDAO)
-    {
-        $this->cache = $redisDAO;
-    }
 
     public function getGroup(int $groupID): ?Group
     {
