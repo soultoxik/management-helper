@@ -32,61 +32,22 @@ class GroupController
      * @OA\Post (
      *     path="/api/v1/groups",
      *     tags={"Group API"},
-     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                     description="Group name.",
-     *                     property="name",
-     *                     type="string",
-     *                     example="ggggroup 65"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="min_students_num.",
-     *                     property="min_students_num",
-     *                     type="integer",
-     *                     example="3"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="max_students_num.",
-     *                     property="max_students_num",
-     *                     type="integer",
-     *                     example="20"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="min_skills_num.",
-     *                     property="min_skills_num",
-     *                     type="integer",
-     *                     example="5"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="max_skills_num.",
-     *                     property="max_skills_num",
-     *                     type="integer",
-     *                     example="6"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="max_useless_skill_students.",
-     *                     property="max_useless_skill_students",
-     *                     type="integer",
-     *                     example="1"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="Array of IDs of skills.",
-     *                     property="skills",
-     *                      type="array",
-     *                     example="[1, 2]"
-     *                 ),
-     *                 required={"name, min_students_num, max_students_num"}
+     *                 @OA\Property(property="name", example="junior php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="skills", example="[2, 3, 4]")
      *             )
      *         )
      *     ),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Response(response="201", description="OK"),
      * )
      */
     public function create(ServerRequestInterface $request, array $args)
@@ -124,11 +85,8 @@ class GroupController
     * @OA\Get(
     *     path="/api/v1/groups/{id}",
     *     tags={"Group API"},
-    *
-    *     @OA\Parameter(name="id", in="path", description="The group identifier.", example=1, required=true),
-    *
-    *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-    *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+    *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+    *     @OA\Response(response="200", description="OK"),
     * )
     */
     public function search(ServerRequestInterface $request, array $args)
@@ -148,69 +106,24 @@ class GroupController
      * @OA\Patch  (
      *     path="/api/v1/groups/{id}",
      *     tags={"Group API"},
-     *
-     *     @OA\Parameter(name="id", in="path", description="The group identifier.", example=1, required=true),
-     *
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                     description="Group name.",
-     *                     property="name",
-     *                     type="string",
-     *                     example="ggggroup 65"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="min_students_num.",
-     *                     property="min_students_num",
-     *                     type="integer",
-     *                     example="3"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="max_students_num.",
-     *                     property="max_students_num",
-     *                     type="integer",
-     *                     example="20"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="min_skills_num.",
-     *                     property="min_skills_num",
-     *                     type="integer",
-     *                     example="5"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="max_skills_num.",
-     *                     property="max_skills_num",
-     *                     type="integer",
-     *                     example="6"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="max_useless_skill_students.",
-     *                     property="max_useless_skill_students",
-     *                     type="integer",
-     *                     example="1"
-     *                 ),
-     *                 @OA\Property(
-     *                     description="enabled.",
-     *                     property="enabled",
-     *                     type="boolean",
-     *                     example=false
-     *                 ),
-     *                 @OA\Property(
-     *                     description="Array of IDs of skills.",
-     *                     property="skills",
-     *                      type="array",
-     *                     example="[1, 2, 3]"
-     *                 ),
-     *                 required={"name, min_students_num, max_students_num"}
+     *                 @OA\Property(property="name", example="middle php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5, 6]")
      *             )
      *         )
      *     ),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Response(response="201", description="OK"),
      * )
      */
     public function update(ServerRequestInterface $request, array $args)
@@ -249,11 +162,8 @@ class GroupController
      * @OA\Delete (
      *     path="/api/v1/groups/{id}",
      *     tags={"Group API"},
-     *
-     *     @OA\Parameter(name="id", in="path", description="The group identifier.", example=1, required=true),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
      * )
      */
     public function delete(ServerRequestInterface $request, array $args)
@@ -274,6 +184,30 @@ class GroupController
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/groups/{id}/find-teacher",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="name", example="middle php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5, 6]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function findTeacher(ServerRequestInterface $request, array $args)
     {
         (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
@@ -291,6 +225,30 @@ class GroupController
         return JsonResponse::respond(['id' => $queueRequest->id]);
     }
 
+    /**
+     * @OA\Patch (
+     *     path="/api/v1/groups/{id}/change-teacher",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="name", example="middle php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5, 6]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function changeTeacher(ServerRequestInterface $request, array $args)
     {
         (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
@@ -307,6 +265,14 @@ class GroupController
         return JsonResponse::respond(['result' => $data]);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/groups/{id}/form-group",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function formGroup(ServerRequestInterface $request, array $args)
     {
         (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);

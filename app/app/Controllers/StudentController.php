@@ -29,25 +29,20 @@ class StudentController
      * @OA\Post (
      *     path="/api/v1/students",
      *     tags={"Student API"},
-     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                     description="Group name.",
-     *                     property="name",
-     *                     type="string",
-     *                     example="Bob"
-     *                 ),
-     *                 required={"name"}
+     *                 @OA\Property(property="email", example="junior@email.com"),
+     *                 @OA\Property(property="first_name", example="Bob"),
+     *                 @OA\Property(property="last_name", example="Jordan"),
+     *                 @OA\Property(property="phone", example="+7 495 1111111"),
+     *                 @OA\Property(property="skills", example="[2, 3, 4]")
      *             )
      *         )
      *     ),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Response(response="201", description="OK"),
      * )
      */
     public function create(ServerRequestInterface $request, array $args)
@@ -79,11 +74,8 @@ class StudentController
      * @OA\Get(
      *     path="/api/v1/students/{id}",
      *     tags={"Student API"},
-     *
-     *     @OA\Parameter(name="id", in="path", description="The student identifier.", example=1, required=true),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="200", description="OK"),
      * )
      */
     public function search(ServerRequestInterface $request, array $args)
@@ -105,27 +97,22 @@ class StudentController
      * @OA\Patch  (
      *     path="/api/v1/students/{id}",
      *     tags={"Student API"},
-     *
-     *     @OA\Parameter(name="id", in="path", description="The student identifier.", example=1, required=true),
-     *
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                     description="student name.",
-     *                     property="name",
-     *                     type="string",
-     *                     example="Nicolas"
-     *                 ),
-     *                 required={"name"}
+     *                 @OA\Property(property="email", example="junior@email.com"),
+     *                 @OA\Property(property="first_name", example="Bob"),
+     *                 @OA\Property(property="last_name", example="Jordan"),
+     *                 @OA\Property(property="phone", example="+7 495 3333333"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5]")
      *             )
      *         )
      *     ),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Response(response="201", description="OK"),
      * )
      */
     public function update(ServerRequestInterface $request, array $args)
@@ -160,11 +147,8 @@ class StudentController
      * @OA\Delete (
      *     path="/api/v1/students/{id}",
      *     tags={"Student API"},
-     *
-     *     @OA\Parameter(name="id", in="path", description="The student identifier.", example=1, required=true),
-     *
-     *     @OA\Response(response="200", description="OK", @OA\JsonContent()),
-     *     @OA\Response(response="default", description="Error", @OA\JsonContent()),
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
      * )
      */
     public function delete(ServerRequestInterface $request, array $args)
@@ -187,6 +171,13 @@ class StudentController
     }
 
     /**
+     * @OA\Post (
+     *     path="/api/v1/students/{id}/find-group",
+     *     tags={"Student API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     *
      * @param ServerRequestInterface $request
      * @param array $args
      * @return \Laminas\Diactoros\Response|\Psr\Http\Message\ResponseInterface

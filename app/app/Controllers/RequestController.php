@@ -10,6 +10,14 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestController
 {
+    /**
+     * @OA\Get(
+     *     path="/api/v1/requests/{id}",
+     *     tags={"QueueRequest API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function getStatus(ServerRequestInterface $request, array $args)
     {
         try {
