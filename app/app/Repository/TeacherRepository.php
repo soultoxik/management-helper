@@ -5,30 +5,24 @@ namespace App\Repository;
 
 use App\Models\Group;
 use App\Models\User;
+use App\Storage\Cache;
 use Illuminate\Database\Capsule\Manager as DB;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\Teacher;
 use App\Models\TeacherCondition;
-use App\Repository\Traits\CacheTrait;
 
 class TeacherRepository
 {
-    use CacheTrait;
-
     private User $user;
     private Group $group;
 
-    public function __construct(int $userId)
+    private Cache $cache;
+
+    public function __construct(Cache $redisDAO)
     {
-        $user = User::find($userId);
-
-        if (empty($user)) {
-            throw new NotFoundException('user not found');
-        }
-
-        $this->user = $user;
+        $this->cache = $redisDAO;
     }
 
     public function getTeacherByID(int $teacherID): ?Teacher
@@ -69,7 +63,7 @@ class TeacherRepository
      * @throws BadRequestException
      * @throws NotFoundException
      */
-    public function findSuitableGroup()
+    public function findSuitableGroup(): Group
     {
         $skills = $this->user->skills()->get();
 
@@ -83,9 +77,7 @@ class TeacherRepository
             throw new BadRequestException('cannot get skill ids');
         }
 
-        $this->group = $this->findGroup($skillIds);
-
-        return $this->group;
+        return $this->findGroup($skillIds);
     }
 
     /**
