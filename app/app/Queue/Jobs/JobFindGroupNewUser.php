@@ -30,9 +30,6 @@ class JobFindGroupNewUser extends Job
             );
             return false;
         }
-        // находит и если еще раз отправляю тоже самое. то опять находит туже группу
-        // но запись не добавляется в бд( я так понимаю не проходит запись на уровне команды sync)
-        // потому что исключения не выпадают
         $result = $repo->addGroup($this->student->user->id, $group->id);
         $status = $result ? ' was ': ' was not ';
         AppLogger::addInfo(
