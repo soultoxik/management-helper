@@ -58,19 +58,22 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
     public function processMessage($msg): void
     {
         AppLogger::addInfo('RabbitMQ:Consumer received message', [$msg->body]);
+        $done = false;
         try {
             $worker = new Worker($msg->body, $msg->getRoutingKey());
             $job = $worker->createJob();
             $job->do();
             if ($job->isCompleted()) {
                 $worker->finish();
-                $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
-            } else {
-                // если работа не выполнена, но структура сообщения валидное, значит обратно в очередь
-                $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag'], false, true);
+                $done = true;
             }
         } catch (\Exception $e) {
             AppLogger::addInfo('RabbitMQ:Consumer ' . $e->getMessage());
+        }
+
+        if ($done) {
+            $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+        } else {
             $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
         }
     }
