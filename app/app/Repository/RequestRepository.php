@@ -5,7 +5,6 @@ namespace App\Repository;
 
 use App\Exceptions\RequestRepositoryException;
 use App\Models\Request;
-use League\Route\Http\Exception\NotFoundException;
 
 class RequestRepository extends Repository
 {

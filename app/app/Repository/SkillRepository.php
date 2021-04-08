@@ -67,12 +67,8 @@ class SkillRepository extends Repository
         foreach ($data as $item) {
             $ids[] = $item->id;
         }
-        if (empty($ids)) {
-            return null;
-        }
         return $ids;
     }
-
 
     public function create(SkillDTO $skillDTO): ?Skill
     {
@@ -89,6 +85,11 @@ class SkillRepository extends Repository
     {
         try {
             $skill = Skill::where('id', $newSkill->id)->first();
+            if (empty($skill)) {
+                throw new NotFoundException(
+                    'Can not update. Skill (' . $newSkill->id . ') not found'
+                );
+            }
             $skill->name = $newSkill->name;
             return $skill->save();
         } catch (\Exception $e) {
@@ -105,8 +106,7 @@ class SkillRepository extends Repository
                     'Can not delete. Skill (' . $id . ') not found'
                 );
             }
-            $skill->delete();
-            return true;
+            return $skill->delete();
         } catch (\Exception $e) {
             throw new SkillRepositoryException($e->getMessage(), $e->getCode());
         }

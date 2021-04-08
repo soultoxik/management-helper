@@ -34,16 +34,6 @@ class StudentRepository extends Repository
         return $this->findGroup($skillIds);
     }
 
-//    public function addToGroup()
-//    {
-//        $this->user->groups()->sync([$this->group->id]);
-//    }
-
-//    public function getGroup()
-//    {
-//        return $this->group;
-//    }
-
     /**
      * @param array $skillIds
      * @return Group
@@ -110,9 +100,6 @@ class StudentRepository extends Repository
             return $skillIDs;
         }
         $student = Student::findByID($studentID);
-        if (empty($student)) {
-            throw new NotFoundException('Student (' . $studentID . ') not found');
-        }
         $skillIDs = [];
         foreach ($student->skills as $item) {
             $skillIDs[] = $item;
@@ -133,9 +120,6 @@ class StudentRepository extends Repository
     public function getGroupIDsByStudentID(int $studentID): ?array
     {
         $student = Student::findByID($studentID);
-        if (empty($student)) {
-            throw new NotFoundException('Student (' . $studentID . ') not found');
-        }
         $groupsIDs = [];
         foreach ($student->user->groups as $item) {
             $groupsIDs[] = $item;
