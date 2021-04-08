@@ -26,4 +26,13 @@ class RequestRepository extends Repository
         $request->status = Request::CLOSE;
         return $request->save();
     }
+
+    public static function getStatus(int $id): string
+    {
+        $request = Request::where('id', $id)->first();
+        if (empty($request)) {
+            throw new NotFoundException('Request (' . $id . ') not found');
+        }
+        return $request->status;
+    }
 }

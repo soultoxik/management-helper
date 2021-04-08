@@ -48,7 +48,7 @@
   resource: TeacherController
   action: create
 
-- path: /api/v1/teachers
+- path: /api/v1/teachers/{teacher_id:number}
   method: GET
   resource: TeacherController
   action: search
