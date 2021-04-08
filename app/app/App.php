@@ -11,11 +11,10 @@ class App
     public function __construct()
     {
         $this->router = new Router();
-        $this->router->create();
     }
 
     public function run()
     {
-
+        $this->router->create();
     }
 }
