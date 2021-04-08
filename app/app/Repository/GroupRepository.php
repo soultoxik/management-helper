@@ -3,6 +3,7 @@
 
 namespace App\Repository;
 
+use App\Exceptions\AppException;
 use App\Exceptions\GroupRepositoryException;
 use App\Models\DTOs\GroupDTO;
 use App\Models\Group;
@@ -117,7 +118,7 @@ class GroupRepository extends Repository
     }
 
     /**
-     * @param int   $groupID
+     * @param int $groupID
      * @param array $skillIDs
      *
      * @return bool
@@ -143,7 +144,7 @@ class GroupRepository extends Repository
     }
 
     /**
-     * @param int   $groupID
+     * @param int $groupID
      * @param array $studentIDs
      *
      * @return bool
@@ -213,6 +214,35 @@ class GroupRepository extends Repository
     {
         $group->user_id = $userID;
         return $this->update($group);
+    }
+
+    /**
+     * @param Group $group
+     * @throws BadRequestException
+     */
+    public function formGroup(Group $group)
+    {
+        $counter = DB::table('users')
+            ->select('users.id', DB::raw('count(users.id) as skill_counter'))
+            ->join('users_skills', 'users.id', '=', 'users_skills.user_id')
+            ->join('groups_skills', 'groups_skills.skill_id', '=', 'users_skills.skill_id')
+            ->where('groups_skills.group_id', $group->id)
+            ->where('teacher', Teacher::IS_NOT_A_TEACHER)
+            ->groupBy('users.id');
+
+        $student_ids = DB::query()
+            ->select('id as user_id')
+            ->fromSub($counter, 'counter')
+            ->where('skill_counter', '>=', $group->min_skills_num)
+            ->where('skill_counter', '<=', $group->max_skills_num)
+            ->orderBy('skill_counter', 'desc')
+            ->limit($group->max_students_num)->get();
+
+        if (empty($student_ids) or sizeof($student_ids) < $group->min_students_num) {
+            throw new AppException('by group parameters, no students found', 422);
+        }
+
+        return $student_ids;
     }
 
 //    public function changeTo(int $teacherId)

@@ -87,3 +87,8 @@
   method:  PATCH
   resource: GroupController
   action: changeTeacher
+
+- path: /api/v1/group/{group_id:number}/form-group
+  method:  POST
+  resource: GroupController
+  action: formGroup
