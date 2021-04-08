@@ -3,7 +3,6 @@
 
 namespace App\Models\DTOs;
 
-
 class GroupDTO
 {
 
