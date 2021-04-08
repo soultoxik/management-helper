@@ -3,15 +3,19 @@
 
 namespace App\Repository;
 
+use App\Exceptions\AppException;
 use App\Exceptions\GroupRepositoryException;
 use App\Models\DTOs\GroupDTO;
 use App\Models\Group;
-use App\Repository\Traits\CacheTrait;
+use App\Models\Teacher;
+use App\Models\User;
+use Illuminate\Database\Capsule\Manager as DB;
+use League\Route\Http\Exception\BadRequestException;
+use League\Route\Http\Exception\NotFoundException;
 use Exception;
 
-class GroupRepository
+class GroupRepository extends Repository
 {
-    use CacheTrait;
 
     public function getGroup(int $groupID): ?Group
     {
@@ -22,7 +26,7 @@ class GroupRepository
         }
         $group = Group::where('id', $groupID)->first();
         if (empty($group)) {
-            return null;
+            throw new NotFoundException('Group (' . $groupID . ') not found');
         }
         $this->cache->setGroup($group);
         return $group;
@@ -32,7 +36,7 @@ class GroupRepository
     {
         $group = $this->getGroup($groupID);
         if (empty($groupID)) {
-            return null;
+            throw new NotFoundException('Group (' . $groupID . ') not found');
         }
         $group->setStudents($group->students()->get());
         $group->setSkills($group->skills()->get());
@@ -108,13 +112,13 @@ class GroupRepository
         }
         $group = Group::where('id', $groupID)->first();
         if (empty($group)) {
-            return null;
+            throw new NotFoundException('Group (' . $groupID . ') not found');
         }
         return $group->user_id;
     }
 
     /**
-     * @param int   $groupID
+     * @param int $groupID
      * @param array $skillIDs
      *
      * @return bool
@@ -125,7 +129,7 @@ class GroupRepository
         try {
             $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
-                return false;
+                throw new NotFoundException('Group (' . $groupID . ') not found');
             }
 
             $result = $group->skills()->sync($skillIDs);
@@ -140,7 +144,7 @@ class GroupRepository
     }
 
     /**
-     * @param int   $groupID
+     * @param int $groupID
      * @param array $studentIDs
      *
      * @return bool
@@ -151,7 +155,7 @@ class GroupRepository
         try {
             $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
-                return false;
+                throw new NotFoundException('Group (' . $groupID . ') not found');
             }
             $result = $group->students()->sync($studentIDs);
         } catch (Exception $e) {
@@ -163,4 +167,105 @@ class GroupRepository
         }
         return true;
     }
+
+    public function findSuitableTeacher(Group $group): User
+    {
+        $skills = $group->skills()->get();
+
+        if (empty($skills)) {
+            throw new NotFoundException('skills not found');
+        }
+
+        $skillIds = $skills->pluck('id')->toArray();
+
+        if (empty($skillIds)) {
+            throw new BadRequestException('cannot get skill ids');
+        }
+
+        return $this->findTeacher($skillIds);
+    }
+
+    private function findTeacher(array $skillIds): User
+    {
+        $counter = DB::table('users')
+            ->select('users.id', DB::raw('count(users.id) as counter'))
+            ->join('users_skills', 'users.id', '=', 'users_skills.user_id')
+            ->where('teacher', Teacher::IS_A_TEACHER)
+            ->whereIn('users_skills.skill_id', $skillIds)
+            ->groupBy('users.id')
+            ->limit(100);
+
+        /** @var User $user */
+        $user = User::query()
+            ->joinSub($counter, 'counter', function ($join) {
+                $join->on('users.id', '=', 'counter.id');
+            })
+            ->orderBy('counter', 'desc')
+            ->orderBy('users.id')->first();
+
+        if (empty($user)) {
+            throw new NotFoundException('group not found for this user');
+        }
+
+        return $user;
+    }
+
+    public function setTeacherID(Group $group, int $userID): bool
+    {
+        $group->user_id = $userID;
+        return $this->update($group);
+    }
+
+    /**
+     * @param Group $group
+     * @throws BadRequestException
+     */
+    public function formGroup(Group $group)
+    {
+        $counter = DB::table('users')
+            ->select('users.id', DB::raw('count(users.id) as skill_counter'))
+            ->join('users_skills', 'users.id', '=', 'users_skills.user_id')
+            ->join('groups_skills', 'groups_skills.skill_id', '=', 'users_skills.skill_id')
+            ->where('groups_skills.group_id', $group->id)
+            ->where('teacher', Teacher::IS_NOT_A_TEACHER)
+            ->groupBy('users.id');
+
+        $student_ids = DB::query()
+            ->select('id as user_id')
+            ->fromSub($counter, 'counter')
+            ->where('skill_counter', '>=', $group->min_skills_num)
+            ->where('skill_counter', '<=', $group->max_skills_num)
+            ->orderBy('skill_counter', 'desc')
+            ->limit($group->max_students_num)->get();
+
+        if (empty($student_ids) or sizeof($student_ids) < $group->min_students_num) {
+            throw new AppException('by group parameters, no students found', 422);
+        }
+
+        return $student_ids;
+    }
+
+//    public function changeTo(int $teacherId)
+//    {
+//        $user = (new UserRepository())->findById($teacherId);
+//        if (!$user->teacher) {
+//            throw new BadRequestException('user is not a teacher');
+//        }
+//
+//        $this->group->user_id = $user->id;
+//        $this->group->save();
+//
+//        return $this->group;
+//    }
+//
+//    public function addToGroup()
+//    {
+//        $this->group->user_id = $this->user->id;
+//        $this->group->save();
+//    }
+//
+//    public function getTeacher()
+//    {
+//        return $this->user;
+//    }
 }

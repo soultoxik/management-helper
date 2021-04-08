@@ -9,9 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\Traits\Transaction;
+use League\Route\Http\Exception\NotFoundException;
 
 class Teacher extends Model
 {
+    const IS_A_TEACHER = true;
+    const IS_NOT_A_TEACHER = false;
+
     use Transaction;
 
     public User $user;
@@ -24,7 +28,6 @@ class Teacher extends Model
         ?TeacherCondition $teacherCondition
     ) {
         parent::__construct();
-
         $this->user = $user;
         $this->skills = $skills;
         $this->teacherCondition = $teacherCondition;
@@ -32,9 +35,9 @@ class Teacher extends Model
 
     public static function findByID(int $id): ?Teacher
     {
-        $user = User::where('id', $id)->where('teacher', true)->first();
+        $user = User::where('id', $id)->where('teacher', self::IS_A_TEACHER)->first();
         if (empty($user)) {
-            return null;
+            throw new NotFoundException('Teacher (' . $id . ') not found');
         }
         $skills = $user->skills;
         $condition = $user->teacherConditions;
@@ -43,9 +46,9 @@ class Teacher extends Model
 
     public static function findByEmail(string $email): ?Teacher
     {
-        $user = User::where('email', $email)->where('teacher', true)->first();
+        $user = User::where('email', $email)->where('teacher', self::IS_A_TEACHER)->first();
         if (empty($user)) {
-            return null;
+            throw new NotFoundException('Teacher not found, by email:' . $email);
         }
         $skills = $user->skills;
         $condition = $user->teacherConditions->first();
@@ -75,7 +78,7 @@ class Teacher extends Model
                 'last_name' => $user->last_name,
                 'phone' =>  $user->phone,
                 'enabled' => true,
-                'teacher' => true
+                'teacher' => self::IS_A_TEACHER
             ]);
             $user->skills()->sync($skills);
             $skills = $user->skills()->get();
@@ -144,7 +147,9 @@ class Teacher extends Model
         try {
             $teacher = self::findByID($userID);
             if (empty($teacher)) {
-                return false;
+                throw new NotFoundException(
+                    'Can not remove Teacher. Teacher (' . $userID . ') not found'
+                );
             }
             self::beginTransaction();
             $teacher->user->delete();

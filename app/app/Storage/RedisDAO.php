@@ -3,6 +3,7 @@
 
 namespace App\Storage;
 
+use App\Exceptions\RedisDAOException;
 use App\Models\Group;
 use App\Models\TeacherCondition;
 use Illuminate\Database\Eloquent\Model;
@@ -50,10 +51,18 @@ class RedisDAO implements Cache
     public function delGroup(int $groupID): bool
     {
         $key = $this->generateKeyGroup($groupID);
-        if ($this->redis->del($key)) {
-            $this->delGroupSkills($groupID);
-            $this->delGroupUsers($groupID);
+        if (!$this->redis->del($key)) {
+            return false;
         }
+        $result = $this->delGroupSkills($groupID);
+        if (!$result) {
+            return false;
+        }
+        $result = $this->delGroupUsers($groupID);
+        if (!$result) {
+            return false;
+        }
+        return true;
     }
 
     private function generateKeyGroup(int $id): string
@@ -319,7 +328,7 @@ class RedisDAO implements Cache
         try {
             return $this->redis->hMSet($key, $model);
         } catch (\Exception $e) {
-            var_dump($e);
+            throw new RedisDAOException($e->getMessage(), $e->getCode());
         }
     }
 }

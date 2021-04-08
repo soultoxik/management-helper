@@ -6,10 +6,9 @@ namespace App\Models;
 use App\Actions\ActionsTeacherCondition;
 use App\Exceptions\TeacherConditionException;
 use App\Models\DTOs\TeacherConditionDTO;
-use App\Storage\RedisDAO;
-use Exception;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
+use League\Route\Http\Exception\NotFoundException;
 
 class TeacherCondition extends Model
 {
@@ -75,7 +74,9 @@ class TeacherCondition extends Model
         try {
             $teacherCondition = TeacherCondition::where('id', $id)->first();
             if (empty($teacherCondition)) {
-                return false;
+                throw new NotFoundException(
+                    'Can not remove TeacherCondition(' . $id . '). TeacherCondition not found'
+                );
             }
             $teacherCondition->delete();
             return true;

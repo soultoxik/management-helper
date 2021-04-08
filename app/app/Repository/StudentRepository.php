@@ -2,34 +2,24 @@
 
 namespace App\Repository;
 
+use App\Models\Group;
 use App\Models\Student;
 use App\Models\User;
-use App\Repository\Traits\CacheTrait;
 use Illuminate\Database\Capsule\Manager as DB;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 
-class StudentRepository
+class StudentRepository extends Repository
 {
-    use CacheTrait;
-
-    private User $user;
-
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
 
     /**
-     * @return Model|Builder|object|null
+     * @return Group
      * @throws BadRequestException
      * @throws NotFoundException
      */
-    public function findSuitableGroup()
+    public function findSuitableGroup(User $user): Group
     {
-        $skills = $this->user->skills()->get();
+        $skills = $user->skills()->get();
 
         if (empty($skills)) {
             throw new NotFoundException('skills not found');
@@ -41,19 +31,51 @@ class StudentRepository
             throw new BadRequestException('cannot get skill ids');
         }
 
+        return $this->findGroup($skillIds);
+    }
+
+//    public function addToGroup()
+//    {
+//        $this->user->groups()->sync([$this->group->id]);
+//    }
+
+//    public function getGroup()
+//    {
+//        return $this->group;
+//    }
+
+    /**
+     * @param array $skillIds
+     * @return Group
+     * @throws NotFoundException
+     */
+    private function findGroup(array $skillIds): Group
+    {
         $counter = DB::table('groups')
             ->select('groups.id', DB::raw('count(groups.id) as counter'))
             ->join('groups_skills', 'groups.id', '=', 'groups_skills.group_id')
             ->leftJoin('skills', 'groups_skills.skill_id', '=', 'skills.id')
             ->whereIn('skill_id', $skillIds)
             ->groupBy('groups.id')
-            ->orderBy('counter', 'desc')
-            ->limit(1);
+            ->limit(100);
 
-        return DB::table('groups')
-            ->joinSub($counter,'counter', function ($join) {
+        /** @var Group $group */
+        $group = Group::query()
+            ->joinSub($counter, 'counter', function ($join) {
                 $join->on('groups.id', '=', 'counter.id');
-            })->first();
+            })->where('max_students_num', '>', function ($query) {
+                $query->select(DB::raw('count(groups_users.id) as counter'))
+                    ->from('groups_users')
+                    ->join('users', 'users.id', '=', 'groups_users.user_id')
+                    ->where('teacher', );
+            })->orderBy('counter', 'desc')
+            ->first();
+
+        if (empty($group)) {
+            throw new NotFoundException('group not found for this user');
+        }
+
+        return $group;
     }
 
     public function getStudentByID(int $studentID): ?Student
@@ -66,14 +88,14 @@ class StudentRepository
         return Student::findByEmail($email);
     }
 
-    public function create(User $user, array $skills): ?Student
+    public function create(User $user, array $skillIDs): ?Student
     {
-        return Student::insert($user, $skills);
+        return Student::insert($user, $skillIDs);
     }
 
-    public function update(User $user, ?array $skills): bool
+    public function update(User $user, ?array $skillIDs): bool
     {
-        return Student::change($user, $skills);
+        return Student::change($user, $skillIDs);
     }
 
     public function delete(int $userID): bool
@@ -89,7 +111,7 @@ class StudentRepository
         }
         $student = Student::findByID($studentID);
         if (empty($student)) {
-            return null;
+            throw new NotFoundException('Student (' . $studentID . ') not found');
         }
         $skillIDs = [];
         foreach ($student->skills as $item) {
@@ -102,11 +124,17 @@ class StudentRepository
         return $skillIDs;
     }
 
+    /**
+     * @param int $studentID
+     *
+     * @return array|null
+     * @throws NotFoundException
+     */
     public function getGroupIDsByStudentID(int $studentID): ?array
     {
         $student = Student::findByID($studentID);
         if (empty($student)) {
-            return null;
+            throw new NotFoundException('Student (' . $studentID . ') not found');
         }
         $groupsIDs = [];
         foreach ($student->user->groups as $item) {
@@ -118,6 +146,13 @@ class StudentRepository
         return $groupsIDs;
     }
 
+    /**
+     * @param int   $userID
+     * @param array $skillIDs
+     *
+     * @return bool
+     * @throws \App\Exceptions\StudentException
+     */
     public function setSkills(int $userID, array $skillIDs): bool
     {
         $user = User::where('id', $userID)->first();
@@ -129,13 +164,66 @@ class StudentRepository
         return !empty($result);
     }
 
+    /**
+     * @param User $user
+     *
+     * @return bool
+     * @throws NotFoundException
+     * @throws \App\Exceptions\StudentException
+     */
     public function setUserData(User $user): bool
     {
         $student = $this->getStudentByID($user->id);
         if (empty($student)) {
-            return false;
+            throw new NotFoundException(
+                'Can not set data of Student. Student (' . $user->id . ') not found'
+            );
         }
 
         return Student::change($user, null);
+    }
+
+    /**
+     * @param int $userID
+     * @param int $groupID
+     *
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function addGroup(int $userID, int $groupID): bool
+    {
+        $user = User::where('id', $userID)->first();
+        if (empty($user)) {
+            throw new NotFoundException(
+                'Can not add Student (' . $userID . ') to Group (' . $groupID . '). Student not found'
+            );
+        }
+        $result = $user->groups()->sync($groupID);
+        if (empty($result)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param int $userID
+     * @param int $groupID
+     *
+     * @return bool
+     * @throws NotFoundException
+     */
+    public function delGroup(int $userID, int $groupID): bool
+    {
+        $user = User::where('id', $userID)->first();
+        if (empty($user)) {
+            throw new NotFoundException(
+                'Can not del Student (' . $userID . ') from Group (' . $groupID . '). Student not found'
+            );
+        }
+        $result = $user->groups()->toggle($groupID);
+        if (empty($result)) {
+            return false;
+        }
+        return true;
     }
 }

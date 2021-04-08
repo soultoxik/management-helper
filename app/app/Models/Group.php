@@ -5,17 +5,15 @@ namespace App\Models;
 
 use App\Actions\ActionsGroup;
 use App\Exceptions\GroupException;
-use App\Models\Traits\Transaction;
-use App\Storage\RedisDAO;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DTOs\GroupDTO;
 use Illuminate\Support\Collection;
 use Exception;
+use League\Route\Http\Exception\NotFoundException;
 
 class Group extends Model
 {
-    use Transaction;
     use PivotEventTrait;
 
     protected $table = 'groups';
@@ -49,7 +47,6 @@ class Group extends Model
 
     /**
      * @param GroupDTO $group
-     * @param array[skill_id] $skills
      *
      * @return Group|null
      * @throws GroupException
@@ -75,22 +72,29 @@ class Group extends Model
 
     /**
      * @param Group $group
-     * @param array[skill_id] $skills
      *
      * @return bool
      * @throws GroupException
+     * @throws NotFoundException
      */
     public static function change(Group $group): bool
     {
         try {
             $changedGroup = Group::where('id', $group->id)->first();
+            if (empty($changedGroup)) {
+                throw new NotFoundException(
+                    'Can not update the Group. Group (' . $group->id . ') not found'
+                );
+            }
+
             $changedGroup->name = $group->name;
+            $changedGroup->user_id = $group->user_id;
             $changedGroup->min_students_num = $group->min_students_num;
             $changedGroup->max_students_num = $group->max_students_num;
             $changedGroup->min_skills_num = $group->min_skills_num;
             $changedGroup->max_skills_num = $group->max_skills_num;
             $changedGroup->max_useless_skill_students = $group->max_useless_skill_students;
-            $changedGroup->enabled = $group->enabled;
+            $changedGroup->enabled = (bool) $group->enabled;
             $changedGroup->save();
             // @TODO изменения группы приводит к возможному изменению студентов.
             return true;
@@ -104,13 +108,16 @@ class Group extends Model
      *
      * @return bool
      * @throws GroupException
+     * @throws NotFoundException
      */
     public static function remove(int $groupID): bool
     {
         try {
             $group = Group::where('id', $groupID)->first();
             if (empty($group)) {
-                return false;
+                throw new NotFoundException(
+                    'Can not remove the Group. Group (' . $groupID . ') not found'
+                );
             }
             $group->delete();
             return true;

@@ -3,6 +3,7 @@
 
 namespace App\Models;
 
+use App\Actions\ActionsUser;
 use App\Models\Traits\Transaction;
 use App\Storage\RedisDAO;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
@@ -38,28 +39,43 @@ class User extends Model
         return $this->hasOne('App\Models\TeacherCondition', 'user_id');
     }
 
+    public function teacherGroups()
+    {
+        return $this->hasMany('App\Models\Group');
+    }
+
+    public function isStudent()
+    {
+        return !$this->teacher;
+    }
+
+    public function isTeacher()
+    {
+        return $this->teacher;
+    }
+
     public static function boot()
     {
         parent::boot();
-        $redis = new RedisDAO();
-        // переделать через Repository
-        static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) use ($redis) {
+        $actions = new ActionsUser();
+        static::pivotAttached(function ($model, $relationName, $pivotIds, $pivotIdsAttributes) use ($actions) {
             if ($relationName == 'skills') {
-                foreach ($pivotIds as $skillID) {
-                    $redis->addSkillToUser($model->id, $skillID);
-                }
+                $actions->addSkills($model->id, $pivotIds);
+            }
+            if ($relationName == 'groups') {
+                $actions->addGroups($model->id, $pivotIds);
             }
         });
-        static::pivotDetached(function ($model, $relationName, $pivotIds) use ($redis) {
+        static::pivotDetached(function ($model, $relationName, $pivotIds) use ($actions) {
             if ($relationName == 'skills') {
-                foreach ($pivotIds as $skillID) {
-                    $redis->delSkillFromUser($model->id, $skillID);
-                }
+                $actions->delSkills($model->id, $pivotIds);
+            }
+            if ($relationName == 'groups') {
+                $actions->delGroups($model->id, $pivotIds);
             }
         });
-        static::deleted(function ($model) use ($redis) {
-            $redis->delUserSkills($model->id);
+        static::deleted(function ($model) use ($actions) {
+            $actions->delUserSkill($model->id);
         });
     }
-
 }

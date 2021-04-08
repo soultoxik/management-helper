@@ -3,6 +3,8 @@
 
 namespace App\Queue\Jobs;
 
+use App\Logger\AppLogger;
+use App\Repository\RequestRepository;
 use App\Exceptions\WorkerException;
 use App\Helpers\JSONHelper;
 use App\Models\Group;
@@ -12,7 +14,12 @@ use App\Storage\RedisDAO;
 
 class Worker
 {
-    protected const REQUIRED_PARAM = ['request_id', 'data'];
+    protected const REQUIRED_PARAM = ['request_id', 'id'];
+
+    public const COMMAND_CREATE_GROUP = 'create_group';
+    public const COMMAND_FIND_TEACHER = 'find_teacher';
+    public const COMMAND_FIND_GROUP_NEW_USER = 'find_group_new_user';
+    public const COMMAND_REPLACE_TEACHER = 'change_teacher';
 
     protected int $requestID;
     protected string $command;
@@ -41,29 +48,29 @@ class Worker
                 $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
                 $job = new JobCreateGroup($group);
                 break;
+            case 'change_teacher':
             case 'find_teacher':
                 $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
                 $job = new JobFindTeacher($group);
                 break;
             case 'find_group_new_user':
-                $repo = new StudentRepository(null);
-                $repo->setRedis($redis);
+                $repo = new StudentRepository(new RedisDAO());
                 $student = $repo->getStudentByID($this->id);
-                if (empty($group)) {
+                if (empty($student)) {
                     throw new WorkerException(
                         $msgPrefix . ' Can not load student: ' . $this->id
                     );
                 }
                 $job = new JobFindGroupNewUser($student);
                 break;
-            case 'replace_teacher':
-                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
-                $job = new JobReplaceTeacher($group);
-                break;
+//            case 'change_teacher':
+//                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+//                $job = new JobChangeTeacher($group);
+//                break;
             default:
                 throw new WorkerException('This command is not available.');
         }
-//        AppLogger::addInfo('RabbitMQ:Consumer create job - ' . $this->command);
+        AppLogger::addInfo('RabbitMQ:Consumer create job - ' . $this->command);
         return $job;
     }
 
@@ -77,8 +84,7 @@ class Worker
      */
     private function prepareJobGroup(int $groupID, RedisDAO $redis, string $msg): Group
     {
-        $repo = new GroupRepository();
-        $repo->setRedis($redis);
+        $repo = new GroupRepository(new RedisDAO());
         $group = $repo->getGroup($this->id);
         if (empty($group)) {
             throw new WorkerException(
@@ -90,7 +96,7 @@ class Worker
 
     public function finish()
     {
-//        Request::update(['id' => $this->requestID, 'status' => 'Done']);
+        RequestRepository::closeRequest($this->requestID);
     }
 
     /**

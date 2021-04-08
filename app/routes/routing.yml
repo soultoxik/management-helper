@@ -1,7 +1,7 @@
 - path: /
   method: GET
   resource: IndexController
-  action: index
+  action: test
 
 - path: /api/v1/groups
   method: POST
@@ -28,7 +28,7 @@
   resource: StudentController
   action: create
 
-- path: /api/v1/students
+- path: /api/v1/students/{student_id:number}
   method: GET
   resource: StudentController
   action: search
@@ -48,7 +48,7 @@
   resource: TeacherController
   action: create
 
-- path: /api/v1/teachers
+- path: /api/v1/teachers/{teacher_id:number}
   method: GET
   resource: TeacherController
   action: search
@@ -72,6 +72,26 @@
   method: POST
   resource: StudentController
   action: findGroup
+
+- path: /api/v1/teacher/{user_id:number}/find-group
+  method: POST
+  resource: TeacherController
+  action: findGroup
+
+- path: /api/v1/group/{group_id:number}/find-teacher
+  method: POST
+  resource: GroupController
+  action: findTeacher
+
+- path: /api/v1/group/{group_id:number}/change-teacher
+  method:  PATCH
+  resource: GroupController
+  action: changeTeacher
+
+- path: /api/v1/group/{group_id:number}/form-group
+  method:  POST
+  resource: GroupController
+  action: formGroup
 
 - path: /api/v1/documentation/generate
   method: GET

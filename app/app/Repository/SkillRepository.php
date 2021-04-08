@@ -3,17 +3,19 @@
 
 namespace App\Repository;
 
+use App\Exceptions\SkillRepositoryException;
 use App\Models\DTOs\SkillDTO;
 use App\Models\Skill;
 use Illuminate\Support\Collection;
+use League\Route\Http\Exception\NotFoundException;
 
-class SkillRepository
+class SkillRepository extends Repository
 {
     public function getSkillByID(int $id): ?Skill
     {
         $skill = Skill::where('id', $id)->first();
         if (empty($skill)) {
-            return null;
+            throw new NotFoundException('Skill (' . $id . ') not found');
         }
         return $skill;
     }
@@ -22,35 +24,37 @@ class SkillRepository
     {
         $skill = Skill::where('name', $name)->first();
         if (empty($skill)) {
-            return null;
+            throw new NotFoundException('Skill not found, by name' . $name);
         }
         return $skill;
     }
 
-    public function getUserIDsBySkillID(int $skillID): ?array
+    public function getUserIDsBySkillID(int $id): ?array
     {
         try {
-            $skill = Skill::where('id', $skillID)->first();
+            $skill = Skill::where('id', $id)->first();
             if (empty($skill)) {
-                return null;
+                throw new NotFoundException('Skill (' . $id . ') not found');
             }
             $result = $skill->users;
             return $this->processMultiple($result);
         } catch (\Exception $e) {
+            throw new SkillRepositoryException($e->getMessage(), $e->getCode());
         }
     }
 
-    public function getGroupIDsBySkillID(int $skillID): ?array
+    public function getGroupIDsBySkillID(int $id): ?array
     {
         try {
-            $skill = Skill::where('id', $skillID)->first();
+            $skill = Skill::where('id', $id)->first();
             if (empty($skill)) {
-                return null;
+                throw new NotFoundException('Skill (' . $id . ') not found');
             }
 
             $result = $skill->groups;
             return $this->processMultiple($result);
         } catch (\Exception $e) {
+            throw new SkillRepositoryException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -77,7 +81,7 @@ class SkillRepository
                 'name' => $skillDTO->name,
             ]);
         } catch (\Exception $e) {
-            // Exception
+            throw new SkillRepositoryException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -88,7 +92,7 @@ class SkillRepository
             $skill->name = $newSkill->name;
             return $skill->save();
         } catch (\Exception $e) {
-            // Exception
+            throw new SkillRepositoryException($e->getMessage(), $e->getCode());
         }
     }
 
@@ -97,12 +101,14 @@ class SkillRepository
         try {
             $skill = Skill::where('id', $id)->first();
             if (empty($skill)) {
-                return false;
+                throw new NotFoundException(
+                    'Can not delete. Skill (' . $id . ') not found'
+                );
             }
             $skill->delete();
             return true;
         } catch (\Exception $e) {
-            // Exception
+            throw new SkillRepositoryException($e->getMessage(), $e->getCode());
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Response\JsonResponse;
+use League\Route\Http\Exception\BadRequestException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IndexController
@@ -19,6 +20,6 @@ class IndexController
     public function test()
     {
         $data = ['asd' => 123];
-        return JsonResponse::respond($data, 201);
+        return JsonResponse::respond($data, 402);
     }
 }

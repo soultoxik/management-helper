@@ -4,6 +4,8 @@
 namespace App\Queue\Jobs;
 
 
+use App\Logger\AppLogger;
+
 abstract class Job
 {
     protected bool $completed = false;
@@ -18,7 +20,7 @@ abstract class Job
 
     protected function setCompleted(): void
     {
-//        AppLogger::addInfo('RabbitMQ:Consumer job - completed');
+        AppLogger::addInfo('RabbitMQ:Consumer job - completed');
         $this->completed = true;
     }
 
