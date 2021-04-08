@@ -244,28 +244,4 @@ class GroupRepository extends Repository
 
         return $student_ids;
     }
-
-//    public function changeTo(int $teacherId)
-//    {
-//        $user = (new UserRepository())->findById($teacherId);
-//        if (!$user->teacher) {
-//            throw new BadRequestException('user is not a teacher');
-//        }
-//
-//        $this->group->user_id = $user->id;
-//        $this->group->save();
-//
-//        return $this->group;
-//    }
-//
-//    public function addToGroup()
-//    {
-//        $this->group->user_id = $this->user->id;
-//        $this->group->save();
-//    }
-//
-//    public function getTeacher()
-//    {
-//        return $this->user;
-//    }
 }
