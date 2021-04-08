@@ -5,15 +5,14 @@ namespace App\Models;
 
 use App\Exceptions\StudentException;
 use Exception;
-use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Traits\Transaction;
+use League\Route\Http\Exception\NotFoundException;
 
 class Student extends Model
 {
     use Transaction;
-    use PivotEventTrait;
 
     public User $user;
     public ?Collection $skills;
@@ -29,7 +28,9 @@ class Student extends Model
     {
         $user = User::where('id', $id)->where('teacher', false)->first();
         if (empty($user)) {
-            return null;
+            throw new NotFoundException(
+                'Student not found by ID:' . $id
+            );
         }
         $skills = $user->skills;
         return new Student($user, $skills);
@@ -39,7 +40,9 @@ class Student extends Model
     {
         $user = User::where('email', $email)->where('teacher', false)->first();
         if (empty($user)) {
-            return null;
+            throw new NotFoundException(
+                'Student not found by email:' . $email
+            );
         }
         $skills = $user->skills;
         return new Student($user, $skills);
@@ -90,7 +93,9 @@ class Student extends Model
             self::beginTransaction();
             $newUser = User::where('id', $user->id)->first();
             if (empty($newUser)) {
-                throw new StudentException('User does not exist.');
+                throw new NotFoundException(
+                    'Can not change Student. Student (' . $user->id . ') not found'
+                );
             }
             $newUser->email = $user->email;
             $newUser->first_name = $user->first_name;
@@ -123,14 +128,13 @@ class Student extends Model
         try {
             $student = self::findByID($userID);
             if (empty($student)) {
-                throw new StudentException('User does not exist.');
+                throw new NotFoundException(
+                    'Can not remove Student. Student (' . $userID . ') not found'
+                );
             }
-            self::beginTransaction();
             $student->user->delete();
-            self::commit();
             return true;
         } catch (Exception $e) {
-            self::rollBack();
             throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
