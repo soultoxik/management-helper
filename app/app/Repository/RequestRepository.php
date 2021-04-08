@@ -4,6 +4,7 @@
 namespace App\Repository;
 
 use App\Models\Request;
+use League\Route\Http\Exception\NotFoundException;
 
 class RequestRepository
 {
@@ -20,7 +21,7 @@ class RequestRepository
     {
         $request = Request::where('id', $id)->first();
         if (empty($request)) {
-//            throw new \Exception()
+            throw new NotFoundException('Request (' . $id . ') not found');
         }
         $request->status = Request::CLOSE;
         return $request->save();
