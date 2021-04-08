@@ -19,7 +19,7 @@ class Worker
     public const COMMAND_CREATE_GROUP = 'create_group';
     public const COMMAND_FIND_TEACHER = 'find_teacher';
     public const COMMAND_FIND_GROUP_NEW_USER = 'find_group_new_user';
-    public const COMMAND_REPLACE_TEACHER = 'replace_teacher';
+    public const COMMAND_REPLACE_TEACHER = 'change_teacher';
 
     protected int $requestID;
     protected string $command;
@@ -48,6 +48,7 @@ class Worker
                 $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
                 $job = new JobCreateGroup($group);
                 break;
+            case 'change_teacher':
             case 'find_teacher':
                 $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
                 $job = new JobFindTeacher($group);
@@ -62,10 +63,10 @@ class Worker
                 }
                 $job = new JobFindGroupNewUser($student);
                 break;
-            case 'replace_teacher':
-                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
-                $job = new JobReplaceTeacher($group);
-                break;
+//            case 'change_teacher':
+//                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+//                $job = new JobChangeTeacher($group);
+//                break;
             default:
                 throw new WorkerException('This command is not available.');
         }

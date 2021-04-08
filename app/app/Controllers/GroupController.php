@@ -7,6 +7,7 @@ use App\Queue\Jobs\Worker;
 use App\Queue\RabbitMQProducer;
 use App\Repository\GroupRepository;
 use App\Repository\RequestRepository;
+use App\Repository\TeacherRepository;
 use App\Response\JsonResponse;
 use App\Storage\RedisDAO;
 use App\Validators\RequestValidator;
@@ -140,10 +141,6 @@ class GroupController
     {
         (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
 
-//        $repo = new GroupRepository(new RedisDAO());
-//        $group = $repo->findById($args['group_id']);
-//        $user = $repo->findSuitableTeacher();
-//        $repo->setTeacherID($group, $user->id);
         $queueRequest = RequestRepository::createRequest();
 
         $data = [
@@ -159,12 +156,17 @@ class GroupController
 
     public function changeTeacher(ServerRequestInterface $request, array $args)
     {
-        $data = json_decode($request->getBody()->getContents(), true);
-        (new RequestValidator($data))->validate(['teacher_id' => 'required|numeric']);
+        (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
 
-        $group = new GroupRepository();
-        $group->findById($args['group_id']);
-        $group->changeTo($data['teacher_id']);
+        $queueRequest = RequestRepository::createRequest();
+
+        $data = [
+            'request_id' => $queueRequest->id,
+            'id' => $args['group_id']
+        ];
+
+        $producer = new RabbitMQProducer();
+        $producer->publish(Worker::COMMAND_REPLACE_TEACHER, $data);
         return JsonResponse::respond(['result' => $data]);
     }
 }
