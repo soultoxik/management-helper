@@ -61,7 +61,7 @@ class GroupController
 
     public function search(ServerRequestInterface $request, array $args)
     {
-        (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
+        $this->validateArgument($args);
         $repo = new GroupRepository(new RedisDAO());
         $group = $repo->getGroupFull($args['group_id']);
         $data = [
@@ -107,7 +107,7 @@ class GroupController
     public function delete(ServerRequestInterface $request, array $args)
     {
         try {
-            (new RequestValidator($args))->validate(['group_id' => 'required|numeric']);
+            $this->validateArgument($args);
             $repo = new GroupRepository(new RedisDAO());
             $result = $repo->delete($args['group_id']);
             $data = ['deleted' => $result];
