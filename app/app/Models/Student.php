@@ -3,18 +3,24 @@
 
 namespace App\Models;
 
+use App\Exceptions\StudentException;
+use Exception;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use App\Models\Traits\Transaction;
 
 class Student extends Model
 {
     use Transaction;
+    use PivotEventTrait;
 
     public User $user;
     public ?Collection $skills;
 
     public function __construct(User $user, ?Collection $skills)
     {
+        parent::__construct();
         $this->user = $user;
         $this->skills = $skills;
     }
@@ -40,10 +46,11 @@ class Student extends Model
     }
 
     /**
-     * @param User  $user
+     * @param User $user
      * @param array[skill_id] $skills
      *
      * @return Student|null
+     * @throws StudentException
      */
     public static function insert(User $user, array $skills): ?Student
     {
@@ -64,20 +71,20 @@ class Student extends Model
 
             return new Student($user, $skills);
 
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
-            return null;
+            throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
 
     /**
-     * @param User  $user
+     * @param User $user
      * @param array[skill_id] $skills
      *
      * @return bool
+     * @throws StudentException
      */
-    public static function change(User $user, array $skills): bool
+    public static function change(User $user, ?array $skills): bool
     {
         try {
             self::beginTransaction();
@@ -89,18 +96,25 @@ class Student extends Model
             $newUser->enabled = $user->enabled;
             $newUser->teacher = $user->teacher;
             $newUser->save();
-            $newUser->skills()->sync($skills);
+            if (!empty($skills)) {
+                $newUser->skills()->sync($skills);
+            }
             // @TODO изменения скиллов может привести к исключению студента из группы.
             self::commit();
 
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
-            return false;
+            throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
 
+    /**
+     * @param int $userID
+     *
+     * @return bool
+     * @throws StudentException
+     */
     public static function remove(int $userID): bool
     {
         try {
@@ -112,11 +126,9 @@ class Student extends Model
             $student->user->delete();
             self::commit();
             return true;
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (Exception $e) {
             self::rollBack();
+            throw new StudentException($e->getMessage(), $e->getCode());
         }
     }
-
-
 }

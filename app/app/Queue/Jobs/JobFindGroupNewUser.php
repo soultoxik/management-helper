@@ -3,6 +3,8 @@
 
 namespace App\Queue\Jobs;
 
+use App\Models\Student;
+
 class JobFindGroupNewUser extends Job
 {
     private Student $student;
