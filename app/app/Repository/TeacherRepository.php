@@ -106,10 +106,10 @@ class TeacherRepository extends Repository
             });
 
         if (!empty($user->teacherGroups()->first())) {
-            $group = $group->where(function ($query) {
+            $group = $group->where(function ($query) use ($user) {
                 $query->select(DB::raw('count(id) as counter'))
                     ->from('groups')
-                    ->where('user_id', $this->user->id)
+                    ->where('user_id', $user->id)
                     ->groupBy('user_id');
             }, '<', $conditions['max_groups_num']);
         }
