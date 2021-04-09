@@ -205,7 +205,7 @@ class GroupController
      *             )
      *         )
      *     ),
-     *     @OA\Response(response="201", description="OK"),
+     *     @OA\Response(response="200", description="OK"),
      * )
      */
     public function findTeacher(ServerRequestInterface $request, array $args)
@@ -246,7 +246,7 @@ class GroupController
      *             )
      *         )
      *     ),
-     *     @OA\Response(response="201", description="OK"),
+     *     @OA\Response(response="200", description="OK"),
      * )
      */
     public function changeTeacher(ServerRequestInterface $request, array $args)
@@ -270,7 +270,7 @@ class GroupController
      *     path="/api/v1/group/{id}/form-group",
      *     tags={"Group API"},
      *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
-     *     @OA\Response(response="201", description="OK"),
+     *     @OA\Response(response="200", description="OK"),
      * )
      */
     public function formGroup(ServerRequestInterface $request, array $args)
