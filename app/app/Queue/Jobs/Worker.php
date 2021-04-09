@@ -7,10 +7,6 @@ use App\Logger\AppLogger;
 use App\Repository\RequestRepository;
 use App\Exceptions\WorkerException;
 use App\Helpers\JSONHelper;
-use App\Models\Group;
-use App\Repository\GroupRepository;
-use App\Repository\StudentRepository;
-use App\Repository\TeacherRepository;
 use App\Storage\RedisDAO;
 
 class Worker

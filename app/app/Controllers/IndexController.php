@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Response\JsonResponse;
-use League\Route\Http\Exception\BadRequestException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IndexController

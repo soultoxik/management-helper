@@ -8,7 +8,6 @@ use App\Exceptions\GroupException;
 use App\Logger\AppLogger;
 use App\Models\Teacher;
 use App\Repository\GroupRepository;
-use App\Repository\TeacherRepository;
 use League\Route\Http\Exception\BadRequestException;
 use League\Route\Http\Exception\NotFoundException;
 

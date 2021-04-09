@@ -22,5 +22,4 @@ class Skill extends Model
     {
         return $this->belongsToMany('App\Models\Group', 'groups_skills');
     }
-
 }

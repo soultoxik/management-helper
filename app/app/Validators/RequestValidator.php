@@ -3,7 +3,6 @@
 
 namespace App\Validators;
 
-
 use League\Route\Http\Exception\BadRequestException;
 use Rakit\Validation\Validator;
 

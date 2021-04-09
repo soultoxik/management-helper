@@ -5,7 +5,6 @@ namespace App\Models;
 
 use App\Actions\ActionsUser;
 use App\Models\Traits\Transaction;
-use App\Storage\RedisDAO;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use \Illuminate\Database\Eloquent\Model;
 
