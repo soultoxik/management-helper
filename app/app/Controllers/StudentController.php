@@ -105,13 +105,6 @@ class StudentController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param array $args
-     * @return \Laminas\Diactoros\Response|\Psr\Http\Message\ResponseInterface
-     * @throws \League\Route\Http\Exception\BadRequestException
-     * @throws \League\Route\Http\Exception\NotFoundException
-     */
     public function findGroup(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);
