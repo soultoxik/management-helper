@@ -1,0 +1,635 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/groups": {
+      "post": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "example": "junior php group"
+                  },
+                  "min_students_num": {
+                    "example": 3
+                  },
+                  "max_students_num": {
+                    "example": 20
+                  },
+                  "min_skills_num": {
+                    "example": 5
+                  },
+                  "max_skills_num": {
+                    "example": 6
+                  },
+                  "max_useless_skill_students": {
+                    "example": "1"
+                  },
+                  "skills": {
+                    "example": "[2, 3, 4]"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/groups/{id}": {
+      "get": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::search",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "example": "middle php group"
+                  },
+                  "min_students_num": {
+                    "example": 3
+                  },
+                  "max_students_num": {
+                    "example": 20
+                  },
+                  "min_skills_num": {
+                    "example": 5
+                  },
+                  "max_skills_num": {
+                    "example": 6
+                  },
+                  "max_useless_skill_students": {
+                    "example": "1"
+                  },
+                  "enabled": {
+                    "example": false
+                  },
+                  "skills": {
+                    "example": "[3, 4, 5, 6]"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/group/{id}/find-teacher": {
+      "post": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::findTeacher",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "example": "middle php group"
+                  },
+                  "min_students_num": {
+                    "example": 3
+                  },
+                  "max_students_num": {
+                    "example": 20
+                  },
+                  "min_skills_num": {
+                    "example": 5
+                  },
+                  "max_skills_num": {
+                    "example": 6
+                  },
+                  "max_useless_skill_students": {
+                    "example": "1"
+                  },
+                  "enabled": {
+                    "example": false
+                  },
+                  "skills": {
+                    "example": "[3, 4, 5, 6]"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/group/{id}/change-teacher": {
+      "patch": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::changeTeacher",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "example": "middle php group"
+                  },
+                  "min_students_num": {
+                    "example": 3
+                  },
+                  "max_students_num": {
+                    "example": 20
+                  },
+                  "min_skills_num": {
+                    "example": 5
+                  },
+                  "max_skills_num": {
+                    "example": 6
+                  },
+                  "max_useless_skill_students": {
+                    "example": "1"
+                  },
+                  "enabled": {
+                    "example": false
+                  },
+                  "skills": {
+                    "example": "[3, 4, 5, 6]"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/group/{id}/form-group": {
+      "post": {
+        "tags": [
+          "Group API"
+        ],
+        "operationId": "App\\Controllers\\GroupController::formGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}": {
+      "get": {
+        "tags": [
+          "QueueRequest API"
+        ],
+        "operationId": "App\\Controllers\\RequestController::getStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/students": {
+      "post": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "example": "junior@email.com"
+                  },
+                  "first_name": {
+                    "example": "Bob"
+                  },
+                  "last_name": {
+                    "example": "Jordan"
+                  },
+                  "phone": {
+                    "example": "+7 495 1111111"
+                  },
+                  "skills": {
+                    "example": "[2, 3, 4]"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/students/{id}": {
+      "get": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::search",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "example": "junior@email.com"
+                  },
+                  "first_name": {
+                    "example": "Bob"
+                  },
+                  "last_name": {
+                    "example": "Jordan"
+                  },
+                  "phone": {
+                    "example": "+7 495 3333333"
+                  },
+                  "enabled": {
+                    "example": false
+                  },
+                  "skills": {
+                    "example": "[3, 4, 5]"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/student/{id}/find-group": {
+      "post": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::findGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/teachers": {
+      "post": {
+        "tags": [
+          "Teacher API"
+        ],
+        "operationId": "App\\Controllers\\TeacherController::create",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "example": "junior@email.com"
+                  },
+                  "first_name": {
+                    "example": "Bob"
+                  },
+                  "last_name": {
+                    "example": "Jordan"
+                  },
+                  "phone": {
+                    "example": "+7 495 1111111"
+                  },
+                  "skills": {
+                    "example": "[2, 3, 4]"
+                  },
+                  "max_groups_num": {
+                    "example": 5
+                  },
+                  "min_group_size": {
+                    "example": 5
+                  },
+                  "max_group_size": {
+                    "example": 10
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/teachers/{id}": {
+      "get": {
+        "tags": [
+          "Teacher API"
+        ],
+        "operationId": "App\\Controllers\\TeacherController::search",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Teacher API"
+        ],
+        "operationId": "App\\Controllers\\TeacherController::delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Teacher API"
+        ],
+        "operationId": "App\\Controllers\\TeacherController::update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "example": "junior@email.com"
+                  },
+                  "first_name": {
+                    "example": "Bob"
+                  },
+                  "last_name": {
+                    "example": "Jordan"
+                  },
+                  "phone": {
+                    "example": "+7 495 1111111"
+                  },
+                  "enabled": {
+                    "example": false
+                  },
+                  "skills": {
+                    "example": "[3, 4, 5]"
+                  },
+                  "max_groups_num": {
+                    "example": 1
+                  },
+                  "min_group_size": {
+                    "example": 25
+                  },
+                  "max_group_size": {
+                    "example": 35
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/teacher/{id}/find-group": {
+      "post": {
+        "tags": [
+          "Teacher API"
+        ],
+        "operationId": "App\\Controllers\\TeacherController::findGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

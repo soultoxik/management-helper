@@ -45,7 +45,27 @@ git pull
 psql -h 35.228.74.42 -p 5432 -U otus -d otusdb
 psql -h 35.228.74.42 -p 5432 -U postgres -d otusdb
 
+restore from backup: psql -h 35.228.74.42 -p 5432 -U otus -d otusdb  < DB/backup.sql
+
 *
 ### postgres (docker-compose service), password - docker
 psql -h 192.168.15.5 -p 5432 -U docker -d docker
+```
+
+```
+swagger:
+cp app/public/swagger/index-example.html app/public/swagger/index.html
+- replace %REPLACE_HOST%, 
+    e.g. 
+        url: "http://35.228.202.200/swagger.json"
+        or
+        url: "http://localhost:2280/swagger.json"
+
+- get doccumentation
+http://35.228.202.200/swagger/index.html
+http://localhost:2280/swagger/index.html
+
+- generate documentation
+http://localhost:2280/api/v1/documentation/generate
+* после как сгенерится json => вставить в app/public/swagger.json
 ```

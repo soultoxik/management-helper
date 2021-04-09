@@ -22,6 +22,28 @@ class GroupController extends Controller
         $this->groupRepo = new GroupRepository($this->redis);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/groups",
+     *     tags={"Group API"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="name", example="junior php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="skills", example="[2, 3, 4]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function create(ServerRequestInterface $request, array $args)
     {
         try {
@@ -61,6 +83,14 @@ class GroupController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+    * @OA\Get(
+    *     path="/api/v1/groups/{id}",
+    *     tags={"Group API"},
+    *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+    *     @OA\Response(response="200", description="OK"),
+    * )
+    */
     public function search(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);
@@ -74,6 +104,30 @@ class GroupController extends Controller
         return JsonResponse::respond($data);
     }
 
+    /**
+     * @OA\Patch  (
+     *     path="/api/v1/groups/{id}",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="name", example="middle php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5, 6]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function update(ServerRequestInterface $request, array $args)
     {
         try {
@@ -115,6 +169,14 @@ class GroupController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+     * @OA\Delete (
+     *     path="/api/v1/groups/{id}",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function delete(ServerRequestInterface $request, array $args)
     {
         try {
@@ -133,6 +195,30 @@ class GroupController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/group/{id}/find-teacher",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="name", example="middle php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5, 6]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="OK"),
+     * )
+     */
     public function findTeacher(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);
@@ -143,6 +229,30 @@ class GroupController extends Controller
         return JsonResponse::respond($data);
     }
 
+    /**
+     * @OA\Patch (
+     *     path="/api/v1/group/{id}/change-teacher",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="name", example="middle php group"),
+     *                 @OA\Property(property="min_students_num", example=3),
+     *                 @OA\Property(property="max_students_num", example=20),
+     *                 @OA\Property(property="min_skills_num", example=5),
+     *                 @OA\Property(property="max_skills_num", example=6),
+     *                 @OA\Property(property="max_useless_skill_students", example="1"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5, 6]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="200", description="OK"),
+     * )
+     */
     public function changeTeacher(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);
@@ -153,6 +263,14 @@ class GroupController extends Controller
         return JsonResponse::respond($data);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/group/{id}/form-group",
+     *     tags={"Group API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="200", description="OK"),
+     * )
+     */
     public function formGroup(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);

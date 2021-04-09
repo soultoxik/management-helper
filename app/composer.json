@@ -26,7 +26,8 @@
         "ext-json": "*",
         "ext-bcmath": "*",
         "ext-sockets": "*",
-        "ext-redis": "*"
+        "ext-redis": "*",
+        "zircote/swagger-php": "^3.1"
     },
     "autoload": {
         "psr-4": {

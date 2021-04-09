@@ -92,3 +92,8 @@
   method:  POST
   resource: GroupController
   action: formGroup
+
+- path: /api/v1/documentation/generate
+  method: GET
+  resource: DocumentationController
+  action: generateDocumentation

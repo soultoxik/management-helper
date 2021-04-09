@@ -22,6 +22,26 @@ class StudentController extends Controller
         $this->studentRepo = new StudentRepository($this->redis);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/students",
+     *     tags={"Student API"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="email", example="junior@email.com"),
+     *                 @OA\Property(property="first_name", example="Bob"),
+     *                 @OA\Property(property="last_name", example="Jordan"),
+     *                 @OA\Property(property="phone", example="+7 495 1111111"),
+     *                 @OA\Property(property="skills", example="[2, 3, 4]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function create(ServerRequestInterface $request, array $args)
     {
         try {
@@ -46,6 +66,14 @@ class StudentController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/v1/students/{id}",
+     *     tags={"Student API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="200", description="OK"),
+     * )
+     */
     public function search(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);
@@ -60,6 +88,28 @@ class StudentController extends Controller
         return JsonResponse::respond($data);
     }
 
+    /**
+     * @OA\Patch  (
+     *     path="/api/v1/students/{id}",
+     *     tags={"Student API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="email", example="junior@email.com"),
+     *                 @OA\Property(property="first_name", example="Bob"),
+     *                 @OA\Property(property="last_name", example="Jordan"),
+     *                 @OA\Property(property="phone", example="+7 495 3333333"),
+     *                 @OA\Property(property="enabled", example=false),
+     *                 @OA\Property(property="skills", example="[3, 4, 5]")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function update(ServerRequestInterface $request, array $args)
     {
         try {
@@ -87,6 +137,14 @@ class StudentController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+     * @OA\Delete (
+     *     path="/api/v1/students/{id}",
+     *     tags={"Student API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     */
     public function delete(ServerRequestInterface $request, array $args)
     {
         try {
@@ -105,6 +163,20 @@ class StudentController extends Controller
         return JsonResponse::respond($data, $status);
     }
 
+    /**
+     * @OA\Post (
+     *     path="/api/v1/student/{id}/find-group",
+     *     tags={"Student API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="201", description="OK"),
+     * )
+     *
+     * @param ServerRequestInterface $request
+     * @param array $args
+     * @return \Laminas\Diactoros\Response|\Psr\Http\Message\ResponseInterface
+     * @throws \League\Route\Http\Exception\BadRequestException
+     * @throws \League\Route\Http\Exception\NotFoundException
+     */
     public function findGroup(ServerRequestInterface $request, array $args)
     {
         $this->validator->validateArgument($args);
