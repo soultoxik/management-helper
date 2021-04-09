@@ -59,6 +59,7 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
     {
         AppLogger::addInfo('RabbitMQ:Consumer received message', [$msg->body]);
         try {
+            // тут нужно отдельно проверить reduest_id
             $worker = new Worker($msg->body, $msg->getRoutingKey());
             $job = $worker->createJob();
             $job->do();

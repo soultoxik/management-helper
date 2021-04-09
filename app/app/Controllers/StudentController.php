@@ -2,41 +2,38 @@
 
 namespace App\Controllers;
 
-use App\Helpers\JSONHelper;
-use App\Models\User;
 use App\Queue\Jobs\Worker;
-use App\Queue\RabbitMQProducer;
-use App\Repository\RequestRepository;
 use App\Repository\StudentRepository;
 use App\Response\JsonResponse;
-use App\Storage\RedisDAO;
-use App\Validators\RequestValidator;
+use App\Validators\StudentControllerValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
-class StudentController
+class StudentController extends Controller
 {
 
-    const RULES_VALIDATE = [
-        'email' => 'required|email',
-        'first_name' => 'required',
-        'last_name' => 'required',
-        'phone' => 'required',
-        'enabled' => 'required|boolean',
-        'skills' => 'required|array',
-    ];
+    use UserControllerTrait;
+
+    protected StudentControllerValidator $validator;
+    protected StudentRepository $studentRepo;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->validator = new StudentControllerValidator();
+        $this->studentRepo = new StudentRepository($this->redis);
+    }
 
     public function create(ServerRequestInterface $request, array $args)
     {
         try {
             $body = $request->getBody()->getContents();
-            $this->validateCreate($body);
+            $this->validator->validateCreate($body);
 
             $body = json_decode($body, true);
-            $user = $this->prepareCreateUser($body);
+            $user = $this->prepareCreateUser($body, false);
 
             $skills = $body['skills'];
-            $repo = new StudentRepository(new RedisDAO());
-            $student = $repo->create($user, $skills);
+            $student = $this->studentRepo->create($user, $skills);
             if (empty($student)) {
                 throw new \Exception('Student was not create');
             }
@@ -52,10 +49,9 @@ class StudentController
 
     public function search(ServerRequestInterface $request, array $args)
     {
-        $this->validateArgument($args);
+        $this->validator->validateArgument($args);
 
-        $repo = new StudentRepository(new RedisDAO());
-        $student = $repo->getStudentByID($args['student_id']);
+        $student = $this->studentRepo->getStudentByID($args['student_id']);
         $user = $student->user->toArray();
         unset($user['skills']);
         $data = [
@@ -69,15 +65,14 @@ class StudentController
     {
         try {
             $body = $request->getBody()->getContents();
-            $this->validateUpdate($body, $args);
+            $this->validator->validateUpdate($body, $args);
 
             $body = json_decode($body, true);
-            $user = $this->prepareUpdateUser($args['student_id'], $body);
+            $user = $this->prepareUpdateUser($args['student_id'], $body, false);
 
             $skills = $body['skills'];
 
-            $repo = new StudentRepository(new RedisDAO());
-            $result = $repo->update($user, $skills);
+            $result = $this->studentRepo->update($user, $skills);
             $status = 201;
             if (empty($result)) {
                 $status = 422;
@@ -96,9 +91,8 @@ class StudentController
     public function delete(ServerRequestInterface $request, array $args)
     {
         try {
-            $this->validateArgument($args);
-            $repo = new StudentRepository(new RedisDAO());
-            $result = $repo->delete($args['student_id']);
+            $this->validator->validateArgument($args);
+            $result = $this->studentRepo->delete($args['student_id']);
             $data = ['deleted' => $result];
             $status = 201;
         } catch (\Exception $e) {
@@ -121,87 +115,13 @@ class StudentController
      */
     public function findGroup(ServerRequestInterface $request, array $args)
     {
-        (new RequestValidator($args))->validate(['user_id' => 'required|numeric']);
+        $this->validator->validateArgument($args);
 
-//        $student = new StudentRepository($this->student);
-//        $student->findSuitableGroup();
-//        $student->addToGroup();
-//        $user = (new UserRepository())->findById($args['user_id']);
-//
-//        if ($user->isTeacher()) {
-//            throw new BadRequestException('user is a student');
-//        }
+        $data = $this->asyncRequest(
+            $args['student_id'],
+            Worker::COMMAND_FIND_GROUP_NEW_USER
+        );
 
-        $queueRequest = RequestRepository::createRequest();
-
-        $data = [
-            'request_id' => $queueRequest->id,
-            'id' => $args['user_id']
-        ];
-
-        $producer = new RabbitMQProducer();
-        $producer->publish(Worker::COMMAND_FIND_GROUP_NEW_USER, $data);
-
-        return JsonResponse::respond(['id' => $queueRequest->id]);
-    }
-
-    private function validateCreate(string $body): void
-    {
-        $rules = self::RULES_VALIDATE;
-        unset($rules['enabled']);
-        $this->validateBody($body, $rules);
-    }
-
-    private function validateUpdate(string $body, array $args): void
-    {
-        $this->validateArgument($args);
-        $this->validateBody($body, self::RULES_VALIDATE);
-    }
-
-    private function validateArgument(array $args)
-    {
-        $validator = new RequestValidator($args);
-        $validator->validate(['student_id' => 'required|numeric']);
-    }
-
-    private function validateBody(string $body, array $rules)
-    {
-        if (!JSONHelper::isJSON($body)) {
-            throw new \Exception('Received string is not in JSON-format.');
-        }
-        $data = json_decode($body, true);
-        $validator = new RequestValidator($data);
-        $validator->validate($rules);
-    }
-
-    private function prepareCreateUser(array $body): User
-    {
-        $user = $this->prepareUser($body);
-        $user->enabled = true;
-        $user->teacher = false;
-        return $user;
-    }
-
-    private function prepareUpdateUser(int $studentID, array $body): User
-    {
-        $user = $this->prepareUser($body);
-        $user->id = $studentID;
-        $user->teacher = false;
-        return $user;
-    }
-
-    private function prepareUser(array $body): User
-    {
-        $properties = array_keys(self::RULES_VALIDATE);
-
-        $user = new User;
-        foreach ($properties as $item) {
-            if ($item == 'skills') {
-                continue;
-            }
-            $user->{$item} = $body[$item];
-        }
-
-        return $user;
+        return JsonResponse::respond($data);
     }
 }

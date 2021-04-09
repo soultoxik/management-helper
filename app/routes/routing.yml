@@ -68,12 +68,12 @@
   resource: RequestController
   action: getStatus
 
-- path: /api/v1/student/{user_id:number}/find-group
+- path: /api/v1/student/{student_id:number}/find-group
   method: POST
   resource: StudentController
   action: findGroup
 
-- path: /api/v1/teacher/{user_id:number}/find-group
+- path: /api/v1/teacher/{teacher_id:number}/find-group
   method: POST
   resource: TeacherController
   action: findGroup

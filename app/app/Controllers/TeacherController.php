@@ -2,49 +2,48 @@
 
 namespace App\Controllers;
 
-use App\Helpers\JSONHelper;
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\TeacherCondition;
-use App\Models\User;
 use App\Repository\TeacherRepository;
 use App\Repository\UserRepository;
 use App\Response\JsonResponse;
-use App\Storage\RedisDAO;
 use App\Validators\RequestValidator;
+use App\Validators\TeacherControllerValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
-class TeacherController
+class TeacherController extends Controller
 {
-    public const USER_RULES_VALIDATE
-        = [
-            'email'      => 'required|email',
-            'first_name' => 'required',
-            'last_name'  => 'required',
-            'phone'      => 'required',
-            'enabled'    => 'required|boolean',
-            'skills'     => 'required|array',
-        ];
 
-    public const TEACHER_RULES_VALIDATE
-        = [
-            'max_groups_num' => 'required|numeric',
-            'min_group_size' => 'required|numeric',
-            'max_group_size' => 'required|numeric',
-        ];
+    use UserControllerTrait;
+
+    protected TeacherControllerValidator $validator;
+    protected TeacherRepository $teacherRepo;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->validator = new TeacherControllerValidator();
+        $this->teacherRepo = new TeacherRepository($this->redis);
+    }
 
     public function create(ServerRequestInterface $request, array $args)
     {
         try {
             $body = $request->getBody()->getContents();
-            $this->validateCreate($body);
+            $this->validator->validateCreate($body);
 
             $body = json_decode($body, true);
-            $user = $this->prepareCreateUser($body);
+            $user = $this->prepareCreateUser($body, true);
 
             $skills = $body['skills'];
-            $teacherCondition = $this->prepareCreateTeacherCondition($body);
-            $repo = new TeacherRepository(new RedisDAO());
-            $teacher = $repo->create($user, $skills, $teacherCondition);
+            $teacherCondition = new TeacherConditionDTO(
+                null,
+                $body['max_groups_num'],
+                $body['min_group_size'],
+                $body['max_group_size'],
+            );
+
+            $teacher = $this->teacherRepo->create($user, $skills, $teacherCondition);
             if (empty($teacher)) {
                 throw new \Exception('Teacher was not create');
             }
@@ -60,16 +59,17 @@ class TeacherController
 
     public function search(ServerRequestInterface $request, array $args)
     {
-        $this->validateArgument($args);
+        $this->validator->validateArgument($args);
 
-        $repo = new TeacherRepository(new RedisDAO());
-        $teacher = $repo->getTeacherByID($args['teacher_id']);
+        $teacher = $this->teacherRepo->getTeacherByID($args['teacher_id']);
         $user = $teacher->user->toArray();
+        $teacher_conditions = $user['teacher_conditions'];
         unset($user['skills']);
+        unset($user['teacher_conditions']);
         $data = [
             'user' => $user,
             'skills' => $teacher->skills->pluck('id')->toArray(),
-            'teacher_condition' => $user['teacher_conditions'],
+            'teacher_condition' => $teacher_conditions,
         ];
         return JsonResponse::respond($data);
     }
@@ -78,20 +78,20 @@ class TeacherController
     {
         try {
             $body = $request->getBody()->getContents();
-            $this->validateUpdate($body, $args);
+            $this->validator->validateUpdate($body, $args);
 
             $body = json_decode($body, true);
-            $user = $this->prepareUpdateUser($args['teacher_id'], $body);
+            $user = $this->prepareUpdateUser($args['teacher_id'], $body, true);
 
             $skills = $body['skills'];
 
-            $teacherCondition = $this->prepareUpdateTeacherCondition(
-                $user->id,
-                $body
-            );
+            $teacherCondition = new TeacherCondition();
+            $teacherCondition->user_id = $args['teacher_id'];
+            $teacherCondition->max_groups_num = $body['max_groups_num'];
+            $teacherCondition->min_group_size = $body['min_group_size'];
+            $teacherCondition->max_group_size = $body['max_group_size'];
 
-            $repo = new TeacherRepository(new RedisDAO());
-            $result = $repo->update($user, $skills, $teacherCondition);
+            $result = $this->teacherRepo->update($user, $skills, $teacherCondition);
             $status = 201;
             if (empty($result)) {
                 $status = 422;
@@ -110,9 +110,8 @@ class TeacherController
     public function delete(ServerRequestInterface $request, array $args)
     {
         try {
-            $this->validateArgument($args);
-            $repo = new TeacherRepository(new RedisDAO());
-            $result = $repo->delete($args['teacher_id']);
+            $this->validator->validateArgument($args);
+            $result = $this->teacherRepo->delete($args['teacher_id']);
             $data = ['deleted' => $result];
             $status = 201;
         } catch (\Exception $e) {
@@ -145,88 +144,85 @@ class TeacherController
         return JsonResponse::respond(['result' => $student->getGroup()]);
     }
 
-    private function validateCreate(string $body): void
-    {
-        $rules = array_merge(self::USER_RULES_VALIDATE, self::TEACHER_RULES_VALIDATE);
-        unset($rules['enabled'], $rules['user_id']);
-        $this->validateBody($body, $rules);
-    }
-
-    private function validateUpdate(string $body, array $args): void
-    {
-        $this->validateArgument($args);
-        $this->validateBody(
-            $body,
-            array_merge(self::USER_RULES_VALIDATE, self::TEACHER_RULES_VALIDATE)
-        );
-    }
-    private function validateBody(string $body, array $rules)
-    {
-        if (!JSONHelper::isJSON($body)) {
-            throw new \Exception('Received string is not in JSON-format.');
-        }
-        $data = json_decode($body, true);
-        $validator = new RequestValidator($data);
-        $validator->validate($rules);
-    }
-
-    private function validateArgument(array $args)
-    {
-        $validator = new RequestValidator($args);
-        $validator->validate(['teacher_id' => 'required|numeric']);
-    }
-
-    private function prepareCreateUser(array $body): User
-    {
-        $user = $this->prepareUser($body);
-        $user->enabled = true;
-        $user->teacher = true;
-        return $user;
-    }
-
-    private function prepareUpdateUser(int $studentID, array $body): User
-    {
-        $user = $this->prepareUser($body);
-        $user->id = $studentID;
-        $user->teacher = true;
-        return $user;
-    }
-
-    private function prepareUser(array $body): User
-    {
-        $properties = array_keys(self::USER_RULES_VALIDATE);
-
-        $user = new User;
-        foreach ($properties as $item) {
-            if ($item == 'skills') {
-                continue;
-            }
-            $user->{$item} = $body[$item];
-        }
-
-        return $user;
-    }
-
-    private function prepareCreateTeacherCondition(array $body): TeacherConditionDTO
-    {
-        return new TeacherConditionDTO(
-            null,
-            $body['max_groups_num'],
-            $body['min_group_size'],
-            $body['max_group_size'],
-        );
-    }
-
-    private function prepareUpdateTeacherCondition(int $teacherID, array $body): TeacherCondition
-    {
-        $properties = array_keys(self::TEACHER_RULES_VALIDATE);
-
-        $teacherCondition = new TeacherCondition();
-        $teacherCondition->user_id = $teacherID;
-        foreach ($properties as $item) {
-            $teacherCondition->{$item} = $body[$item];
-        }
-
-        return $teacherCondition;
-    }
+//    private function validateCreate(string $body): void
+//    {
+//        $rules = array_merge(self::USER_RULES_VALIDATE, self::TEACHER_RULES_VALIDATE);
+//        unset($rules['enabled'], $rules['user_id']);
+//        $this->validateBody($body, $rules);
+//    }
+//
+//    private function validateUpdate(string $body, array $args): void
+//    {
+//        $this->validateArgument($args);
+//        $this->validateBody(
+//            $body,
+//            array_merge(self::USER_RULES_VALIDATE, self::TEACHER_RULES_VALIDATE)
+//        );
+//    }
+//    private function validateBody(string $body, array $rules)
+//    {
+//        if (!JSONHelper::isJSON($body)) {
+//            throw new \Exception('Received string is not in JSON-format.');
+//        }
+//        $data = json_decode($body, true);
+//        $validator = new RequestValidator($data);
+//        $validator->validate($rules);
+//    }
+//
+//    private function validateArgument(array $args)
+//    {
+//        $validator = new RequestValidator($args);
+//        $validator->validate(['teacher_id' => 'required|numeric']);
+//    }
+//
+//    private function prepareCreateUser(array $body): User
+//    {
+//        $user = $this->prepareUser($body);
+//        $user->enabled = true;
+//        $user->teacher = true;
+//        return $user;
+//    }
+//
+//    private function prepareUpdateUser(int $studentID, array $body): User
+//    {
+//        $user = $this->prepareUser($body);
+//        $user->id = $studentID;
+//        $user->teacher = true;
+//        return $user;
+//    }
+//
+//    private function prepareUser(array $body): User
+//    {
+//        $properties = array_keys(self::USER_RULES_VALIDATE);
+//
+//        $user = new User;
+//        foreach ($properties as $item) {
+//            if ($item == 'skills') {
+//                continue;
+//            }
+//            $user->{$item} = $body[$item];
+//        }
+//
+//        return $user;
+//    }
+//
+//    private function prepareCreateTeacherCondition(array $body): TeacherConditionDTO
+//    {
+//        return new TeacherConditionDTO(
+//            null,
+//            $body['max_groups_num'],
+//            $body['min_group_size'],
+//            $body['max_group_size'],
+//        );
+//    }
+//
+//    private function prepareUpdateTeacherCondition(int $teacherID, array $body): TeacherCondition
+//    {
+//        $teacherCondition = new TeacherCondition();
+//        $teacherCondition->user_id = $teacherID;
+//        $teacherCondition->max_groups_num = $body['max_groups_num'];
+//        $teacherCondition->min_group_size = $body['min_group_size'];
+//        $teacherCondition->max_group_size = $body['max_group_size'];
+//        return $teacherCondition;
+//    }
 }
