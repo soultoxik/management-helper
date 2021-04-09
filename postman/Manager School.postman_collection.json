@@ -6,473 +6,540 @@
 	},
 	"item": [
 		{
-			"name": "Create student",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"skills\": [\n       5,6,7,8,9\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Async",
+			"item": [
+				{
+					"name": "Form Group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/group/10/form-group",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"group",
+								"10",
+								"form-group"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/students",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"students"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get student",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Group Change Teacher",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/group/28/change-teacher",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"group",
+								"28",
+								"change-teacher"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/students/10",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"students",
-						"10"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update student",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"enabled\": false,\n    \"skills\": [\n       5\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Student Find Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/student/5/find-group",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"student",
+								"5",
+								"find-group"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/students/30",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"students",
-						"30"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete student",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Group Find Teacher",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"enabled\": false,\n    \"skills\": [\n        3\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/group/3/find-teacher",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"group",
+								"3",
+								"find-teacher"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/students/30",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"students",
-						"30"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create group",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"skills\": [\n        3,6,7,13,16,4,8,19,20\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Teacher Find Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/teacher/10/find-group",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"teacher",
+								"10",
+								"find-group"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/groups",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"groups"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Update group",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"enabled\": false,\n    \"skills\": [\n        3, 4, 5, 6, 7, 8, 9\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Student",
+			"item": [
+				{
+					"name": "Create student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"skills\": [\n       5,6,7,8,9\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/students",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"students"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/groups/11",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"groups",
-						"11"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete group",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Update student",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"enabled\": false,\n    \"skills\": [\n       5\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/students/30",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"students",
+								"30"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/groups/19",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"groups",
-						"19"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get group",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Delete student",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/students/30",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"students",
+								"30"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/groups/2",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"groups",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Find group for student",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get student",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/students/10",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"students",
+								"10"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/student/5/find-group",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"student",
-						"5",
-						"find-group"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Find teacher for group",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"enabled\": false,\n    \"skills\": [\n        3\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Group",
+			"item": [
+				{
+					"name": "Create group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"skills\": [\n        3,6,7,13,16,4,8,19,20\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/groups",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"groups"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081//api/v1/group/10/find-teacher",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"",
-						"api",
-						"v1",
-						"group",
-						"10",
-						"find-teacher"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Change teacher for group",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"enabled\": false,\n    \"skills\": [\n        3\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Delete group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/groups/19",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"19"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/group/20/change-teacher",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"group",
-						"20",
-						"change-teacher"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "create teacher",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"skills\": [\n       5,6,7,8,9\n    ],\n    \"max_groups_num\": \"5\",\n    \"min_group_size\": \"5\",\n    \"max_group_size\": \"10\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Update group",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomLoremWords}}\",\n    \"min_students_num\": \"4\",\n    \"max_students_num\": \"9\",\n    \"min_skills_num\": \"5\",\n    \"max_skills_num\": \"6\",\n    \"max_useless_skill_students\": \"1\",\n    \"enabled\": false,\n    \"skills\": [\n        3, 4, 5, 6, 7, 8, 9\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/groups/11",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"11"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/teachers",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"teachers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update teacher",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"enabled\": false,\n    \"skills\": [\n       5\n    ],\n    \"max_groups_num\": \"1\",\n    \"min_group_size\": \"30\",\n    \"max_group_size\": \"30\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get group",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/groups/2",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"2"
+							]
 						}
-					}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Teacher",
+			"item": [
+				{
+					"name": "Create teacher",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"skills\": [\n       5,6,7,8,9\n    ],\n    \"max_groups_num\": \"5\",\n    \"min_group_size\": \"5\",\n    \"max_group_size\": \"10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/teachers",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"teachers"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/teachers/95",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						"95"
-					]
+				{
+					"name": "Update teacher",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"first_name\": \"{{$randomUserName}}\",\n    \"last_name\": \"{{$randomUserName}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"enabled\": false,\n    \"skills\": [\n       5\n    ],\n    \"max_groups_num\": \"1\",\n    \"min_group_size\": \"30\",\n    \"max_group_size\": \"30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/teachers/95",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								"95"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get teacher",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/teachers/95",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								"95"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete teacher",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://app.loc:8081/api/v1/teachers/95",
+							"protocol": "http",
+							"host": [
+								"app",
+								"loc"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"teachers",
+								"95"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get teacher",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/teachers/95",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						"95"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete teacher",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/teachers/95",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"teachers",
-						"95"
-					]
-				}
-			},
-			"response": []
+			]
 		},
 		{
 			"name": "Get Request",
@@ -492,30 +559,6 @@
 						"v1",
 						"requests",
 						"888"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Form Group",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://app.loc:8081/api/v1/group/10/form-group",
-					"protocol": "http",
-					"host": [
-						"app",
-						"loc"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"group",
-						"10",
-						"form-group"
 					]
 				}
 			},
