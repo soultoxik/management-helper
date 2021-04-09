@@ -53,16 +53,14 @@ psql -h 192.168.15.5 -p 5432 -U docker -d docker
 ```
 
 ```
-examples:
+swagger:
+cp app/public/swagger/index-example.html app/public/swagger/index.html
+- replace %REPLACE_HOST%, e.g. url: "http://localhost:2280/swagger.json"
+
 - generate documentation
 http://localhost:2280/api/v1/documentation/generate
 * после как сгенерится json => вставить в app/public/swagger.json
 
-
 - get doccumentation
 http://localhost:2280/swagger/index.html
-
-docker-compose exec php bash
-composer install
-
 ```
