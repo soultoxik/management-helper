@@ -3,7 +3,7 @@
 
 namespace App\Validators;
 
-class TeacherControllerValidator extends UserControllerValidator
+class TeacherControllerValidator extends UserControllerValidator implements ControllerValidatorInterface
 {
     const TEACHER_RULES_VALIDATE
         = [
@@ -30,7 +30,7 @@ class TeacherControllerValidator extends UserControllerValidator
         );
     }
 
-    public function validateArgument(array $args)
+    public function validateArgument(array $args): void
     {
         $this->baseValidateArgument($args, self::RULE_ARGUMENT);
     }

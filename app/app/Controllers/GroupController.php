@@ -13,7 +13,6 @@ use App\Models\Group;
 class GroupController extends Controller
 {
 
-    protected GroupControllerValidator $validator;
     protected GroupRepository $groupRepo;
 
     public function __construct()

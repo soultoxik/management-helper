@@ -13,7 +13,6 @@ class StudentController extends Controller
 
     use UserControllerTrait;
 
-    protected StudentControllerValidator $validator;
     protected StudentRepository $studentRepo;
 
     public function __construct()

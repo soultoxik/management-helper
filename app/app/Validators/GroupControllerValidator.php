@@ -3,7 +3,7 @@
 
 namespace App\Validators;
 
-class GroupControllerValidator extends BaseControllerValidator
+class GroupControllerValidator extends BaseControllerValidator implements ControllerValidatorInterface
 {
     const RULES_BODY = [
         'name' => 'required|alpha_spaces',
@@ -30,7 +30,7 @@ class GroupControllerValidator extends BaseControllerValidator
         $this->baseValidateBody($body, self::RULES_BODY);
     }
 
-    public function validateArgument(array $args)
+    public function validateArgument(array $args): void
     {
         $this->baseValidateArgument($args, self::RULE_ARGUMENT);
     }

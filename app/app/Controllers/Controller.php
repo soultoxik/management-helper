@@ -6,11 +6,13 @@ namespace App\Controllers;
 use App\Queue\RabbitMQProducer;
 use App\Repository\RequestRepository;
 use App\Storage\RedisDAO;
+use App\Validators\ControllerValidatorInterface;
 
 abstract class Controller
 {
 
     protected RedisDAO $redis;
+    protected ControllerValidatorInterface $validator;
 
     public function __construct()
     {

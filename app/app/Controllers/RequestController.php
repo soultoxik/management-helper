@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class RequestController extends Controller
 {
 
-    protected RequestControllerValidator $validator;
     protected RequestRepository $requestRepo;
 
     public function __construct()

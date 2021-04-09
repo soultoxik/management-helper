@@ -16,7 +16,6 @@ class TeacherController extends Controller
 
     use UserControllerTrait;
 
-    protected TeacherControllerValidator $validator;
     protected TeacherRepository $teacherRepo;
 
     public function __construct()

@@ -3,7 +3,7 @@
 
 namespace App\Validators;
 
-class StudentControllerValidator extends UserControllerValidator
+class StudentControllerValidator extends UserControllerValidator implements ControllerValidatorInterface
 {
     const RULE_ARGUMENT = ['student_id' => 'required|numeric'];
 
@@ -20,7 +20,7 @@ class StudentControllerValidator extends UserControllerValidator
         $this->baseValidateBody($body, self::USER_RULES_VALIDATE);
     }
 
-    public function validateArgument(array $args)
+    public function validateArgument(array $args): void
     {
         $this->baseValidateArgument($args, self::RULE_ARGUMENT);
     }
