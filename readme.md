@@ -69,3 +69,10 @@ http://localhost:2280/swagger/index.html
 http://localhost:2280/api/v1/documentation/generate
 * после как сгенерится json => вставить в app/public/swagger.json
 ```
+
+```
+RabbitMQ's consumer:
+Open PHP docker by cli: docker-compose exec php bash
+Need change directory: cd /var/www/html/console
+Run command: php console.php student_find_group & php console.php teacher_find_group & php console.php group_find_teacher & php console.php group_change_teacher & php console.php group_form_group &
+```
