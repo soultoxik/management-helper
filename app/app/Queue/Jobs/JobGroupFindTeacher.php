@@ -15,7 +15,6 @@ class JobGroupFindTeacher extends Job
 {
     const FAIL = 'not_found_teacher_for_group';
 
-    private Teacher $teacher;
     private GroupRepository $groupRepo;
     private int $groupID;
 

@@ -14,7 +14,6 @@ class JobStudentFindGroup extends Job
 {
     const FAIL = 'not_found_group_for_student';
 
-    private Student $student;
     private StudentRepository $studentRepo;
     private int $studentID;
 
@@ -28,9 +27,9 @@ class JobStudentFindGroup extends Job
     protected function work(): bool
     {
         try {
-            $this->student = $this->studentRepo->getStudentByID($this->studentID);
-            $group = $this->studentRepo->findSuitableGroup($this->student->user);
-            return $this->studentRepo->addGroup($this->student->user->id, $group->id);
+            $student = $this->studentRepo->getStudentByID($this->studentID);
+            $group = $this->studentRepo->findSuitableGroup($student->user);
+            return $this->studentRepo->addGroup($student->user->id, $group->id);
         } catch (NotFoundException $e) {
             AppLogger::addWarning(
                 'RabbitMQ:Consumer:' . $e->getMessage()

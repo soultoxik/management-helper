@@ -35,7 +35,7 @@ class JobGroupFormGroup extends Job
             foreach ($result as $item) {
                 $studentIDs[] = $item->user_id;
             }
-            return $this->groupRepo->setStudentsByGroupID($this->group->id, $studentIDs);
+            return $this->groupRepo->setStudentsByGroupID($group->id, $studentIDs);
         } catch (AppException | NotFoundException $e) {
             AppLogger::addWarning(
                 'RabbitMQ:Consumer:' . $e->getMessage()

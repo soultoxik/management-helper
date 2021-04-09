@@ -14,7 +14,6 @@ class JobGroupChangeTeacher extends Job
 {
     const FAIL = 'not_changed_teacher';
 
-    private Group $group;
     private GroupRepository $groupRepo;
     private int $groupID;
 
@@ -28,9 +27,9 @@ class JobGroupChangeTeacher extends Job
     protected function work(): bool
     {
         try {
-            $this->group = $this->groupRepo->getGroup($this->groupID);
-            $user = $this->groupRepo->findSuitableTeacher($this->group);
-            return $this->groupRepo->setTeacherID($this->group, $user->id);
+            $group = $this->groupRepo->getGroup($this->groupID);
+            $user = $this->groupRepo->findSuitableTeacher($group);
+            return $this->groupRepo->setTeacherID($group, $user->id);
         } catch (NotFoundException $e) {
             AppLogger::addWarning(
                 'RabbitMQ:Consumer:' . $e->getMessage()
