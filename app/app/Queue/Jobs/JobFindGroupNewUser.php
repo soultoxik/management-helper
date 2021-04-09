@@ -4,10 +4,11 @@
 namespace App\Queue\Jobs;
 
 use App\Logger\AppLogger;
-use App\Repository\GroupRepository;
 use App\Repository\StudentRepository;
 use App\Models\Student;
 use App\Storage\RedisDAO;
+use League\Route\Http\Exception\BadRequestException;
+use League\Route\Http\Exception\NotFoundException;
 
 class JobFindGroupNewUser extends Job
 {
@@ -22,21 +23,20 @@ class JobFindGroupNewUser extends Job
 
     protected function work(): bool
     {
-        $repo = new StudentRepository(new RedisDAO());
-        $group = $repo->findSuitableGroup($this->student->user);
-        if (empty($group)) {
-            AppLogger::addInfo(
-                'RabbitMQ:Consumer - Could not find groups for student: ' . $this->student->user->id
+        try {
+            $repo = new StudentRepository(new RedisDAO());
+            $group = $repo->findSuitableGroup($this->student->user);
+            return $repo->addGroup($this->student->user->id, $group->id);
+        } catch (NotFoundException $e) {
+            AppLogger::addWarning(
+                'RabbitMQ:Consumer:' . $e->getMessage()
             );
-            return false;
+        } catch (BadRequestException $e) {
+            AppLogger::addError(
+                'RabbitMQ:Consumer:' . $e->getMessage()
+            );
         }
-        $result = $repo->addGroup($this->student->user->id, $group->id);
-        $status = $result ? ' was ': ' was not ';
-        AppLogger::addInfo(
-            'RabbitMQ:Consumer - For student: ' . $this->student->user->id
-            . $status . 'found groupID:' . $group->id
-        );
-        return $result;
+        return false;
     }
 
     public function getStatusFail(): string
