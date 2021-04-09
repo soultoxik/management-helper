@@ -4,12 +4,20 @@
 namespace App\Queue\Jobs;
 
 use App\Logger\AppLogger;
+use App\Storage\RedisDAO;
+use App\Storage\Cache;
 
 abstract class Job
 {
     const SUCCESS = 'completed';
 
     protected bool $completed = false;
+    protected Cache $cache;
+
+    public function __construct()
+    {
+        $this->cache = new RedisDAO();
+    }
 
     public function do()
     {

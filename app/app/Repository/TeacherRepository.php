@@ -17,7 +17,7 @@ class TeacherRepository extends Repository
     private User $user;
     private Group $group;
 
-    public function getTeacherByID(int $teacherID): ?Teacher
+    public function getTeacherByID(int $teacherID): Teacher
     {
         return Teacher::findByID($teacherID);
     }
@@ -55,9 +55,9 @@ class TeacherRepository extends Repository
      * @throws BadRequestException
      * @throws NotFoundException
      */
-    public function findSuitableGroup(): Group
+    public function findSuitableGroup(Teacher $teacher): Group
     {
-        $skills = $this->user->skills()->get();
+        $skills = $teacher->user->skills()->get();
 
         if (empty($skills)) {
             throw new NotFoundException('skills not found');
@@ -68,8 +68,7 @@ class TeacherRepository extends Repository
         if (empty($skillIds)) {
             throw new BadRequestException('cannot get skill ids');
         }
-
-        return $this->findGroup($skillIds);
+        return $this->findGroup($skillIds, $teacher->user);
     }
 
     /**
@@ -77,12 +76,13 @@ class TeacherRepository extends Repository
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object
      * @throws NotFoundException
      */
-    private function findGroup(array $skillIds)
+    private function findGroup(array $skillIds, $user)
     {
-        $conditions = $this->user->teacherConditions()->first();
-        if (empty($conditions)) {
+        if (empty($user->teacherConditions()->first())) {
             throw new NotFoundException('conditions not found');
         }
+
+        $conditions = $user->teacherConditions()->first()->toArray();
 
         $counter = DB::table('groups')
                 ->select('groups.id', DB::raw('count(groups.id) as counter'))
@@ -105,7 +105,7 @@ class TeacherRepository extends Repository
                     ->where('max_students_num', '<=', $conditions['max_group_size']);
             });
 
-        if (!empty($this->user->teacherGroups()->first())) {
+        if (!empty($user->teacherGroups()->first())) {
             $group = $group->where(function ($query) {
                 $query->select(DB::raw('count(id) as counter'))
                     ->from('groups')
@@ -120,20 +120,20 @@ class TeacherRepository extends Repository
             ->first();
 
         if (empty($group)) {
-            throw new NotFoundException('group not found for this user');
+            throw new NotFoundException('group not found for this Teacher');
         }
 
         return $group;
     }
 
-    public function addToGroup(): void
+    public function addToGroup(Group $group, Teacher $teacher): bool
     {
-        $this->group->user_id = $this->user->id;
-        $this->group->save();
+        $group->user_id = $teacher->user->id;
+        return $group->save();
     }
-
-    public function getGroup(): Group
-    {
-        return $this->group;
-    }
+//
+//    public function getGroup(): Group
+//    {
+//        return $this->group;
+//    }
 }

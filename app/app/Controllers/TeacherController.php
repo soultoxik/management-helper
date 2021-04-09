@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\DTOs\TeacherConditionDTO;
 use App\Models\TeacherCondition;
+use App\Queue\Jobs\Worker;
 use App\Repository\TeacherRepository;
 use App\Repository\UserRepository;
 use App\Response\JsonResponse;
@@ -133,14 +134,22 @@ class TeacherController extends Controller
      */
     public function findGroup(ServerRequestInterface $request, array $args)
     {
-        (new RequestValidator($args))->validate(['user_id' => 'required|numeric']);
+//        (new RequestValidator($args))->validate(['user_id' => 'required|numeric']);
+//
+//        $user = (new UserRepository())->findById($args['user_id']);
+//        $student = new TeacherRepository($user);
+//        $student->findSuitableGroup();
+//        $student->addToGroup();
+//
+//        return JsonResponse::respond(['result' => $student->getGroup()]);
+        $this->validator->validateArgument($args);
 
-        $user = (new UserRepository())->findById($args['user_id']);
-        $student = new TeacherRepository($user);
-        $student->findSuitableGroup();
-        $student->addToGroup();
+        $data = $this->asyncRequest(
+            $args['teacher_id'],
+            Worker::COMMAND_TEACHER_FIND_GROUP
+        );
 
-        return JsonResponse::respond(['result' => $student->getGroup()]);
+        return JsonResponse::respond($data);
     }
 
 //    private function validateCreate(string $body): void

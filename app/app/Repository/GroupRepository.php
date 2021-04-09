@@ -17,7 +17,7 @@ use Exception;
 class GroupRepository extends Repository
 {
 
-    public function getGroup(int $groupID): ?Group
+    public function getGroup(int $groupID): Group
     {
         $group = $this->cache->getGroup($groupID);
         if (!empty($group)) {
@@ -52,6 +52,13 @@ class GroupRepository extends Repository
         return $group;
     }
 
+    /**
+     * @param Group $newGroup
+     *
+     * @return bool
+     * @throws NotFoundException
+     * @throws \App\Exceptions\GroupException
+     */
     public function update(Group $newGroup): bool
     {
         $result = Group::change($newGroup);
@@ -168,6 +175,13 @@ class GroupRepository extends Repository
         return true;
     }
 
+    /**
+     * @param Group $group
+     *
+     * @return User
+     * @throws BadRequestException
+     * @throws NotFoundException
+     */
     public function findSuitableTeacher(Group $group): User
     {
         $skills = $group->skills()->get();
@@ -210,6 +224,14 @@ class GroupRepository extends Repository
         return $user;
     }
 
+    /**
+     * @param Group $group
+     * @param int   $userID
+     *
+     * @return bool
+     * @throws NotFoundException
+     * @throws \App\Exceptions\GroupException
+     */
     public function setTeacherID(Group $group, int $userID): bool
     {
         $group->user_id = $userID;

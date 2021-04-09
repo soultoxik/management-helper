@@ -24,7 +24,7 @@ class Student extends Model
         $this->skills = $skills;
     }
 
-    public static function findByID(int $id): ?Student
+    public static function findByID(int $id): Student
     {
         $user = User::where('id', $id)->where('teacher', false)->first();
         if (empty($user)) {

@@ -68,7 +68,7 @@ class StudentRepository extends Repository
         return $group;
     }
 
-    public function getStudentByID(int $studentID): ?Student
+    public function getStudentByID(int $studentID): Student
     {
         return Student::findByID($studentID);
     }

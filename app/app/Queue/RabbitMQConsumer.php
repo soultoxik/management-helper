@@ -11,10 +11,11 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
 {
 
     protected const ALLOWED_COMMANDS = [
-        Worker::COMMAND_CREATE_GROUP,
-        Worker::COMMAND_FIND_TEACHER,
-        Worker::COMMAND_FIND_GROUP_NEW_USER,
-        Worker::COMMAND_REPLACE_TEACHER
+        Worker::COMMAND_STUDENT_FIND_GROUP,
+        Worker::COMMAND_TEACHER_FIND_GROUP,
+        Worker::COMMAND_GROUP_FIND_TEACHER,
+        Worker::COMMAND_GROUP_CHANGE_TEACHER,
+        Worker::COMMAND_GROUP_FORM_GROUP
     ];
 
     public function consume(string $command): void
@@ -59,7 +60,6 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
     {
         AppLogger::addInfo('RabbitMQ:Consumer received message', [$msg->body]);
         try {
-            // тут нужно отдельно проверить reduest_id
             $worker = new Worker($msg->body, $msg->getRoutingKey());
             $job = $worker->createJob();
             $job->do();
@@ -71,7 +71,8 @@ class RabbitMQConsumer extends RabbitMQ implements QueueConsumerInterface
                 $worker->fail($job);
             }
         } catch (\Exception $e) {
-            AppLogger::addInfo('RabbitMQ:Consumer ' . $e->getMessage());
+            AppLogger::addCriticale('RabbitMQ:Consumer ' . $e->getMessage());
+            $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
         }
     }
 

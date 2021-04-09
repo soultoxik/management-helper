@@ -138,7 +138,7 @@ class GroupController extends Controller
         $this->validator->validateArgument($args);
         $data = $this->asyncRequest(
             $args['group_id'],
-            Worker::COMMAND_FIND_TEACHER
+            Worker::COMMAND_GROUP_FIND_TEACHER
         );
         return JsonResponse::respond($data);
     }
@@ -148,7 +148,7 @@ class GroupController extends Controller
         $this->validator->validateArgument($args);
         $data = $this->asyncRequest(
             $args['group_id'],
-            Worker::COMMAND_REPLACE_TEACHER
+            Worker::COMMAND_GROUP_CHANGE_TEACHER
         );
         return JsonResponse::respond($data);
     }
@@ -158,7 +158,7 @@ class GroupController extends Controller
         $this->validator->validateArgument($args);
         $data = $this->asyncRequest(
             $args['group_id'],
-            Worker::COMMAND_CREATE_GROUP
+            Worker::COMMAND_GROUP_FORM_GROUP
         );
         return JsonResponse::respond($data);
     }

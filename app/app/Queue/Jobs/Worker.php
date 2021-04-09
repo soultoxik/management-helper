@@ -10,20 +10,23 @@ use App\Helpers\JSONHelper;
 use App\Models\Group;
 use App\Repository\GroupRepository;
 use App\Repository\StudentRepository;
+use App\Repository\TeacherRepository;
 use App\Storage\RedisDAO;
 
 class Worker
 {
     protected const REQUIRED_PARAM = ['request_id', 'id'];
 
-    public const COMMAND_CREATE_GROUP = 'create_group';
-    public const COMMAND_FIND_TEACHER = 'find_teacher';
-    public const COMMAND_FIND_GROUP_NEW_USER = 'find_group_new_user';
-    public const COMMAND_REPLACE_TEACHER = 'change_teacher';
+    public const COMMAND_STUDENT_FIND_GROUP = 'student_find_group';
+    public const COMMAND_TEACHER_FIND_GROUP = 'teacher_find_group';
+    public const COMMAND_GROUP_FIND_TEACHER = 'group_find_teacher';
+    public const COMMAND_GROUP_CHANGE_TEACHER = 'group_change_teacher';
+    public const COMMAND_GROUP_FORM_GROUP = 'group_form_group';
 
     protected int $requestID;
     protected string $command;
     private int $id;
+    private RedisDAO $redis;
 
     public function __construct(string $message, string $command)
     {
@@ -33,6 +36,8 @@ class Worker
         $this->command = $command;
         $this->requestID = $data['request_id'];
         $this->id = $data['id'];
+
+        $this->redis = new RedisDAO();
     }
 
     /**
@@ -44,28 +49,31 @@ class Worker
         $redis = new RedisDAO();
         $msgPrefix = 'Command (' . $this->command . ') can not do.';
         switch ($this->command) {
-            case 'create_group':
-                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
-                $job = new JobCreateGroup($group);
+            case self::COMMAND_STUDENT_FIND_GROUP:
+//                $repo = new StudentRepository($this->redis);
+//                $student = $repo->getStudentByID($this->id);
+//                if (empty($student)) {
+//                    throw new WorkerException(
+//                        $msgPrefix . ' Can not load student: ' . $this->id
+//                    );
+//                }
+                $job = new JobStudentFindGroup($this->id);
                 break;
-            case 'change_teacher':
-            case 'find_teacher':
-                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
-                $job = new JobFindTeacher($group);
+            case self::COMMAND_TEACHER_FIND_GROUP:
+                $job = new JobTeacherFindGroup($this->id);
                 break;
-            case 'find_group_new_user':
-                $repo = new StudentRepository(new RedisDAO());
-                $student = $repo->getStudentByID($this->id);
-                if (empty($student)) {
-                    throw new WorkerException(
-                        $msgPrefix . ' Can not load student: ' . $this->id
-                    );
-                }
-                $job = new JobFindGroupNewUser($student);
+            case self::COMMAND_GROUP_FIND_TEACHER:
+//                $repo = new TeacherRepository($this->redis);
+//                $teacher = $repo->getTeacherByID($this->id);
+                $job = new JobGroupFindTeacher($this->id);
                 break;
-            case 'change_teacher':
-                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
-                $job = new JobChangeTeacher($group);
+            case self::COMMAND_GROUP_CHANGE_TEACHER:
+//                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+                $job = new JobGroupChangeTeacher($this->id);
+                break;
+            case self::COMMAND_GROUP_FORM_GROUP:
+//                $group = $this->prepareJobGroup($this->id, $redis, $msgPrefix);
+                $job = new JobGroupFormGroup($this->id);
                 break;
             default:
                 throw new WorkerException('This command is not available.');
@@ -74,25 +82,25 @@ class Worker
         return $job;
     }
 
-    /**
-     * @param int      $groupID
-     * @param RedisDAO $redis
-     * @param string   $msg
-     *
-     * @return Group
-     * @throws WorkerException
-     */
-    private function prepareJobGroup(int $groupID, RedisDAO $redis, string $msg): Group
-    {
-        $repo = new GroupRepository(new RedisDAO());
-        $group = $repo->getGroup($this->id);
-        if (empty($group)) {
-            throw new WorkerException(
-                $msg . ' Can not load group: ' . $this->id
-            );
-        }
-        return $group;
-    }
+//    /**
+//     * @param int      $groupID
+//     * @param RedisDAO $redis
+//     * @param string   $msg
+//     *
+//     * @return Group
+//     * @throws WorkerException
+//     */
+//    private function prepareJobGroup(int $groupID, RedisDAO $redis, string $msg): Group
+//    {
+//        $repo = new GroupRepository($this->redis);
+//        $group = $repo->getGroup($this->id);
+//        if (empty($group)) {
+//            throw new WorkerException(
+//                $msg . ' Can not load group: ' . $this->id
+//            );
+//        }
+//        return $group;
+//    }
 
     /**
      * @param string $message

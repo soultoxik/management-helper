@@ -33,7 +33,7 @@ class Teacher extends Model
         $this->teacherCondition = $teacherCondition;
     }
 
-    public static function findByID(int $id): ?Teacher
+    public static function findByID(int $id): Teacher
     {
         $user = User::where('id', $id)->where('teacher', self::IS_A_TEACHER)->first();
         if (empty($user)) {

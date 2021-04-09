@@ -111,7 +111,7 @@ class StudentController extends Controller
 
         $data = $this->asyncRequest(
             $args['student_id'],
-            Worker::COMMAND_FIND_GROUP_NEW_USER
+            Worker::COMMAND_STUDENT_FIND_GROUP
         );
 
         return JsonResponse::respond($data);
