@@ -11,7 +11,7 @@ services:
     build:
       context: ./docker/php
       args:
-        UID: $UID
+        UID: $NGINX_PHP_UID
         NGINX_PHP_USER: $NGINX_PHP_USER
         CLIENT_HOST: "${NETWORK_ID}.1"
     image: otus-project/php
@@ -33,13 +33,13 @@ services:
     build:
       context: ./docker/nginx
       args:
-        UID: $UID
+        UID: $NGINX_PHP_UID
         NGINX_PHP_USER: $NGINX_PHP_USER
-        CLIENT_HOST: $CLIENT_HOST
+#        CLIENT_HOST: $CLIENT_HOST
     image: otus-project/nginx
     ports:
       - ${NGINX_80_PORT}:80
-      - ${NGINX_443_PORT}:443
+#      - ${NGINX_443_PORT}:443
     volumes:
       - ./app:/var/www/html
       - ./docker/sock:/sock
@@ -55,11 +55,11 @@ services:
   rabbitmq:
     image: rabbitmq:3.7.5-management
     environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     ports:
-      - 15672:15672
-      - 5672:5672
+      - ${RABBITMQ_PORT1}:15672
+      - ${RABBITMQ_PORT2}:5672
     networks:
       app-network:
         ipv4_address: "${NETWORK_ID}.4"
@@ -69,9 +69,9 @@ services:
       context: ./docker/postgres
     image: otus-project/postgres
 #    ports:
-#      - ${DB_PORT}:5432
+#      - ${POSTGRES_PORT}:5432
     environment:
-      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
     volumes:
       - ./data/postgres:/var/lib/postgresql
       - ./logs/postgres:/var/log/postgresql
@@ -81,8 +81,10 @@ services:
 
   redis:
     image: redis:6.2-rc2
-    expose:
-      - 6379
+#    expose:
+#      - 6379
+#    ports:
+#      - ${REDIS_PORT}:6379
     networks:
       app-network:
         ipv4_address: "${NETWORK_ID}.6"
@@ -95,8 +97,8 @@ services:
     volumes:
       - './docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml'
       - './docker/logstash/pipeline:/usr/share/logstash/pipeline'
-#    ports:
-#      - '5001:5001'
+    ports:
+      - ${LOGSTASH_PORT}:5001
     environment:
       LS_JAVA_OPTS: '-Xmx1g -Xms1g'
     networks:
@@ -111,11 +113,6 @@ services:
 #      - ./data/elasticsearch:/usr/share/elasticsearch/data
     environment:
       - discovery.type=single-node
-##        - cluster.name=laradock-cluster
-##        - node.name=laradock-node
-#        - bootstrap.memory_lock=true
-#        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-##        - cluster.initial_master_nodes=laradock-node
 #    ulimits:
 #      memlock:
 #        soft: -1
@@ -123,9 +120,9 @@ services:
 #      nofile:
 #        soft: 65536
 #        hard: 65536
-#    ports:
-#      - 9200:9200
-#      - 9300:9300
+    ports:
+      - ${ELASTICSEARCH_PORT1}:9200
+      - ${ELASTICSEARCH_PORT2}:9300
     networks:
       app-network:
         ipv4_address: "${NETWORK_ID}.8"
@@ -141,13 +138,10 @@ services:
 #        reservations:
 ##          cpus: '0.25'
 #          memory: 20M
-#    ports:
-#      - 5601:5601
+    ports:
+      - ${KIBANA_PORT}:5601
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
     networks:
       app-network:
         ipv4_address: "${NETWORK_ID}.9"
-
-
-
