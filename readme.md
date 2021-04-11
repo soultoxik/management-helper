@@ -1,4 +1,9 @@
-http://35.228.202.200/swagger/index.html - demo
+http://35.228.202.200/swagger/index.html - Swagger
+
+http://35.228.202.200:15672/ - RabbitMQ Management
+
+http://35.228.202.200:5601/ - Kibana
+http://35.228.202.200:9200/ - Elasticsearch
 
 # deploy
 ```
@@ -32,9 +37,6 @@ cd /home/viktar_otus/management-helper/
 
 git pull
 
-# restore database from backup
-psql -h 35.228.74.42 -p 5432 -U otus -d otusdb  < DB/backup.sql
-
 #----------------------------------------------------------
 # generate keys
 # https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys#locatesshkeys
@@ -61,6 +63,10 @@ psql -h 35.228.74.42 -p 5432 -U postgres -d otusdb
 *
 # docker-compose service, password - docker
 psql -h 192.168.15.5 -p 5432 -U docker -d docker
+
+# restore database from backup
+psql -h 35.228.74.42 -p 5432 -U otus -d otusdb  < DB/backup.sql
+psql -h 192.168.15.5 -p 5432 -U docker -d docker  < DB/backup.sql
 ```
 
 # RabbitMQ
@@ -69,5 +75,5 @@ RabbitMQ's consumer:
 Open PHP docker by cli: docker-compose exec php bash
 Need change directory: cd /var/www/html/console
 Run command: php console.php student_find_group & php console.php teacher_find_group & \
- php console.php group_find_teacher & php console.php group_change_teacher & php console.php group_form_group &
+ php console.php group_find_teacher & php console.php group_change_teacher & php console.php group_form_group
 ```
