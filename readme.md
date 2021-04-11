@@ -65,7 +65,7 @@ psql -h 35.228.74.42 -p 5432 -U postgres -d otusdb
 psql -h 192.168.15.5 -p 5432 -U docker -d docker
 
 # restore database from backup
-psql -h 35.228.74.42 -p 5432 -U otus -d otusdb  < DB/backup.sql
+psql -h 35.228.74.42 -p 5432 -U postgres -d otusdb  < DB/backup.sql
 psql -h 192.168.15.5 -p 5432 -U docker -d docker  < DB/backup.sql
 ```
 
