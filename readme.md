@@ -18,6 +18,19 @@ cp app/public/swagger/index-example.html app/public/swagger/index.html
 # 3.
 docker-compose up -d
 
+# 4.
+docker-compose exec php bash
+
+# rabbitMQ - queue
+cd console
+
+# start queue
+php console.php student_find_group & php console.php teacher_find_group & \
+ php console.php group_find_teacher & php console.php group_change_teacher & php console.php group_form_group
+
+# finish queue
+fg
+
 
 # update api-documentation (example)
 http://localhost:2280/api/v1/documentation/generate
