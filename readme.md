@@ -23,13 +23,17 @@ docker-compose exec php bash
 
 # rabbitMQ - queue
 cd console
-
 # start queue
 php console.php student_find_group & php console.php teacher_find_group & \
  php console.php group_find_teacher & php console.php group_change_teacher & php console.php group_form_group
-
 # finish queue
 fg
+
+# redis
+redis-cli
+keys *
+HGETALL groups:31
+SMEMBERS group:skills:31
 
 
 # update api-documentation (example)
@@ -45,7 +49,8 @@ http://35.228.202.200:15672 - rabbitmq
 # login
 # local terminal: ssh -i <private-key-path> viktar.otus@35.228.202.200
 # example: ssh -i ~/.ssh/otus-project-ssh-key viktar.otus@35.228.202.200
-su viktar_otus
+# su viktar_otus
+sudo su
 cd /home/viktar_otus/management-helper/
 
 git pull
