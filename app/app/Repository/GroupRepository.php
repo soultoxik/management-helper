@@ -204,6 +204,8 @@ class GroupRepository extends Repository
         $counter = DB::table('users')
             ->select('users.id', DB::raw('count(users.id) as counter'))
             ->join('users_skills', 'users.id', '=', 'users_skills.user_id')
+            ->leftJoin('groups', 'groups.user_id', '=', 'users.id')
+            ->whereNull('groups.user_id')
             ->where('teacher', Teacher::IS_A_TEACHER)
             ->whereIn('users_skills.skill_id', $skillIds)
             ->groupBy('users.id')
