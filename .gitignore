@@ -1,10 +1,9 @@
 .idea/
 .vscode/
-
+.DS_Store
 data/
 logs/
-app/log/app.log
-
+log/
 .env
 
 vendor/
