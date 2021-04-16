@@ -29,11 +29,14 @@ php console.php student_find_group & php console.php teacher_find_group & \
 # finish queue
 fg
 
+# 5.
+docker-compose exec redis bash
+
 # redis
 redis-cli
 keys *
-HGETALL groups:31
-SMEMBERS group:skills:31
+HGETALL groups:1
+SMEMBERS group:skills:1
 
 
 # update api-documentation (example)
