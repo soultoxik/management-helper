@@ -1,4 +1,4 @@
-- pipeline.id: HABR
+- pipeline.id: LOGS
   pipeline.workers: 1
   pipeline.batch.size: 1
-  path.config: "./config/pipelines/habr_pipeline.conf"
+  path.config: "./config/pipelines/nginx_pipeline.conf"
