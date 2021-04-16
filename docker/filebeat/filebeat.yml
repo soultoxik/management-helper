@@ -1,0 +1,27 @@
+filebeat.config:
+  modules:
+    path: /usr/share/filebeat/modules.d/*.yml
+    reload.enabled: false
+
+processors:
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+
+filebeat.inputs:
+  - type: log
+    paths:
+      - /usr/share/filebeat/logs/nginx/access.log
+    scan_frequency: 5s
+
+  - type: log
+    paths:
+      - /usr/share/filebeat/logs/nginx/error.log
+    scan_frequency: 5s
+
+  - type: log
+    paths:
+      - /usr/share/filebeat/logs/app/app.log
+    scan_frequency: 5s
+output:
+  logstash:
+    hosts: ["192.168.15.7:5044"]
