@@ -58,6 +58,11 @@
   resource: TeacherController
   action: search
 
+- path: /api/v1/teachers/{teacher_id:number}/groups
+  method: GET
+  resource: TeacherController
+  action: searchGroups
+
 - path: /api/v1/teachers/{teacher_id:number}
   method: PATCH
   resource: TeacherController
