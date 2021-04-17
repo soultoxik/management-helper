@@ -120,14 +120,9 @@ class StudentRepository extends Repository
     public function getGroupIDsByStudentID(int $studentID): ?array
     {
         $student = Student::findByID($studentID);
-        $groupsIDs = [];
-        foreach ($student->user->groups as $item) {
-            $groupsIDs[] = $item;
-        }
-        if (empty($groupsIDs)) {
-            return null;
-        }
-        return $groupsIDs;
+        $groupsIDs = $student->user->groups()->get();
+
+        return $groupsIDs->pluck('id')->toArray();
     }
 
     /**

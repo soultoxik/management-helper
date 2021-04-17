@@ -104,6 +104,26 @@ class TeacherController extends Controller
     }
 
     /**
+     * @OA\Get (
+     *     path="/api/v1/teachers/{id}/groups",
+     *     tags={"Teacher API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="200", description="OK"),
+     * )
+     */
+    public function searchGroups(ServerRequestInterface $request, array $args)
+    {
+        $this->validator->validateArgument($args);
+
+        $groupsIDs = $this->teacherRepo->getGroupIDsByID($args['teacher_id']);
+        $data = [
+            'teacher_id' => $args['teacher_id'],
+            'group_ids' => $groupsIDs,
+        ];
+        return JsonResponse::respond($data);
+    }
+
+    /**
      * @OA\Patch (
      *     path="/api/v1/teachers/{id}",
      *     tags={"Teacher API"},

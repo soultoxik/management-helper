@@ -89,6 +89,25 @@ class StudentController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/v1/students/{id}/groups",
+     *     tags={"Student API"},
+     *     @OA\Parameter(name="id", in="path", description="The identifier.", example=1, required=true),
+     *     @OA\Response(response="200", description="OK"),
+     * )
+     */
+    public function searchGroups(ServerRequestInterface $request, array $args)
+    {
+        $this->validator->validateArgument($args);
+        $groupsIDs = $this->studentRepo->getGroupIDsByStudentID($args['student_id']);
+        $data = [
+            'student_id' => $args['student_id'],
+            'group_ids' => $groupsIDs,
+        ];
+        return JsonResponse::respond($data);
+    }
+
+    /**
      * @OA\Patch  (
      *     path="/api/v1/students/{id}",
      *     tags={"Student API"},

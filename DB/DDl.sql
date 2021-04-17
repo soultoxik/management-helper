@@ -93,6 +93,7 @@ CREATE INDEX groups_skills_group_id_idx ON public.groups_skills USING btree (gro
 CREATE INDEX groups_users_group_id_idx ON public.groups_users USING btree (group_id, user_id);
 CREATE UNIQUE INDEX teachers_conditions_user_id_idx ON public.teachers_conditions USING btree (user_id);
 CREATE UNIQUE INDEX users_skills_user_id_idx ON public.users_skills USING btree (user_id, skill_id);
+CREATE INDEX users_teacher_idx ON public.users using btree ("teacher") where "teacher";
 
 ALTER TABLE public.teachers_conditions ADD CONSTRAINT teachers_conditions_check CHECK ((min_group_size <= max_group_size));
 ALTER TABLE public."groups" ADD CONSTRAINT groups_skills_check CHECK ((min_skills_num <= max_skills_num));

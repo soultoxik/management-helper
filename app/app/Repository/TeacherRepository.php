@@ -131,9 +131,14 @@ class TeacherRepository extends Repository
         $group->user_id = $teacher->user->id;
         return $group->save();
     }
-//
-//    public function getGroup(): Group
-//    {
-//        return $this->group;
-//    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function getGroupIDsByID(int $teacherID): ?array
+    {
+        $teacher = Teacher::findByID($teacherID);
+        $groupsIDs = $teacher->user->teacherGroups()->get();
+        return $groupsIDs->pluck('id')->toArray();
+    }
 }
