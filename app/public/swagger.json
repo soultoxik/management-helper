@@ -437,6 +437,28 @@
         }
       }
     },
+    "/api/v1/students/{id}/groups": {
+      "get": {
+        "tags": [
+          "Student API"
+        ],
+        "operationId": "App\\Controllers\\StudentController::searchGroups",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/v1/student/{id}/find-group": {
       "post": {
         "tags": [
@@ -604,6 +626,28 @@
         },
         "responses": {
           "201": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/teachers/{id}/groups": {
+      "get": {
+        "tags": [
+          "Teacher API"
+        ],
+        "operationId": "App\\Controllers\\TeacherController::searchGroups",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The identifier.",
+            "required": true,
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
             "description": "OK"
           }
         }
